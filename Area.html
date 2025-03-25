@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geometric and 3D Shape Calculator</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 40px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 800px;
+            margin: auto;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        .tab.active {
+            background-color: #007BFF;
+            color: white;
+            border-color: #007BFF;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            text-align: center;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        input, select {
+            padding: 8px;
+            margin: 10px 0;
+            width: 80%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .shape-container {
+            position: relative;
+            display: inline-block;
+            margin: 20px auto;
+        }
+        .shape {
+            background-color: #007BFF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0 auto;
+        }
+        .circle {
+            border-radius: 50%;
+        }
+        .triangle {
+            width: 0 !important;
+            height: 0 !important;
+            background-color: transparent !important;
+            border-left: 75px solid transparent;
+            border-right: 75px solid transparent;
+            border-bottom: 150px solid #007BFF;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+        .triangle-text {
+            position: absolute;
+            bottom: -75px;
+            color: white;
+        }
+        .trapezium {
+            width: 150px;
+            height: 100px;
+            background-color: #007BFF;
+            position: relative;
+            clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+        }
+        .rhombus {
+            width: 150px;
+            height: 150px;
+            background-color: #007BFF;
+            transform: skew(-20deg);
+        }
+        .parallelogram {
+            width: 150px;
+            height: 100px;
+            background-color: #007BFF;
+            transform: skewX(-20deg);
+        }
+        .label {
+            position: absolute;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+        .result {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .formula {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 15px auto;
+            display: inline-block;
+            font-family: 'Courier New', monospace;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        button {
+            display: block;
+            width: 80%;
+            padding: 10px;
+            margin: 20px auto;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .steps {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            display: none;
+        }
+        .steps-btn {
+            background: none;
+            color: #007BFF;
+            border: none;
+            padding: 5px 0;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: underline;
+            width: auto;
+            text-align: left;
+        }
+        .shape-3d {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(-20deg) rotateY(30deg);
+        }
+        .face {
+            position: absolute;
+            border: 1px solid #333;
+            background-color: rgba(74, 122, 255, 0.7);
+        }
+        .cube .face {
+            width: 100%;
+            height: 100%;
+        }
+        .cuboid .face {
+            width: 100%;
+            height: 100%;
+        }
+        .cone {
+            width: 100px;
+            height: 200px;
+            position: relative;
+            transform-style: preserve-3d;
+            margin: 0 auto;
+        }
+        .cone .base {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: rgba(74, 122, 255, 0.7);
+            position: absolute;
+            bottom: 0;
+            transform: translateZ(-50px);
+        }
+        .cone .side {
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 200px solid rgba(74, 122, 255, 0.7);
+            position: absolute;
+            top: 0;
+            transform-origin: top;
+        }
+        .sphere {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: rgba(74, 122, 255, 0.7);
+            position: relative;
+            transform-style: preserve-3d;
+            margin: 0 auto;
+        }
+        .hemisphere {
+            width: 100px;
+            height: 50px;
+            border-radius: 50% 50% 0 0;
+            background-color: rgba(74, 122, 255, 0.7);
+            position: relative;
+            transform-style: preserve-3d;
+            margin: 0 auto;
+        }
+        input:disabled {
+            background-color: #f0f0f0;
+            color: #888;
+        }
+        .cone-diagram {
+            margin: 20px auto;
+            text-align: center;
+        }
+        .cone-diagram svg {
+            width: 200px;
+            height: 200px;
+        }
+        .cone-diagram text {
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Geometric and 3D Shape Calculator</h1>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="openTab('square')">Square</div>
+            <div class="tab" onclick="openTab('circle')">Circle</div>
+            <div class="tab" onclick="openTab('trapezium')">Trapezium</div>
+            <div class="tab" onclick="openTab('rhombus')">Rhombus</div>
+            <div class="tab" onclick="openTab('triangle')">Triangle</div>
+            <div class="tab" onclick="openTab('parallelogram')">Parallelogram</div>
+            <div class="tab" onclick="openTab('3d-calculator')">3D Shapes</div>
+        </div>
+
+        <!-- Square Calculator -->
+        <div id="square" class="tab-content active">
+            <h2>Square Area Calculator</h2>
+            <div class="formula">Area = side<sup>2</sup></div>
+            <div class="input-group">
+                <label for="squareSide">Enter side length:</label>
+                <input type="number" id="squareSide" oninput="calculateSquareArea()" min="0" step="any">
+            </div>
+            <div class="shape-container">
+                <div id="squareShape" class="shape" style="width: 100px; height: 100px;">0</div>
+                <div class="label" style="top: 100%; left: 50%; transform: translate(-50%, 10px);">
+                    <span id="squareSideLabel">0</span>
+                </div>
+            </div>
+            <div class="result">Area: <span id="squareArea">0</span> square units</div>
+        </div>
+
+        <!-- Circle Calculator -->
+        <div id="circle" class="tab-content">
+            <h2>Circle Area Calculator</h2>
+            <div class="formula">Area = π × r<sup>2</sup></div>
+            <div class="input-group">
+                <label for="circleRadius">Enter radius:</label>
+                <input type="number" id="circleRadius" oninput="calculateCircleArea()" min="0" step="any">
+            </div>
+            <div class="shape-container">
+                <div id="circleShape" class="shape circle" style="width: 100px; height: 100px;">0</div>
+                <div class="label" style="top: 100%; left: 50%; transform: translate(-50%, 10px);">
+                    r = <span id="circleRadiusLabel">0</span>
+                </div>
+            </div>
+            <div class="result">Area: <span id="circleArea">0</span> square units</div>
+        </div>
+
+        <!-- Trapezium Calculator -->
+        <div id="trapezium" class="tab-content">
+            <h2>Trapezium Area Calculator</h2>
+            <div class="formula">Area = ½ × (a + b) × h</div>
+            <div class="input-group">
+                <label for="trapeziumTopBase">Enter top base (a):</label>
+                <input type="number" id="trapeziumTopBase" oninput="calculateTrapeziumArea()" min="0" step="any">
+            </div>
+            <div class="input-group">
+                <label for="trapeziumBottomBase">Enter bottom base (b):</label>
+                <input type="number" id="trapeziumBottomBase" oninput="calculateTrapeziumArea()" min="0" step="any">
+            </div>
+            <div class="input-group">
+                <label for="trapeziumHeight">Enter height (h):</label>
+                <input type="number" id="trapeziumHeight" oninput="calculateTrapeziumArea()" min="0" step="any">
+            </div>
+            <div class="shape-container">
+                <div id="trapeziumShape" class="shape trapezium"></div>
+                <div id="trapeziumLabels" style="position: relative; height: 40px; margin-top: 10px; text-align: center;">
+                    <span style="position: absolute; left: 25%; transform: translateX(-50%);">a = <span id="trapeziumTopBaseLabel">0</span></span>
+                    <span style="position: absolute; left: 75%; transform: translateX(-50%);">b = <span id="trapeziumBottomBaseLabel">0</span></span>
+                    <span style="position: absolute; left: 50%; transform: translateX(-50%); top: 20px;">h = <span id="trapeziumHeightLabel">0</span></span>
+                </div>
+            </div>
+            <div class="result">Area: <span id="trapeziumArea">0</span> square units</div>
+        </div>
+
+        <!-- Rhombus Calculator -->
+        <div id="rhombus" class="tab-content">
+            <h2>Rhombus Area Calculator</h2>
+            <div class="formula">Area = ½ × d<sub>1</sub> × d<sub>2</sub></div>
+            <div class="input-group">
+                <label for="rhombusDiagonal1">Enter diagonal 1 (d1):</label>
+                <input type="number" id="rhombusDiagonal1" oninput="calculateRhombusArea()" min="0" step="any">
+            </div>
+            <div class="input-group">
+                <label for="rhombusDiagonal2">Enter diagonal 2 (d2):</label>
+                <input type="number" id="rhombusDiagonal2" oninput="calculateRhombusArea()" min="0" step="any">
+            </div>
+            <div class="shape-container" style="width: 200px; height: 200px; position: relative;">
+                <div id="rhombusShape" class="shape rhombus" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) skew(-20deg);"></div>
+                <div style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; pointer-events: none;">
+                    <div style="position: absolute; top: 50%; left: 0; right: 0; border-top: 1px dashed black;"></div>
+                    <div style="position: absolute; top: 0; bottom: 0; left: 50%; border-left: 1px dashed black;"></div>
+                    <div style="position: absolute; top: 50%; left: 0; transform: translateY(-100%);">d1 = <span id="rhombusDiagonal1Label">0</span></div>
+                    <div style="position: absolute; top: 100%; left: 50%; transform: translateX(-100%);">d2 = <span id="rhombusDiagonal2Label">0</span></div>
+                </div>
+            </div>
+            <div class="result">Area: <span id="rhombusArea">0</span> square units</div>
+        </div>
+
+        <!-- Triangle Calculator -->
+        <div id="triangle" class="tab-content">
+            <h2>Triangle Area Calculator</h2>
+            <div class="formula">Area = ½ × base × height</div>
+            <div class="input-group">
+                <label for="triangleBase">Enter base:</label>
+                <input type="number" id="triangleBase" oninput="calculateTriangleArea()" min="0" step="any">
+            </div>
+            <div class="input-group">
+                <label for="triangleHeight">Enter height:</label>
+                <input type="number" id="triangleHeight" oninput="calculateTriangleArea()" min="0" step="any">
+            </div>
+            <div class="shape-container" style="height: 200px;">
+                <div id="triangleShape" class="triangle">
+                    <span class="triangle-text">0</span>
+                </div>
+                <div style="position: relative; margin-top: 10px; text-align: center;">
+                    <span>base = <span id="triangleBaseLabel">0</span></span>
+                    <span style="margin-left: 20px;">height = <span id="triangleHeightLabel">0</span></span>
+                </div>
+            </div>
+            <div class="result">Area: <span id="triangleArea">0</span> square units</div>
+        </div>
+
+        <!-- Parallelogram Calculator -->
+        <div id="parallelogram" class="tab-content">
+            <h2>Parallelogram Area Calculator</h2>
+            <div class="formula">Area = base × height</div>
+            <div class="input-group">
+                <label for="parallelogramBase">Enter base:</label>
+                <input type="number" id="parallelogramBase" oninput="calculateParallelogramArea()" min="0" step="any">
+            </div>
+            <div class="input-group">
+                <label for="parallelogramHeight">Enter height:</label>
+                <input type="number" id="parallelogramHeight" oninput="calculateParallelogramArea()" min="0" step="any">
+            </div>
+            <div class="shape-container" style="width: 200px; height: 150px; position: relative;">
+                <div id="parallelogramShape" class="shape parallelogram" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) skewX(-20deg);"></div>
+                <div style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; pointer-events: none;">
+                    <div style="position: absolute; top: 0; bottom: 0; left: 20%; border-left: 1px dashed black;"></div>
+                    <div style="position: absolute; top: 100%; left: 50%; transform: translateX(-50%);">base = <span id="parallelogramBaseLabel">0</span></div>
+                    <div style="position: absolute; top: 50%; left: 20%; transform: translate(-100%, -50%);">height = <span id="parallelogramHeightLabel">0</span></div>
+                </div>
+            </div>
+            <div class="result">Area: <span id="parallelogramArea">0</span> square units</div>
+        </div>
+
+        <!-- 3D Shape Calculator -->
+        <div id="3d-calculator" class="tab-content">
+            <h2>3D Shape Calculator</h2>
+            <div class="formula">Calculate LSA, TSA, and Volume for 3D Shapes</div>
+            
+            <div class="input-group">
+                <label for="shape3d">Select Shape:</label>
+                <select id="shape3d" onchange="update3DInputs()">
+                    <option value="cube">Cube</option>
+                    <option value="cuboid">Cuboid</option>
+                    <option value="cone">Cone</option>
+                    <option value="sphere">Sphere</option>
+                    <option value="hemisphere">Hemisphere</option>
+                </select>
+            </div>
+
+            <div id="inputs3d"></div>
+
+            <div class="input-group">
+                <label for="unknown3d">Unknown Value:</label>
+                <select id="unknown3d" onchange="toggle3DUnknownFields()">
+                    <option value="lsa">LSA</option>
+                    <option value="tsa">TSA</option>
+                    <option value="volume">Volume</option>
+                    <option value="side">Side Length (Cube)</option>
+                    <option value="radius">Radius (Cone/Sphere/Hemisphere)</option>
+                    <option value="height">Height (Cuboid/Cone)</option>
+                    <option value="slant-height">Slant Height (Cone)</option>
+                </select>
+            </div>
+
+            <button onclick="calculate3D()">Calculate</button>
+            
+            <div id="result3d" class="result">
+                <h3>Result:</h3>
+                <p id="result-value3d"></p>
+                
+                <button class="steps-btn" onclick="toggleSteps('steps3d')">Show Steps</button>
+                <div id="steps3d" class="steps"></div>
+            </div>
+
+            <div id="shape-3d-container" style="margin-top: 30px;">
+                <h3>3D Visualization</h3>
+                <div id="shape-3d"></div>
+            </div>
+
+            <div id="cone-diagram" class="cone-diagram" style="display: none;">
+                <svg viewBox="0 0 200 200">
+                    <path d="M100,20 L180,180 L20,180 Z" fill="rgba(74, 122, 255, 0.3)" stroke="#007BFF" stroke-width="2"/>
+                    <circle cx="100" cy="180" r="80" fill="rgba(74, 122, 255, 0.3)" stroke="#007BFF" stroke-width="2"/>
+                    <line x1="100" y1="20" x2="100" y2="180" stroke="#333" stroke-width="1" stroke-dasharray="5,5"/>
+                    <line x1="20" y1="180" x2="180" y2="180" stroke="#333" stroke-width="1"/>
+                    <line x1="100" y1="180" x2="180" y2="180" stroke="#333" stroke-width="1" stroke-dasharray="5,5"/>
+                    <text x="50" y="190">r</text>
+                    <text x="190" y="190">r</text>
+                    <text x="110" y="100">h</text>
+                    <text x="150" y="120">l</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching function
+        function openTab(tabName) {
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+            
+            const tabs = document.getElementsByClassName('tab');
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            
+            document.getElementById(tabName).classList.add('active');
+            
+            const activeTabButton = document.querySelector(`.tab[onclick="openTab('${tabName}')"]`);
+            activeTabButton.classList.add('active');
+            
+            // If opening 3D calculator tab, initialize it
+            if (tabName === '3d-calculator') {
+                update3DInputs();
+            }
+        }
+        
+        // Square Calculator
+        function calculateSquareArea() {
+            const side = parseFloat(document.getElementById('squareSide').value) || 0;
+            const area = side * side;
+            
+            document.getElementById('squareArea').textContent = area.toFixed(2);
+            document.getElementById('squareSideLabel').textContent = side;
+            
+            const maxSize = 150;
+            const displaySize = Math.min(side * 20, maxSize);
+            
+            const squareShape = document.getElementById('squareShape');
+            squareShape.style.width = displaySize + 'px';
+            squareShape.style.height = displaySize + 'px';
+            squareShape.textContent = area.toFixed(2);
+        }
+        
+        // Circle Calculator
+        function calculateCircleArea() {
+            const radius = parseFloat(document.getElementById('circleRadius').value) || 0;
+            const area = Math.PI * radius * radius;
+            
+            document.getElementById('circleArea').textContent = area.toFixed(2);
+            document.getElementById('circleRadiusLabel').textContent = radius;
+            
+            const maxSize = 150;
+            const displaySize = Math.min(radius * 20, maxSize);
+            
+            const circleShape = document.getElementById('circleShape');
+            circleShape.style.width = displaySize + 'px';
+            circleShape.style.height = displaySize + 'px';
+            circleShape.textContent = area.toFixed(2);
+        }
+        
+        // Trapezium Calculator
+        function calculateTrapeziumArea() {
+            const a = parseFloat(document.getElementById('trapeziumTopBase').value) || 0;
+            const b = parseFloat(document.getElementById('trapeziumBottomBase').value) || 0;
+            const h = parseFloat(document.getElementById('trapeziumHeight').value) || 0;
+            const area = 0.5 * (a + b) * h;
+            
+            document.getElementById('trapeziumArea').textContent = area.toFixed(2);
+            document.getElementById('trapeziumTopBaseLabel').textContent = a;
+            document.getElementById('trapeziumBottomBaseLabel').textContent = b;
+            document.getElementById('trapeziumHeightLabel').textContent = h;
+            
+            // Adjust trapezium visualization
+            const trapezium = document.getElementById('trapeziumShape');
+            if (a > 0 && b > 0) {
+                const ratio = a / b;
+                const clipPath = `polygon(${Math.max(0, 50 - 30 * ratio)}% 0%, ${Math.min(100, 50 + 30 * ratio)}% 0%, 100% 100%, 0% 100%)`;
+                trapezium.style.clipPath = clipPath;
+            }
+        }
+        
+        // Rhombus Calculator
+        function calculateRhombusArea() {
+            const d1 = parseFloat(document.getElementById('rhombusDiagonal1').value) || 0;
+            const d2 = parseFloat(document.getElementById('rhombusDiagonal2').value) || 0;
+            const area = 0.5 * d1 * d2;
+            
+            document.getElementById('rhombusArea').textContent = area.toFixed(2);
+            document.getElementById('rhombusDiagonal1Label').textContent = d1;
+            document.getElementById('rhombusDiagonal2Label').textContent = d2;
+            
+            // Adjust rhombus visualization
+            const rhombus = document.getElementById('rhombusShape');
+            const maxSize = 150;
+            const displayWidth = Math.min(d1 * 5, maxSize);
+            const displayHeight = Math.min(d2 * 5, maxSize);
+            
+            rhombus.style.width = displayWidth + 'px';
+            rhombus.style.height = displayHeight + 'px';
+        }
+        
+        // Triangle Calculator
+        function calculateTriangleArea() {
+            const base = parseFloat(document.getElementById('triangleBase').value) || 0;
+            const height = parseFloat(document.getElementById('triangleHeight').value) || 0;
+            const area = 0.5 * base * height;
+            
+            document.getElementById('triangleArea').textContent = area.toFixed(2);
+            document.getElementById('triangleBaseLabel').textContent = base;
+            document.getElementById('triangleHeightLabel').textContent = height;
+            
+            // Adjust triangle visualization
+            const triangle = document.getElementById('triangleShape');
+            const maxSize = 150;
+            const displayBase = Math.min(base * 10, maxSize);
+            const displayHeight = Math.min(height * 10, maxSize);
+            
+            triangle.style.borderLeft = (displayBase / 2) + 'px solid transparent';
+            triangle.style.borderRight = (displayBase / 2) + 'px solid transparent';
+            triangle.style.borderBottom = displayHeight + 'px solid #007BFF';
+            
+            document.querySelector('.triangle-text').textContent = area.toFixed(2);
+        }
+        
+        // Parallelogram Calculator
+        function calculateParallelogramArea() {
+            const base = parseFloat(document.getElementById('parallelogramBase').value) || 0;
+            const height = parseFloat(document.getElementById('parallelogramHeight').value) || 0;
+            const area = base * height;
+            
+            document.getElementById('parallelogramArea').textContent = area.toFixed(2);
+            document.getElementById('parallelogramBaseLabel').textContent = base;
+            document.getElementById('parallelogramHeightLabel').textContent = height;
+            
+            // Adjust parallelogram visualization
+            const parallelogram = document.getElementById('parallelogramShape');
+            const maxSize = 150;
+            const displayWidth = Math.min(base * 10, maxSize);
+            const displayHeight = Math.min(height * 10, maxSize);
+            
+            parallelogram.style.width = displayWidth + 'px';
+            parallelogram.style.height = displayHeight + 'px';
+            parallelogram.textContent = area.toFixed(2);
+        }
+
+        // 3D Shape Calculator
+        const inputs3d = {
+            cube: `
+                <div class="input-group">
+                    <label for="side3d">Side Length (a):</label>
+                    <input type="number" id="side3d" placeholder="Enter side length">
+                </div>
+                <div class="input-group">
+                    <label for="lsa3d">LSA:</label>
+                    <input type="number" id="lsa3d" placeholder="Enter LSA">
+                </div>
+                <div class="input-group">
+                    <label for="tsa3d">TSA:</label>
+                    <input type="number" id="tsa3d" placeholder="Enter TSA">
+                </div>
+                <div class="input-group">
+                    <label for="volume3d">Volume:</label>
+                    <input type="number" id="volume3d" placeholder="Enter Volume">
+                </div>
+            `,
+            cuboid: `
+                <div class="input-group">
+                    <label for="length3d">Length (l):</label>
+                    <input type="number" id="length3d" placeholder="Enter length">
+                </div>
+                <div class="input-group">
+                    <label for="width3d">Width (w):</label>
+                    <input type="number" id="width3d" placeholder="Enter width">
+                </div>
+                <div class="input-group">
+                    <label for="height3d">Height (h):</label>
+                    <input type="number" id="height3d" placeholder="Enter height">
+                </div>
+                <div class="input-group">
+                    <label for="lsa3d">LSA:</label>
+                    <input type="number" id="lsa3d" placeholder="Enter LSA">
+                </div>
+                <div class="input-group">
+                    <label for="tsa3d">TSA:</label>
+                    <input type="number" id="tsa3d" placeholder="Enter TSA">
+                </div>
+                <div class="input-group">
+                    <label for="volume3d">Volume:</label>
+                    <input type="number" id="volume3d" placeholder="Enter Volume">
+                </div>
+            `,
+            cone: `
+                <div class="input-group">
+                    <label for="radius3d">Radius (r):</label>
+                    <input type="number" id="radius3d" placeholder="Enter radius">
+                </div>
+                <div class="input-group">
+                    <label for="height3d">Height (h):</label>
+                    <input type="number" id="height3d" placeholder="Enter height">
+                </div>
+                <div class="input-group">
+                    <label for="slantHeight3d">Slant Height (l):</label>
+                    <input type="number" id="slantHeight3d" placeholder="Enter slant height">
+                </div>
+                <div class="input-group">
+                    <label for="lsa3d">LSA:</label>
+                    <input type="number" id="lsa3d" placeholder="Enter LSA">
+                </div>
+                <div class="input-group">
+                    <label for="tsa3d">TSA:</label>
+                    <input type="number" id="tsa3d" placeholder="Enter TSA">
+                </div>
+                <div class="input-group">
+                    <label for="volume3d">Volume:</label>
+                    <input type="number" id="volume3d" placeholder="Enter Volume">
+                </div>
+            `,
+            sphere: `
+                <div class="input-group">
+                    <label for="radius3d">Radius (r):</label>
+                    <input type="number" id="radius3d" placeholder="Enter radius">
+                </div>
+                <div class="input-group">
+                    <label for="tsa3d">TSA:</label>
+                    <input type="number" id="tsa3d" placeholder="Enter TSA">
+                </div>
+                <div class="input-group">
+                    <label for="volume3d">Volume:</label>
+                    <input type="number" id="volume3d" placeholder="Enter Volume">
+                </div>
+            `,
+            hemisphere: `
+                <div class="input-group">
+                    <label for="radius3d">Radius (r):</label>
+                    <input type="number" id="radius3d" placeholder="Enter radius">
+                </div>
+                <div class="input-group">
+                    <label for="lsa3d">LSA:</label>
+                    <input type="number" id="lsa3d" placeholder="Enter LSA">
+                </div>
+                <div class="input-group">
+                    <label for="tsa3d">TSA:</label>
+                    <input type="number" id="tsa3d" placeholder="Enter TSA">
+                </div>
+                <div class="input-group">
+                    <label for="volume3d">Volume:</label>
+                    <input type="number" id="volume3d" placeholder="Enter Volume">
+                </div>
+            `
+        };
+
+        function update3DInputs() {
+            const shape = document.getElementById('shape3d').value;
+            document.getElementById('inputs3d').innerHTML = inputs3d[shape];
+            toggle3DUnknownFields();
+            draw3DShape(shape);
+            
+            // Show/hide cone diagram
+            if (shape === 'cone') {
+                document.getElementById('cone-diagram').style.display = 'block';
+            } else {
+                document.getElementById('cone-diagram').style.display = 'none';
+            }
+        }
+
+        function toggle3DUnknownFields() {
+            const unknown = document.getElementById('unknown3d').value;
+            const shape = document.getElementById('shape3d').value;
+
+            // Enable all fields first
+            const fields = ['side3d', 'radius3d', 'height3d', 'slantHeight3d', 'lsa3d', 'tsa3d', 'volume3d'];
+            fields.forEach(field => {
+                const input = document.getElementById(field);
+                if (input) input.disabled = false;
+            });
+
+            // Disable the field that will be calculated
+            if (unknown === 'side' && shape === 'cube') {
+                document.getElementById('side3d').disabled = true;
+            } else if (unknown === 'radius' && (shape === 'cone' || shape === 'sphere' || shape === 'hemisphere')) {
+                document.getElementById('radius3d').disabled = true;
+            } else if (unknown === 'height' && (shape === 'cuboid' || shape === 'cone')) {
+                document.getElementById('height3d').disabled = true;
+            } else if (unknown === 'slant-height' && shape === 'cone') {
+                document.getElementById('slantHeight3d').disabled = true;
+            } else if (unknown === 'lsa') {
+                document.getElementById('lsa3d').disabled = true;
+            } else if (unknown === 'tsa') {
+                document.getElementById('tsa3d').disabled = true;
+            } else if (unknown === 'volume') {
+                document.getElementById('volume3d').disabled = true;
+            }
+        }
+
+        function calculate3D() {
+            const shape = document.getElementById('shape3d').value;
+            const unknown = document.getElementById('unknown3d').value;
+
+            let result, steps;
+
+            switch (shape) {
+                case 'cube':
+                    const side = parseFloat(document.getElementById('side3d').value);
+                    const cubeLSA = parseFloat(document.getElementById('lsa3d').value);
+                    const cubeTSA = parseFloat(document.getElementById('tsa3d').value);
+                    const cubeVolume = parseFloat(document.getElementById('volume3d').value);
+
+                    if (unknown === 'side') {
+                        if (!isNaN(cubeLSA)) {
+                            result = Math.sqrt(cubeLSA / 4);
+                            steps = `LSA = 4 × a² ⇒ a = √(LSA / 4) = √(${cubeLSA} / 4) = ${result}`;
+                        } else if (!isNaN(cubeTSA)) {
+                            result = Math.sqrt(cubeTSA / 6);
+                            steps = `TSA = 6 × a² ⇒ a = √(TSA / 6) = √(${cubeTSA} / 6) = ${result}`;
+                        } else if (!isNaN(cubeVolume)) {
+                            result = Math.cbrt(cubeVolume);
+                            steps = `Volume = a³ ⇒ a = ³√(Volume) = ³√(${cubeVolume}) = ${result}`;
+                        }
+                    } else if (unknown === 'lsa') {
+                        result = 4 * side * side;
+                        steps = `LSA = 4 × a² = 4 × ${side}² = ${result}`;
+                    } else if (unknown === 'tsa') {
+                        result = 6 * side * side;
+                        steps = `TSA = 6 × a² = 6 × ${side}² = ${result}`;
+                    } else if (unknown === 'volume') {
+                        result = side * side * side;
+                        steps = `Volume = a³ = ${side}³ = ${result}`;
+                    }
+                    break;
+
+                case 'cuboid':
+                    const length = parseFloat(document.getElementById('length3d').value);
+                    const width = parseFloat(document.getElementById('width3d').value);
+                    const height = parseFloat(document.getElementById('height3d').value);
+                    const cuboidLSA = parseFloat(document.getElementById('lsa3d').value);
+                    const cuboidTSA = parseFloat(document.getElementById('tsa3d').value);
+                    const cuboidVolume = parseFloat(document.getElementById('volume3d').value);
+
+                    if (unknown === 'height') {
+                        if (!isNaN(cuboidLSA)) {
+                            result = cuboidLSA / (2 * (length + width));
+                            steps = `LSA = 2(l + w)h ⇒ h = LSA / (2(l + w)) = ${cuboidLSA} / (2(${length} + ${width})) = ${result}`;
+                        } else if (!isNaN(cuboidVolume)) {
+                            result = cuboidVolume / (length * width);
+                            steps = `Volume = l × w × h ⇒ h = Volume / (l × w) = ${cuboidVolume} / (${length} × ${width}) = ${result}`;
+                        }
+                    } else if (unknown === 'lsa') {
+                        result = 2 * (length + width) * height;
+                        steps = `LSA = 2(l + w)h = 2(${length} + ${width}) × ${height} = ${result}`;
+                    } else if (unknown === 'tsa') {
+                        result = 2 * (length * width + width * height + height * length);
+                        steps = `TSA = 2(lw + wh + hl) = 2(${length * width} + ${width * height} + ${height * length}) = ${result}`;
+                    } else if (unknown === 'volume') {
+                        result = length * width * height;
+                        steps = `Volume = l × w × h = ${length} × ${width} × ${height} = ${result}`;
+                    }
+                    break;
+
+                case 'cone':
+                    const radius = parseFloat(document.getElementById('radius3d').value);
+                    const coneHeight = parseFloat(document.getElementById('height3d').value);
+                    const coneSlantHeight = parseFloat(document.getElementById('slantHeight3d').value);
+                    const coneLSA = parseFloat(document.getElementById('lsa3d').value);
+                    const coneTSA = parseFloat(document.getElementById('tsa3d').value);
+                    const coneVolume = parseFloat(document.getElementById('volume3d').value);
+
+                    if (unknown === 'radius') {
+                        if (!isNaN(coneLSA)) {
+                            result = coneLSA / (Math.PI * coneSlantHeight);
+                            steps = `LSA = πrl ⇒ r = LSA / (πl) = ${coneLSA} / (π × ${coneSlantHeight}) = ${result}`;
+                        } else if (!isNaN(coneTSA)) {
+                            // Solve quadratic equation: πr² + πrl - TSA = 0
+                            const a = Math.PI;
+                            const b = Math.PI * coneSlantHeight;
+                            const c = -coneTSA;
+                            result = (-b + Math.sqrt(b*b - 4*a*c)) / (2*a);
+                            steps = `TSA = πr(r + l) ⇒ πr² + πrl - TSA = 0<br>`;
+                            steps += `Using quadratic formula: r = [ -πl + √((πl)² + 4π × TSA) ] / (2π)<br>`;
+                            steps += `r = [ -${(Math.PI * coneSlantHeight).toFixed(2)} + √(${(Math.PI * coneSlantHeight).toFixed(2)}² + 4 × ${Math.PI.toFixed(2)} × ${coneTSA}) ] / (2 × ${Math.PI.toFixed(2)})<br>`;
+                            steps += `r = ${result.toFixed(2)}`;
+                        } else if (!isNaN(coneVolume)) {
+                            result = Math.sqrt((3 * coneVolume) / (Math.PI * coneHeight));
+                            steps = `Volume = (1/3)πr²h ⇒ r = √((3 × Volume) / (πh)) = √((3 × ${coneVolume}) / (π × ${coneHeight})) = ${result}`;
+                        } else if (!isNaN(coneSlantHeight) && !isNaN(coneHeight)) {
+                            // Calculate radius from slant height and height: l² = r² + h² ⇒ r = √(l² - h²)
+                            result = Math.sqrt(coneSlantHeight * coneSlantHeight - coneHeight * coneHeight);
+                            steps = `l² = r² + h² ⇒ r = √(l² - h²) = √(${coneSlantHeight}² - ${coneHeight}²) = ${result}`;
+                        }
+                    } else if (unknown === 'height') {
+                        if (!isNaN(coneVolume)) {
+                            result = (3 * coneVolume) / (Math.PI * radius * radius);
+                            steps = `Volume = (1/3)πr²h ⇒ h = (3 × Volume) / (πr²) = (3 × ${coneVolume}) / (π × ${radius}²) = ${result}`;
+                        } else if (!isNaN(coneSlantHeight)) {
+                            // Calculate height from slant height and radius: h = √(l² - r²)
+                            result = Math.sqrt(coneSlantHeight * coneSlantHeight - radius * radius);
+                            steps = `l² = r² + h² ⇒ h = √(l² - r²) = √(${coneSlantHeight}² - ${radius}²) = ${result}`;
+                        }
+                    } else if (unknown === 'slant-height') {
+                        result = Math.sqrt(radius * radius + coneHeight * coneHeight);
+                        steps = `Slant Height (l) = √(r² + h²) = √(${radius}² + ${coneHeight}²) = ${result}`;
+                    } else if (unknown === 'lsa') {
+                        result = Math.PI * radius * coneSlantHeight;
+                        steps = `LSA = πrl = π × ${radius} × ${coneSlantHeight} = ${result}`;
+                    } else if (unknown === 'tsa') {
+                        result = Math.PI * radius * (radius + coneSlantHeight);
+                        steps = `TSA = πr(r + l) = π × ${radius} × (${radius} + ${coneSlantHeight}) = ${result}`;
+                    } else if (unknown === 'volume') {
+                        result = (1 / 3) * Math.PI * radius * radius * coneHeight;
+                        steps = `Volume = (1/3)πr²h = (1/3) × π × ${radius}² × ${coneHeight} = ${result}`;
+                    }
+                    break;
+
+                case 'sphere':
+                    const sphereRadius = parseFloat(document.getElementById('radius3d').value);
+                    const sphereTSA = parseFloat(document.getElementById('tsa3d').value);
+                    const sphereVolume = parseFloat(document.getElementById('volume3d').value);
+
+                    if (unknown === 'radius') {
+                        if (!isNaN(sphereTSA)) {
+                            result = Math.sqrt(sphereTSA / (4 * Math.PI));
+                            steps = `TSA = 4πr² ⇒ r = √(TSA / (4π)) = √(${sphereTSA} / (4π)) = ${result}`;
+                        } else if (!isNaN(sphereVolume)) {
+                            result = Math.cbrt((3 * sphereVolume) / (4 * Math.PI));
+                            steps = `Volume = (4/3)πr³ ⇒ r = ³√((3 × Volume) / (4π)) = ³√((3 × ${sphereVolume}) / (4π)) = ${result}`;
+                        }
+                    } else if (unknown === 'tsa') {
+                        result = 4 * Math.PI * sphereRadius * sphereRadius;
+                        steps = `TSA = 4πr² = 4 × π × ${sphereRadius}² = ${result}`;
+                    } else if (unknown === 'volume') {
+                        result = (4 / 3) * Math.PI * sphereRadius * sphereRadius * sphereRadius;
+                        steps = `Volume = (4/3)πr³ = (4/3) × π × ${sphereRadius}³ = ${result}`;
+                    }
+                    break;
+
+                case 'hemisphere':
+                    const hemisphereRadius = parseFloat(document.getElementById('radius3d').value);
+                    const hemisphereLSA = parseFloat(document.getElementById('lsa3d').value);
+                    const hemisphereTSA = parseFloat(document.getElementById('tsa3d').value);
+                    const hemisphereVolume = parseFloat(document.getElementById('volume3d').value);
+
+                    if (unknown === 'radius') {
+                        if (!isNaN(hemisphereLSA)) {
+                            result = Math.sqrt(hemisphereLSA / (2 * Math.PI));
+                            steps = `LSA = 2πr² ⇒ r = √(LSA / (2π)) = √(${hemisphereLSA} / (2π)) = ${result}`;
+                        } else if (!isNaN(hemisphereTSA)) {
+                            result = Math.sqrt(hemisphereTSA / (3 * Math.PI));
+                            steps = `TSA = 3πr² ⇒ r = √(TSA / (3π)) = √(${hemisphereTSA} / (3π)) = ${result}`;
+                        } else if (!isNaN(hemisphereVolume)) {
+                            result = Math.cbrt((3 * hemisphereVolume) / (2 * Math.PI));
+                            steps = `Volume = (2/3)πr³ ⇒ r = ³√((3 × Volume) / (2π)) = ³√((3 × ${hemisphereVolume}) / (2π)) = ${result}`;
+                        }
+                    } else if (unknown === 'lsa') {
+                        result = 2 * Math.PI * hemisphereRadius * hemisphereRadius;
+                        steps = `LSA = 2πr² = 2 × π × ${hemisphereRadius}² = ${result}`;
+                    } else if (unknown === 'tsa') {
+                        result = 3 * Math.PI * hemisphereRadius * hemisphereRadius;
+                        steps = `TSA = 3πr² = 3 × π × ${hemisphereRadius}² = ${result}`;
+                    } else if (unknown === 'volume') {
+                        result = (2 / 3) * Math.PI * hemisphereRadius * hemisphereRadius * hemisphereRadius;
+                        steps = `Volume = (2/3)πr³ = (2/3) × π × ${hemisphereRadius}³ = ${result}`;
+                    }
+                    break;
+            }
+
+            // Display result
+            document.getElementById('result-value3d').textContent = `Result: ${result ? result.toFixed(2) : 'Invalid input'}`;
+            document.getElementById('result3d').style.display = 'block';
+            document.getElementById('steps3d').innerHTML = steps;
+
+            // Update visualization
+            draw3DShape(shape);
+        }
+
+        function draw3DShape(shape) {
+            const shape3d = document.getElementById('shape-3d');
+            shape3d.innerHTML = ''; // Clear previous visualization
+
+            switch (shape) {
+                case 'cube':
+                    shape3d.innerHTML = `
+                        <div class="shape-3d cube">
+                            <div class="face front"></div>
+                            <div class="face back"></div>
+                            <div class="face left"></div>
+                            <div class="face right"></div>
+                            <div class="face top"></div>
+                            <div class="face bottom"></div>
+                        </div>
+                    `;
+                    break;
+
+                case 'cuboid':
+                    shape3d.innerHTML = `
+                        <div class="shape-3d cuboid">
+                            <div class="face front"></div>
+                            <div class="face back"></div>
+                            <div class="face left"></div>
+                            <div class="face right"></div>
+                            <div class="face top"></div>
+                            <div class="face bottom"></div>
+                        </div>
+                    `;
+                    break;
+
+                case 'cone':
+                    shape3d.innerHTML = `
+                        <div class="cone">
+                            <div class="base"></div>
+                            <div class="side"></div>
+                        </div>
+                    `;
+                    break;
+
+                case 'sphere':
+                    shape3d.innerHTML = `
+                        <div class="sphere"></div>
+                    `;
+                    break;
+
+                case 'hemisphere':
+                    shape3d.innerHTML = `
+                        <div class="hemisphere"></div>
+                    `;
+                    break;
+            }
+        }
+
+        function toggleSteps(id) {
+            const stepsDiv = document.getElementById(id);
+            if (stepsDiv.style.display === 'none' || stepsDiv.style.display === '') {
+                stepsDiv.style.display = 'block';
+            } else {
+                stepsDiv.style.display = 'none';
+            }
+        }
+
+        // Initialize calculators
+        calculateSquareArea();
+        calculateCircleArea();
+        calculateTrapeziumArea();
+        calculateRhombusArea();
+        calculateTriangleArea();
+        calculateParallelogramArea();
+        update3DInputs();
+    </script>
+</body>
+</html>
