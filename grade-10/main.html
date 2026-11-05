@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Calculators - Home</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="content-wrapper" id="contentWrapper">
+        <nav class="navbar">
+            <div class="logo-container">
+                <img src="data/logo.png" alt="EMC" class="logo">  
+            </div>
+            
+            <div class="nav-links">
+                <a href="main.html">Home</a>
+                <a href="calculators.html">Calculators</a>
+                <a href="credits.html">Credits</a>
+            </div>
+            
+            <div class="nav-menu">
+                <button id="menuButton">☰</button>
+            </div>
+        </nav>
+        
+        <div class="hero">
+            <div class="hero-text">
+                <h1>NCERT Grade 10 Math Calculators</h1>
+                <p>Unlock the power of mathematics with tools tailored to the NCERT Grade 10 curriculum.</p>
+            </div>
+        </div>
+        
+        <div class="about">
+            <div class="about-image">
+                <a href="https://ncert.nic.in/textbook.php?jemh1=1-15">
+                    <img src="data/ncert-grade10-textbook.png" alt="NCERT Grade 10 Maths Textbook">
+                </a>
+            </div>
+            <div class="about-text">
+                <h2>About Our Calculators</h2>
+                <p>Designed to complement the NCERT Grade 10 Mathematics textbook, our calculators provide step-by-step solutions for every chapter, from Real Numbers to Probability. Whether you're solving quadratic equations, mastering trigonometry, or exploring coordinate geometry, our tools are built to simplify complex concepts and enhance your understanding. We aim to bridge the gap between theory and practice, offering intuitive, reliable resources that align seamlessly with the NCERT syllabus. Our goal is to empower students to excel in mathematics with confidence and precision, making learning both engaging and effective.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('menuButton').addEventListener('click', function() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+            if (navLinks.style.display === 'flex') {
+                navLinks.style.position = 'absolute';
+                navLinks.style.top = '60px';
+                navLinks.style.left = '0';
+                navLinks.style.width = '100%';
+                navLinks.style.flexDirection = 'column';
+                navLinks.style.background = 'linear-gradient(90deg, #0f5ab5, #123d82)';
+                navLinks.style.padding = '15px';
+                navLinks.style.boxShadow = '0 4px 10px rgba(15, 90, 181, 0.3)';
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9298f63c1f08bcdd',t:'MTc0MzUxOTY4Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
