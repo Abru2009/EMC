@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polynomial Calculator - Class 10 CBSE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        body {
+            background: #f9fbfc;
+            line-height: 1.6;
+            color: #2d2d2d;
+            overflow: auto;
+        }
+        .container {
+            max-width: 1300px;
+            margin: 90px auto 70px;
+            padding: 60px;
+            background: #ffffff;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+        h1 {
+            text-align: center;
+            color: #0f5ab5;
+            font-size: 3.8em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+        h2 {
+            color: #123d82;
+            font-size: 2.4em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            letter-spacing: 0.8px;
+            border-bottom: 2px solid #0f5ab5;
+            padding-bottom: 5px;
+        }
+        h3 {
+            color: #123d82;
+            font-size: 1.6em;
+            margin-top: 20px;
+            font-weight: 500;
+        }
+        .calculator {
+            background: #f9fbfc;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(15, 90, 181, 0.1);
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #4a4a4a;
+            font-weight: 500;
+        }
+        input[type="number"], input[type="text"] {
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        input[type="number"] {
+            width: 60px;
+        }
+        input[type="text"] {
+            width: 200px;
+        }
+        input:focus {
+            border-color: #0f5ab5;
+        }
+        button {
+            background: linear-gradient(45deg, #1a73e8, #2a85ff);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(26, 115, 232, 0.4);
+            margin-top: 10px;
+            margin-right: 10px;
+        }
+        button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(26, 115, 232, 0.5);
+            background: linear-gradient(45deg, #185abc, #1a73e8);
+        }
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        .result {
+            background: #e8eefc;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        .method-box {
+            background: #f2f6ff;
+            border-left: 4px solid #0f5ab5;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        .method-box h4 {
+            color: #0f5ab5;
+            margin-top: 0;
+        }
+        .polynomial-display {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 15px 0;
+            color: #333;
+        }
+        .tab {
+            overflow: hidden;
+            background: #f9fbfc;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            gap: 5px;
+            padding: 5px;
+        }
+        .tab button {
+            background: #e8eefc;
+            border-radius: 8px;
+            padding: 10px 16px;
+            color: #4a4a4a;
+            transition: 0.3s;
+            box-shadow: none;
+        }
+        .tab button:hover {
+            background: #d1e0ff;
+            transform: none;
+        }
+        .tab button.active {
+            background: linear-gradient(45deg, #1a73e8, #2a85ff);
+            color: white;
+            box-shadow: 0 5px 15px rgba(26, 115, 232, 0.4);
+        }
+        .tabcontent {
+            display: none;
+            padding: 20px;
+            border-radius: 0 0 10px 10px;
+            background: #f9fbfc;
+            box-shadow: 0 4px 15px rgba(15, 90, 181, 0.1);
+            animation: fadeEffect 1s;
+        }
+        @keyframes fadeEffect {
+            from {opacity: 0;} to {opacity: 1;}
+        }
+        .graph-container {
+            width: 100%;
+            height: 400px;
+            margin: 20px 0;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        .x-axis, .y-axis {
+            position: absolute;
+            background: #333;
+            z-index: 1;
+        }
+        .x-axis {
+            width: 100%;
+            height: 1px;
+            top: 50%;
+        }
+        .y-axis {
+            width: 1px;
+            height: 100%;
+            left: 50%;
+        }
+        .grid-line {
+            position: absolute;
+            background: #e0e0e0;
+            opacity: 0.5;
+        }
+        .grid-line.horizontal {
+            width: 100%;
+            height: 1px;
+        }
+        .grid-line.vertical {
+            width: 1px;
+            height: 100%;
+        }
+        .label {
+            position: absolute;
+            font-size: 12px;
+            color: #666;
+        }
+        .point {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: red;
+            border-radius: 50%;
+            transform: translate(-4px, -4px);
+            z-index: 2;
+        }
+        .point-label {
+            position: absolute;
+            font-size: 12px;
+            color: red;
+            transform: translate(5px, -15px);
+        }
+        .curve {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+        .factorization-methods {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        .method-tab {
+            padding: 8px 15px;
+            background: #e8eefc;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #4a4a4a;
+            transition: 0.3s;
+        }
+        .method-tab:hover {
+            background: #d1e0ff;
+        }
+        .method-tab.active {
+            background: linear-gradient(45deg, #1a73e8, #2a85ff);
+            color: white;
+            box-shadow: 0 5px 15px rgba(26, 115, 232, 0.4);
+        }
+        .method-content {
+            display: none;
+            margin-top: 15px;
+            background: #e8eefc;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .method-content.active {
+            display: block;
+            animation: fadeMethod 0.5s;
+        }
+        @keyframes fadeMethod {
+            from {opacity: 0;} to {opacity: 1;}
+        }
+        .alert {
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .table-box {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            text-align: center;
+        }
+        th {
+            background: #f2f6ff;
+            color: #123d82;
+        }
+        .special-case {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f2f6ff;
+            border-left: 4px solid #0f5ab5;
+            border-radius: 0 5px 5px 0;
+        }
+        .step {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .step-number {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 20px;
+                margin: 50px auto;
+            }
+            h1 {
+                font-size: 2.8em;
+            }
+            h2 {
+                font-size: 1.8em;
+            }
+            .input-group {
+                flex-direction: column;
+            }
+            input[type="number"], input[type="text"] {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            .tab {
+                flex-direction: column;
+            }
+            .factorization-methods {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Polynomial Calculator</h1>
+        
+        <div class="tab">
+            <button class="tablinks active" onclick="openTab(event, 'zeroes')">Find Zeroes</button>
+            <button class="tablinks" onclick="openTab(event, 'coefficients')">Zeroes & Coefficients</button>
+            <button class="tablinks" onclick="openTab(event, 'factorization')">Factorization</button>
+            <button class="tablinks" onclick="openTab(event, 'from-zeroes')">Create from Zeroes</button>
+        </div>
+        
+        <div id="zeroes" class="tabcontent" style="display: block;">
+            <h2>Find Zeroes of Quadratic Polynomial</h2>
+            <div class="calculator">
+                <div class="input-group">
+                    <label>Enter coefficients of ax² + bx + c:</label>
+                    <input type="number" id="zero-a" placeholder="a" value="1" step="any">
+                    <input type="number" id="zero-b" placeholder="b" value="0" step="any">
+                    <input type="number" id="zero-c" placeholder="c" value="0" step="any">
+                </div>
+                <div class="polynomial-display" id="zero-polynomial">p(x) = x²</div>
+                <button onclick="findZeroes()">Find Zeroes</button>
+                <div class="result" id="zeroes-result"></div>
+                <h3>Geometrical Representation</h3>
+                <div class="graph-container" id="zeroes-graph">
+                    <div class="x-axis"></div>
+                    <div class="y-axis"></div>
+                    <canvas class="curve" id="quadratic-curve"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div id="coefficients" class="tabcontent">
+            <h2>Relationship Between Zeroes and Coefficients</h2>
+            <div class="calculator">
+                <div class="input-group">
+                    <label>Enter coefficients of ax² + bx + c:</label>
+                    <input type="number" id="coef-a" placeholder="a" value="1" step="any">
+                    <input type="number" id="coef-b" placeholder="b" value="0" step="any">
+                    <input type="number" id="coef-c" placeholder="c" value="0" step="any">
+                </div>
+                <div class="polynomial-display" id="coef-polynomial">p(x) = x²</div>
+                <button onclick="checkRelationship()">Verify Relationship</button>
+                <div class="result" id="coefficient-result"></div>
+            </div>
+        </div>
+        
+        <div id="factorization" class="tabcontent">
+            <h2>Factorization of Quadratic Polynomial</h2>
+            <div class="calculator">
+                <div class="input-group">
+                    <label>Enter coefficients of ax² + bx + c:</label>
+                    <input type="number" id="factor-a" placeholder="a" value="1" step="any">
+                    <input type="number" id="factor-b" placeholder="b" value="0" step="any">
+                    <input type="number" id="factor-c" placeholder="c" value="0" step="any">
+                </div>
+                <div class="polynomial-display" id="factor-polynomial">p(x) = x²</div>
+                <button onclick="factorizePolynomial()">Factorize</button>
+                <div class="result" id="factorization-result"></div>
+                <h3>Factorization Methods</h3>
+                <div class="factorization-methods">
+                    <div class="method-tab active" onclick="showMethod(event, 'method-zero')">Using Zeroes</div>
+                    <div class="method-tab" onclick="showMethod(event, 'method-split')">Splitting Middle Term</div>
+                    <div class="method-tab" onclick="showMethod(event, 'method-formula')">Quadratic Formula</div>
+                    <div class="method-tab" onclick="showMethod(event, 'method-special')">Special Cases</div>
+                </div>
+                <div id="method-zero" class="method-content active">
+                    <h4>Method 1: Factorization using Zeroes</h4>
+                    <p>If α and β are the zeroes of a quadratic polynomial ax² + bx + c, then the polynomial can be factorized as:</p>
+                    <div class="alert alert-info">a(x - α)(x - β)</div>
+                    <div class="step"><span class="step-number">Step 1:</span> Find the zeroes using the quadratic formula:<div class="alert alert-info">x = [-b ± √(b² - 4ac)] / 2a</div></div>
+                    <div class="step"><span class="step-number">Step 2:</span> Once you have the zeroes α and β, write the factorized form:<div class="alert alert-info">a(x - α)(x - β)</div></div>
+                    <div class="alert alert-warning">Note: This method works only when the discriminant (b² - 4ac) is non-negative, which means the polynomial has real zeroes.</div>
+                    <h4>Example:</h4><p>For the polynomial p(x) = 2x² - 7x + 3</p>
+                    <div class="step"><span class="step-number">Step 1:</span> Find the zeroes:<p>α = 3 and β = 0.5</p></div>
+                    <div class="step"><span class="step-number">Step 2:</span> Write in factorized form:<p>p(x) = 2(x - 3)(x - 0.5) = 2(x - 3)(x - 1/2)</p></div>
+                </div>
+                <div id="method-split" class="method-content">
+                    <h4>Method 2: Splitting the Middle Term</h4>
+                    <p>This method works well for polynomials where a = 1 or can be easily factored out.</p>
+                    <div class="step"><span class="step-number">Step 1:</span> For polynomial ax² + bx + c, if a ≠ 1, factor out a:<p>ax² + bx + c = a(x² + (b/a)x + c/a)</p></div>
+                    <div class="step"><span class="step-number">Step 2:</span> Find two numbers p and q such that:<div class="alert alert-info">p + q = b/a (coefficient of x-term)<br>p × q = c/a (constant term)</div></div>
+                    <div class="step"><span class="step-number">Step 3:</span> Rewrite the middle term using p and q:<p>x² + (b/a)x + c/a = x² + px + qx + c/a = x² + px + qx + pq</p><p>= (x² + px) + (qx + pq) = x(x + p) + q(x + p) = (x + p)(x + q)</p></div>
+                    <div class="step"><span class="step-number">Step 4:</span> Add the factor a back in (if factored out in Step 1)</div>
+                    <h4>Example:</h4><p>For the polynomial p(x) = x² - 5x + 6</p>
+                    <div class="step"><span class="step-number">Step 1:</span> Find two numbers p and q such that p + q = -5 and p × q = 6<p>The numbers are -2 and -3 (sum = -5, product = 6)</p></div>
+                    <div class="step"><span class="step-number">Step 2:</span> Split the middle term:<p>x² - 5x + 6 = x² - 2x - 3x + 6</p><p>= (x² - 2x) + (-3x + 6)</p><p>= x(x - 2) - 3(x - 2)</p><p>= (x - 2)(x - 3)</p></div>
+                </div>
+                <div id="method-formula" class="method-content">
+                    <h4>Method 3: Using the Quadratic Formula</h4>
+                    <p>This method uses the quadratic formula to find zeroes, then builds the factorized form.</p>
+                    <div class="alert alert-info">For ax² + bx + c:</div>
+                    <div class="step"><span class="step-number">Step 1:</span> Calculate the discriminant:<div class="alert alert-info">D = b² - 4ac</div></div>
+                    <div class="step"><span class="step-number">Step 2:</span> Find the zeroes using the quadratic formula:<div class="alert alert-info">x = [-b ± √D] / 2a</div></div>
+                    <div class="step"><span class="step-number">Step 3:</span> Write the factorized form:<div class="alert alert-info">p(x) = a(x - x₁)(x - x₂) where x₁ and x₂ are the zeroes</div></div>
+                    <div class="table-box">
+                        <table>
+                            <tr><th>Discriminant</th><th>Nature of Roots</th><th>Factorization</th></tr>
+                            <tr><td>D > 0</td><td>Two distinct real roots</td><td>a(x - x₁)(x - x₂)</td></tr>
+                            <tr><td>D = 0</td><td>One repeated real root</td><td>a(x - x₁)²</td></tr>
+                            <tr><td>D < 0</td><td>No real roots</td><td>Cannot be factorized using real numbers</td></tr>
+                        </table>
+                    </div>
+                </div>
+                <div id="method-special" class="method-content">
+                    <h4>Method 4: Special Cases</h4>
+                    <p>Some quadratic polynomials have patterns that make factorization easier.</p>
+                    <div class="special-case"><h4>1. Perfect Square Trinomials</h4><div class="alert alert-info">x² + 2xy + y² = (x + y)²<br>x² - 2xy + y² = (x - y)²</div><p><strong>Example:</strong> x² + 6x + 9 = x² + 2(3)x + 3² = (x + 3)²</p></div>
+                    <div class="special-case"><h4>2. Difference of Squares</h4><div class="alert alert-info">x² - y² = (x + y)(x - y)</div><p><strong>Example:</strong> x² - 16 = x² - 4² = (x + 4)(x - 4)</p></div>
+                    <div class="special-case"><h4>3. Sum and Difference of Cubes</h4><div class="alert alert-info">x³ + y³ = (x + y)(x² - xy + y²)<br>x³ - y³ = (x - y)(x² + xy + y²)</div><p><strong>Example:</strong> x³ - 8 = x³ - 2³ = (x - 2)(x² + 2x + 4)</p></div>
+                    <div class="special-case"><h4>4. Factorization by Grouping</h4><p>For expressions like ax³ + bx² + cx + d, group terms and find common factors.</p><p><strong>Example:</strong> x³ + 3x² + 2x + 6 = x²(x + 3) + 2(x + 3) = (x + 3)(x² + 2)</p></div>
+                </div>
+                <h3>Common Examples</h3>
+                <div class="method-box"><h4>Example 1: x² + 5x + 6</h4><p><strong>Factorization:</strong> (x + 2)(x + 3)</p><p><strong>Explanation:</strong> Find factors of 6 that sum to 5: 2 and 3</p></div>
+                <div class="method-box"><h4>Example 2: 2x² - 5x - 3</h4><p><strong>Factorization:</strong> (2x + 1)(x - 3)</p><p><strong>Explanation:</strong> Find values p and q where p + q = -5 and p×q = -6. The values are 1 and -6, leading to 2x² + x - 6x - 3 = (2x + 1)(x - 3)</p></div>
+                <div class="method-box"><h4>Example 3: x² - 9</h4><p><strong>Factorization:</strong> (x + 3)(x - 3)</p><p><strong>Explanation:</strong> Difference of squares: x² - 3² = (x + 3)(x - 3)</p></div>
+            </div>
+        </div>
+        
+        <div id="from-zeroes" class="tabcontent">
+            <h2>Create Polynomial from Zeroes</h2>
+            <div class="calculator">
+                <div class="input-group">
+                    <label>Enter zeroes (separated by comma):</label>
+                    <input type="text" id="input-zeroes" placeholder="e.g., 2,-3">
+                </div>
+                <div class="polynomial-display" id="create-polynomial">p(x) = </div>
+                <button onclick="createFromZeroes()">Create Polynomial</button>
+                <div class="result" id="create-result"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('input[type="number"]').forEach(input => {
+                input.addEventListener('input', updatePolynomialDisplays);
+            });
+            document.getElementById('input-zeroes').addEventListener('input', updateCreatePolynomialDisplay);
+            updatePolynomialDisplays();
+            updateCreatePolynomialDisplay();
+        });
+        
+        function updatePolynomialDisplays() {
+            updateDisplay('zero', 'zero-polynomial');
+            updateDisplay('coef', 'coef-polynomial');
+            updateDisplay('factor', 'factor-polynomial');
+        }
+        
+        function updateDisplay(prefix, displayId) {
+            const a = parseFloat(document.getElementById(`${prefix}-a`)?.value) || 0;
+            const b = parseFloat(document.getElementById(`${prefix}-b`)?.value) || 0;
+            const c = parseFloat(document.getElementById(`${prefix}-c`)?.value) || 0;
+            let polynomialStr = "p(x) = ";
+            
+            if (a === 0 && b === 0 && c === 0) {
+                polynomialStr += "0";
+            } else {
+                if (a !== 0) {
+                    polynomialStr += a === 1 ? "x²" : a === -1 ? "-x²" : `${a}x²`;
+                }
+                if (b !== 0) {
+                    if (a !== 0) polynomialStr += b > 0 ? " + " : " - ";
+                    else if (b < 0) polynomialStr += "-";
+                    polynomialStr += Math.abs(b) === 1 ? "x" : `${Math.abs(b)}x`;
+                }
+                if (c !== 0) {
+                    if (a !== 0 || b !== 0) polynomialStr += c > 0 ? " + " : " - ";
+                    else if (c < 0) polynomialStr += "-";
+                    polynomialStr += Math.abs(c);
+                }
+                if (polynomialStr === "p(x) = ") polynomialStr += "0";
+            }
+            
+            const displayElement = document.getElementById(displayId);
+            if (displayElement) displayElement.textContent = polynomialStr;
+        }
+        
+        function updateCreatePolynomialDisplay() {
+            const input = document.getElementById("input-zeroes").value;
+            const displayElement = document.getElementById("create-polynomial");
+            let polynomialStr = "p(x) = ";
+            
+            const zeroes = input.split(",").map(z => parseFloat(z.trim())).filter(z => !isNaN(z));
+            if (zeroes.length === 0) {
+                polynomialStr += "Enter valid zeroes";
+            } else if (zeroes.length > 2) {
+                polynomialStr += "Only up to 2 zeroes supported";
+            } else {
+                if (zeroes.length === 1) {
+                    polynomialStr += `(x - ${zeroes[0]})²`;
+                } else {
+                    polynomialStr += `(x - ${zeroes[0]})(x - ${zeroes[1]})`;
+                }
+            }
+            
+            if (displayElement) displayElement.textContent = polynomialStr;
+        }
+        
+        function openTab(evt, tabName) {
+            const tabcontent = document.getElementsByClassName("tabcontent");
+            for (let i = 0; i < tabcontent.length; i++) tabcontent[i].style.display = "none";
+            const tablinks = document.getElementsByClassName("tablinks");
+            for (let i = 0; i < tablinks.length; i++) tablinks[i].className = tablinks[i].className.replace(" active", "");
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+            updatePolynomialDisplays();
+            if (tabName === 'from-zeroes') updateCreatePolynomialDisplay();
+        }
+        
+        function showMethod(evt, methodId) {
+            const methodContents = document.getElementsByClassName("method-content");
+            for (let i = 0; i < methodContents.length; i++) methodContents[i].className = methodContents[i].className.replace(" active", "");
+            const methodTabs = document.getElementsByClassName("method-tab");
+            for (let i = 0; i < methodTabs.length; i++) methodTabs[i].className = methodTabs[i].className.replace(" active", "");
+            document.getElementById(methodId).className += " active";
+            evt.currentTarget.className += " active";
+        }
+        
+        function findZeroes() {
+            const a = parseFloat(document.getElementById("zero-a").value) || 0;
+            const b = parseFloat(document.getElementById("zero-b").value) || 0;
+            const c = parseFloat(document.getElementById("zero-c").value) || 0;
+            const resultDiv = document.getElementById("zeroes-result");
+            
+            resultDiv.innerHTML = "";
+            clearZeroesGraph();
+            
+            if (a === 0) {
+                if (b === 0) {
+                    resultDiv.innerHTML = c === 0 ? "All real numbers are zeroes (polynomial = 0)" : "No zeroes exist (constant polynomial)";
+                } else {
+                    const zero = -c / b;
+                    resultDiv.innerHTML = `The polynomial is linear.<br>The zero is: ${zero.toFixed(3)}`;
+                    plotGraph(a, b, c, [zero]);
+                }
+                return;
+            }
+            
+            const discriminant = b * b - 4 * a * c;
+            let zeroes = [];
+            
+            if (discriminant > 0) {
+                const zero1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+                const zero2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+                zeroes = [zero1, zero2];
+                resultDiv.innerHTML = `
+                    <strong>Two real zeroes:</strong><br>
+                    α = ${zero1.toFixed(3)}<br>
+                    β = ${zero2.toFixed(3)}<br><br>
+                    <strong>Verification:</strong><br>
+                    Sum of zeroes (α + β) = ${(zero1 + zero2).toFixed(3)} = ${(-b/a).toFixed(3)} = -b/a<br>
+                    Product of zeroes (α × β) = ${(zero1 * zero2).toFixed(3)} = ${(c/a).toFixed(3)} = c/a
+                `;
+            } else if (discriminant === 0) {
+                const zero = -b / (2 * a);
+                zeroes = [zero];
+                resultDiv.innerHTML = `
+                    <strong>One real zero (repeated):</strong><br>
+                    α = β = ${zero.toFixed(3)}<br><br>
+                    <strong>Verification:</strong><br>
+                    Sum of zeroes (α + β) = ${(zero + zero).toFixed(3)} = ${(-b/a).toFixed(3)} = -b/a<br>
+                    Product of zeroes (α × β) = ${(zero * zero).toFixed(3)} = ${(c/a).toFixed(3)} = c/a
+                `;
+            } else {
+                const realPart = -b / (2 * a);
+                const imagPart = Math.sqrt(Math.abs(discriminant)) / (2 * a);
+                resultDiv.innerHTML = `
+                    <strong>No real zeroes, two complex zeroes:</strong><br>
+                    α = ${realPart.toFixed(3)} + ${imagPart.toFixed(3)}i<br>
+                    β = ${realPart.toFixed(3)} - ${imagPart.toFixed(3)}i<br><br>
+                    <strong>Verification:</strong><br>
+                    Sum of zeroes (α + β) = ${(2 * realPart).toFixed(3)} = ${(-b/a).toFixed(3)} = -b/a<br>
+                    Product of zeroes (α × β) = ${(realPart * realPart + imagPart * imagPart).toFixed(3)} = ${(c/a).toFixed(3)} = c/a
+                `;
+            }
+            plotGraph(a, b, c, zeroes);
+        }
+        
+        function clearZeroesGraph() {
+            const graph = document.getElementById("zeroes-graph");
+            graph.querySelectorAll(".grid-line, .label, .point, .point-label").forEach(el => el.remove());
+            const canvas = document.getElementById("quadratic-curve");
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        
+        function plotGraph(a, b, c, zeroes) {
+            const graph = document.getElementById("zeroes-graph");
+            const canvas = document.getElementById("quadratic-curve");
+            const ctx = canvas.getContext("2d");
+            const width = graph.offsetWidth;
+            const height = graph.offsetHeight;
+            canvas.width = width;
+            canvas.height = height;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            
+            const vertexX = a !== 0 ? -b / (2 * a) : 0;
+            const vertexY = a * vertexX * vertexX + b * vertexX + c;
+            const maxX = Math.max(Math.abs(vertexX) + 2, ...zeroes.map(Math.abs)) + 1;
+            const maxY = Math.max(Math.abs(vertexY), Math.abs(a * maxX * maxX + b * maxX + c)) + 1;
+            const scaleX = width / (2 * maxX);
+            const scaleY = height / (2 * maxY);
+            
+            for (let i = -Math.ceil(maxX); i <= Math.ceil(maxX); i++) {
+                const xPos = centerX + i * scaleX;
+                const grid = document.createElement("div");
+                grid.className = "grid-line vertical";
+                grid.style.left = `${xPos}px`;
+                graph.appendChild(grid);
+                if (i !== 0) {
+                    const label = document.createElement("div");
+                    label.className = "label";
+                    label.textContent = i;
+                    label.style.left = `${xPos}px`;
+                    label.style.top = `${centerY + 5}px`;
+                    graph.appendChild(label);
+                }
+            }
+            for (let i = -Math.ceil(maxY); i <= Math.ceil(maxY); i++) {
+                const yPos = centerY - i * scaleY;
+                const grid = document.createElement("div");
+                grid.className = "grid-line horizontal";
+                grid.style.top = `${yPos}px`;
+                graph.appendChild(grid);
+                if (i !== 0) {
+                    const label = document.createElement("div");
+                    label.className = "label";
+                    label.textContent = i;
+                    label.style.left = `${centerX + 5}px`;
+                    label.style.top = `${yPos}px`;
+                    graph.appendChild(label);
+                }
+            }
+            
+            ctx.beginPath();
+            ctx.strokeStyle = "#1a73e8";
+            ctx.lineWidth = 2;
+            for (let xPixel = 0; xPixel <= width; xPixel++) {
+                const x = (xPixel - centerX) / scaleX;
+                const y = a * x * x + b * x + c;
+                const yPixel = centerY - y * scaleY;
+                if (xPixel === 0) ctx.moveTo(xPixel, yPixel);
+                else ctx.lineTo(xPixel, yPixel);
+            }
+            ctx.stroke();
+            
+            zeroes.forEach(zero => {
+                const xPos = centerX + zero * scaleX;
+                const yPos = centerY;
+                if (xPos >= 0 && xPos <= width && yPos >= 0 && yPos <= height) {
+                    const point = document.createElement("div");
+                    point.className = "point";
+                    point.style.left = `${xPos}px`;
+                    point.style.top = `${yPos}px`;
+                    graph.appendChild(point);
+                    const label = document.createElement("div");
+                    label.className = "point-label";
+                    label.textContent = zero.toFixed(2);
+                    label.style.left = `${xPos}px`;
+                    label.style.top = `${yPos}px`;
+                    graph.appendChild(label);
+                }
+            });
+        }
+        
+        function checkRelationship() {
+            const a = parseFloat(document.getElementById("coef-a").value) || 0;
+            const b = parseFloat(document.getElementById("coef-b").value) || 0;
+            const c = parseFloat(document.getElementById("coef-c").value) || 0;
+            const resultDiv = document.getElementById("coefficient-result");
+            
+            resultDiv.innerHTML = "";
+            
+            if (a === 0) {
+                if (b === 0) {
+                    resultDiv.innerHTML = "Not a polynomial with degree > 0.";
+                } else {
+                    const zero = -c / b;
+                    resultDiv.innerHTML = `Linear polynomial: Zero = ${zero.toFixed(3)}<br>No quadratic relationship to verify.`;
+                }
+                return;
+            }
+            
+            const discriminant = b * b - 4 * a * c;
+            let sumZeroes, productZeroes;
+            
+            if (discriminant >= 0) {
+                const zero1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+                const zero2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+                sumZeroes = zero1 + zero2;
+                productZeroes = zero1 * zero2;
+            } else {
+                const realPart = -b / (2 * a);
+                const imagPart = Math.sqrt(Math.abs(discriminant)) / (2 * a);
+                sumZeroes = 2 * realPart;
+                productZeroes = realPart * realPart + imagPart * imagPart;
+            }
+            
+            resultDiv.innerHTML = `
+                <strong>Relationship Verification:</strong><br>
+                Sum of zeroes (α + β) = ${sumZeroes.toFixed(3)} = ${(-b/a).toFixed(3)} = -b/a<br>
+                Product of zeroes (α × β) = ${productZeroes.toFixed(3)} = ${(c/a).toFixed(3)} = c/a
+            `;
+        }
+        
+        function factorizePolynomial() {
+            const a = parseFloat(document.getElementById("factor-a").value) || 0;
+            const b = parseFloat(document.getElementById("factor-b").value) || 0;
+            const c = parseFloat(document.getElementById("factor-c").value) || 0;
+            const resultDiv = document.getElementById("factorization-result");
+            
+            resultDiv.innerHTML = "";
+            
+            if (a === 0) {
+                if (b === 0) {
+                    resultDiv.innerHTML = c === 0 ? "p(x) = 0" : `p(x) = ${c}`;
+                } else {
+                    resultDiv.innerHTML = `Linear polynomial: p(x) = ${b}x + ${c} = ${b}(x + ${c/b})`;
+                }
+                return;
+            }
+            
+            const discriminant = b * b - 4 * a * c;
+            
+            if (discriminant > 0) {
+                const zero1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+                const zero2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+                resultDiv.innerHTML = `<strong>Factorized Form:</strong><br>p(x) = ${a}(x - ${zero1.toFixed(3)})(x - ${zero2.toFixed(3)})`;
+            } else if (discriminant === 0) {
+                const zero = -b / (2 * a);
+                resultDiv.innerHTML = `<strong>Factorized Form:</strong><br>p(x) = ${a}(x - ${zero.toFixed(3)})²`;
+            } else {
+                resultDiv.innerHTML = "Cannot be factorized into real linear factors (complex roots).";
+            }
+            
+            const ac = a * c;
+            for (let p = -Math.abs(ac); p <= Math.abs(ac); p++) {
+                for (let q = -Math.abs(ac); q <= Math.abs(ac); q++) {
+                    if (p + q === b && p * q === ac) {
+                        resultDiv.innerHTML += `<br><strong>Splitting Middle Term:</strong><br>p(x) = ${a}x² + ${p}x + ${q}x + ${c}<br>= (${a}x + ${p})(x + ${q / a})`;
+                        return;
+                    }
+                }
+            }
+        }
+        
+        function createFromZeroes() {
+            const input = document.getElementById("input-zeroes").value;
+            const resultDiv = document.getElementById("create-result");
+            resultDiv.innerHTML = "";
+            
+            const zeroes = input.split(",").map(z => parseFloat(z.trim())).filter(z => !isNaN(z));
+            
+            if (zeroes.length === 0) {
+                resultDiv.innerHTML = "Please enter valid zeroes.";
+                return;
+            }
+            
+            if (zeroes.length > 2) {
+                resultDiv.innerHTML = "Only quadratic polynomials (up to 2 zeroes) are supported.";
+                return;
+            }
+            
+            let polynomial = "p(x) = ";
+            let a = 1;
+            
+            if (zeroes.length === 1) {
+                polynomial += `(x - ${zeroes[0]})²`;
+                resultDiv.innerHTML = `
+                    <strong>Polynomial:</strong><br>
+                    ${polynomial}<br>
+                    Expanded: p(x) = x² - ${(2 * zeroes[0]).toFixed(3)}x + ${(zeroes[0] * zeroes[0]).toFixed(3)}
+                `;
+            } else {
+                polynomial += `(x - ${zeroes[0]})(x - ${zeroes[1]})`;
+                const sum = zeroes[0] + zeroes[1];
+                const product = zeroes[0] * zeroes[1];
+                resultDiv.innerHTML = `
+                    <strong>Polynomial:</strong><br>
+                    ${polynomial}<br>
+                    Expanded: p(x) = x² - ${sum.toFixed(3)}x + ${product.toFixed(3)}
+                `;
+            }
+            updateCreatePolynomialDisplay();
+        }
+    </script>
+</body>
+</html>

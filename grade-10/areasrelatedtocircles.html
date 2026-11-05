@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle Calculator with Steps & Diagrams</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9fbfc; /* Light background */
+            color: #2d2d2d; /* Dark text */
+        }
+        .calculator {
+            background-color: #ffffff; /* White card */
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(15, 90, 181, 0.1); /* Subtle blue shadow */
+        }
+        h1 {
+            text-align: center;
+            color: #0f5ab5; /* Blue heading */
+            margin-bottom: 20px;
+            font-size: 2.4em; /* Matches Polynomial Calculator */
+            font-weight: 600;
+        }
+        h3 {
+            color: #123d82; /* Darker blue subheading */
+            font-size: 1.5em;
+            font-weight: 500;
+        }
+        .formula {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #e8eefc; /* Light blue result */
+            border-radius: 10px;
+            color: #4a4a4a; /* Grayish text */
+            font-size: 0.95em;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .input-section {
+            flex: 1;
+            min-width: 300px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #4a4a4a; /* Grayish label */
+            font-size: 0.9em;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e0e0e0; /* Light gray border */
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            outline: none;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus {
+            border-color: #0f5ab5; /* Blue focus */
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(135deg, #1a73e8, #2a85ff); /* Blue gradient */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(26, 115, 232, 0.4);
+        }
+        button::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            top: var(--y);
+            left: var(--x);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease;
+        }
+        button:hover::after {
+            width: 200px;
+            height: 200px;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8eefc; /* Light blue result */
+            border-radius: 10px;
+            display: none;
+            color: #4a4a4a; /* Grayish text */
+        }
+        #output {
+            font-size: 1em;
+            margin: 10px 0;
+        }
+        .steps {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f2f6ff; /* Light blue steps */
+            border-radius: 10px;
+            display: none;
+            font-size: 0.9em;
+            line-height: 1.4;
+            color: #4a4a4a; /* Grayish text */
+        }
+        .steps-btn {
+            background: none;
+            color: #1a73e8; /* Blue accent */
+            border: none;
+            padding: 5px 0;
+            font-size: 0.9em;
+            cursor: pointer;
+            text-decoration: underline;
+            width: auto;
+            text-align: left;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            transition: color 0.3s ease;
+        }
+        .steps-btn:hover {
+            color: #0f5ab5; /* Darker blue on hover */
+        }
+        .diagram-container {
+            flex: 1;
+            min-width: 300px;
+            margin-top: 20px;
+        }
+        #diagramCanvas {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #e0e0e0; /* Light gray border */
+            border-radius: 10px;
+            background-color: #ffffff; /* White canvas background */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>Areas Related to Circles Calculator</h1>
+        
+        <div class="formula">
+            <p>Calculate areas and lengths using:</p>
+            <p><strong>Arc Length = (θ/360) × 2πr</strong></p>
+            <p><strong>Sector Area = (θ/360) × πr²</strong></p>
+            <p><strong>Segment Area = Sector Area - Triangle Area</strong></p>
+            <p><strong>Triangle Area = (1/2) × r² × sin(θ) or (1/2) × b × h or (√3/4) × a² (if equilateral)</strong></p>
+            <p><strong>Total Circumference = 2πr</strong></p>
+            <p><strong>Total Area = πr²</strong></p>
+        </div>
+        
+        <div class="container">
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="radius">Radius (r):</label>
+                    <input type="number" id="radius" step="0.01" min="0" placeholder="e.g., 10">
+                    
+                    <label for="angle">Angle (θ in degrees):</label>
+                    <input type="number" id="angle" step="0.01" min="0" max="360" placeholder="e.g., 60">
+                    
+                    <label for="pi">Value of π:</label>
+                    <select id="pi">
+                        <option value="22/7">22/7 (default)</option>
+                        <option value="3.14">3.14</option>
+                    </select>
+                    
+                    <label for="calculation">Calculation Type:</label>
+                    <select id="calculation">
+                        <option value="arc">Arc Length</option>
+                        <option value="sector">Sector Area</option>
+                        <option value="segment">Segment Area</option>
+                        <option value="triangle">Triangle Area</option>
+                        <option value="circumference">Total Circumference</option>
+                        <option value="area">Total Area</option>
+                    </select>
+                </div>
+                
+                <button onclick="calculate()">Calculate</button>
+                
+                <div id="result">
+                    <h3>Result:</h3>
+                    <p id="output">Result = </p>
+                    <button class="steps-btn" id="toggleSteps">Show Steps</button>
+                    <div class="steps" id="steps"></div>
+                </div>
+            </div>
+            
+            <div class="diagram-container">
+                <h3>Diagram Visualization</h3>
+                <canvas id="diagramCanvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculate() {
+            const radius = parseFloat(document.getElementById("radius").value);
+            const angle = parseFloat(document.getElementById("angle").value);
+            const piOption = document.getElementById("pi").value;
+            const calcType = document.getElementById("calculation").value;
+            const resultDiv = document.getElementById("result");
+            const outputP = document.getElementById("output");
+            const stepsDiv = document.getElementById("steps");
+            const canvas = document.getElementById("diagramCanvas");
+            const ctx = canvas.getContext("2d");
+
+            // Set canvas dimensions to match CSS size
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            if (isNaN(radius) || radius <= 0) {
+                outputP.textContent = "Please enter a valid radius (> 0).";
+                resultDiv.style.display = "block";
+                stepsDiv.style.display = "none";
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                return;
+            }
+
+            if ((calcType === "arc" || calcType === "sector" || calcType === "segment" || calcType === "triangle") &&
+                (isNaN(angle) || angle < 0 || angle > 360)) {
+                outputP.textContent = "Please enter a valid angle (0-360°) for this calculation.";
+                resultDiv.style.display = "block";
+                stepsDiv.style.display = "none";
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                return;
+            }
+
+            const pi = piOption === "22/7" ? 22/7 : 3.14;
+            const piDisplay = piOption === "22/7" ? "22/7" : "3.14";
+            const thetaRad = angle * (Math.PI / 180);
+
+            const circumference = 2 * pi * radius;
+            const totalArea = pi * radius * radius;
+            const arcLength = (angle / 360) * circumference;
+            const sectorArea = (angle / 360) * totalArea;
+
+            // Triangle calculations
+            const triangleAreaMethod2 = 0.5 * radius * radius * Math.sin(thetaRad); // 1/2 r² sin(θ)
+            const chordAB = 2 * radius * Math.sin(thetaRad / 2); // Base b (chord length)
+            const heightOM = radius * Math.cos(thetaRad / 2); // Height h
+            const triangleAreaMethod1 = 0.5 * chordAB * heightOM; // 1/2 b h
+            let triangleAreaMethod3 = null;
+            if (Math.abs(angle - 60) < 0.01) { // Check if equilateral (θ ≈ 60°)
+                triangleAreaMethod3 = (Math.sqrt(3) / 4) * radius * radius; // √3/4 a² where a = r
+            }
+
+            const segmentArea = sectorArea - triangleAreaMethod2;
+
+            let output, steps;
+            drawDiagram(ctx, calcType, radius, angle, thetaRad, chordAB, heightOM);
+
+            switch (calcType) {
+                case "arc":
+                    output = `Arc Length = ${arcLength.toFixed(2)} units`;
+                    steps = `
+                        <p><strong>Formula:</strong> (θ / 360) × 2πr</p>
+                        <p><strong>Substitute:</strong> r = ${radius}, θ = ${angle}°, π = ${piDisplay}</p>
+                        <p>= (${angle} / 360) × 2 × ${piDisplay} × ${radius}</p>
+                        <p>= ${arcLength.toFixed(2)} units</p>
+                    `;
+                    break;
+                case "sector":
+                    output = `Sector Area = ${sectorArea.toFixed(2)} square units`;
+                    steps = `
+                        <p><strong>Formula:</strong> (θ / 360) × πr²</p>
+                        <p><strong>Substitute:</strong> r = ${radius}, θ = ${angle}°, π = ${piDisplay}</p>
+                        <p>= (${angle} / 360) × ${piDisplay} × ${radius} × ${radius}</p>
+                        <p>= ${sectorArea.toFixed(2)} square units</p>
+                    `;
+                    break;
+                case "segment":
+                    output = `Segment Area = ${segmentArea.toFixed(2)} square units`;
+                    steps = `
+                        <p><strong>Formula:</strong> Segment Area = Sector Area - Triangle Area</p>
+                        <p>Sector Area = (θ / 360) × πr² = ${sectorArea.toFixed(2)}</p>
+                        <p>Triangle Area = (1/2) × r² × sin(θ) = ${triangleAreaMethod2.toFixed(2)}</p>
+                        <p>Segment Area = ${sectorArea.toFixed(2)} - ${triangleAreaMethod2.toFixed(2)}</p>
+                        <p>= ${segmentArea.toFixed(2)} square units</p>
+                    `;
+                    break;
+                case "triangle":
+                    output = `Triangle Area = ${triangleAreaMethod2.toFixed(2)} square units`;
+                    steps = `
+                        <p><strong>Method 1: (1/2) × b × h</strong></p>
+                        <p>Base b (Chord AB) = 2r × sin(θ/2) = 2 × ${radius} × sin(${angle}/2)</p>
+                        <p>= ${chordAB.toFixed(2)}</p>
+                        <p>Height h (OM) = r × cos(θ/2) = ${radius} × cos(${angle}/2)</p>
+                        <p>= ${heightOM.toFixed(2)}</p>
+                        <p>Area = (1/2) × ${chordAB.toFixed(2)} × ${heightOM.toFixed(2)}</p>
+                        <p>= ${triangleAreaMethod1.toFixed(2)}</p>
+                        <p><strong>Method 2: (1/2) × r² × sin(θ)</strong></p>
+                        <p>Substitute r = ${radius}, θ = ${angle}°</p>
+                        <p>= (1/2) × ${radius} × ${radius} × sin(${angle}°)</p>
+                        <p>= ${triangleAreaMethod2.toFixed(2)}</p>
+                    `;
+                    if (triangleAreaMethod3 !== null) {
+                        steps += `
+                            <p><strong>Method 3: (√3/4) × a² (Equilateral, θ = 60°)</strong></p>
+                            <p>Side a = r = ${radius}</p>
+                            <p>= (√3/4) × ${radius} × ${radius}</p>
+                            <p>= ${triangleAreaMethod3.toFixed(2)}</p>
+                        `;
+                    }
+                    break;
+                case "circumference":
+                    output = `Total Circumference = ${circumference.toFixed(2)} units`;
+                    steps = `
+                        <p><strong>Formula:</strong> 2πr</p>
+                        <p><strong>Substitute:</strong> r = ${radius}, π = ${piDisplay}</p>
+                        <p>= 2 × ${piDisplay} × ${radius}</p>
+                        <p>= ${circumference.toFixed(2)} units</p>
+                    `;
+                    break;
+                case "area":
+                    output = `Total Area = ${totalArea.toFixed(2)} square units`;
+                    steps = `
+                        <p><strong>Formula:</strong> πr²</p>
+                        <p><strong>Substitute:</strong> r = ${radius}, π = ${piDisplay}</p>
+                        <p>= ${piDisplay} × ${radius} × ${radius}</p>
+                        <p>= ${totalArea.toFixed(2)} square units</p>
+                    `;
+                    break;
+            }
+
+            outputP.textContent = output;
+            resultDiv.style.display = "block";
+            stepsDiv.innerHTML = steps;
+            stepsDiv.style.display = "none";
+            document.getElementById("toggleSteps").textContent = "Show Steps";
+        }
+
+        document.getElementById("toggleSteps").addEventListener("click", function() {
+            const steps = document.getElementById("steps");
+            if (steps.style.display === "block") {
+                steps.style.display = "none";
+                this.textContent = "Show Steps";
+            } else {
+                steps.style.display = "block";
+                this.textContent = "Hide Steps";
+            }
+        });
+
+        // Button ripple effect
+        document.querySelectorAll('button:not(.steps-btn)').forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                btn.style.setProperty('--x', `${e.clientX - rect.left}px`);
+                btn.style.setProperty('--y', `${e.clientY - rect.top}px`);
+            });
+        });
+
+        function drawDiagram(ctx, calcType, radius, angle, thetaRad, chordAB, heightOM) {
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            const centerX = ctx.canvas.width / 2;
+            const centerY = ctx.canvas.height / 2;
+            const maxRadius = Math.min(ctx.canvas.width, ctx.canvas.height) / 2 - 20; // Leave padding
+            const scale = maxRadius / radius;
+            const scaledRadius = radius * scale;
+
+            // Draw full circle outline
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, scaledRadius, 0, 2 * Math.PI);
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = "#e0e0e0"; /* Light gray border */
+            ctx.stroke();
+
+            ctx.lineWidth = 2;
+            ctx.font = "14px 'Segoe UI'"; /* Consistent font */
+            ctx.fillStyle = "#4a4a4a"; /* Grayish text */
+
+            // Draw radii OA and OB (if angle-dependent calculation)
+            if (calcType !== "circumference" && calcType !== "area") {
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(centerX + scaledRadius, centerY); // OA
+                ctx.strokeStyle = "#000";
+                ctx.stroke();
+                ctx.fillText("O", centerX - 15, centerY - 5);
+                ctx.fillText("A", centerX + scaledRadius + 5, centerY + 5);
+                ctx.fillText("r", centerX + scaledRadius / 2, centerY + 20);
+
+                const endX = centerX + scaledRadius * Math.cos(thetaRad);
+                const endY = centerY - scaledRadius * Math.sin(thetaRad);
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(endX, endY); // OB
+                ctx.stroke();
+                ctx.fillText("B", endX + 5, endY - 5);
+
+                // Draw angle label
+                ctx.fillText(`θ = ${angle}°`, centerX + 30 * Math.cos(thetaRad / 2), centerY - 30 * Math.sin(thetaRad / 2));
+            } else {
+                ctx.fillText("O", centerX - 15, centerY - 5);
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(centerX + scaledRadius, centerY); // Radius for reference
+                ctx.strokeStyle = "#000";
+                ctx.stroke();
+                ctx.fillText("r", centerX + scaledRadius / 2, centerY + 20);
+            }
+
+            // Specific diagrams based on calculation type
+            if (calcType === "arc") {
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, scaledRadius, 0, -thetaRad, true);
+                ctx.strokeStyle = "#1a73e8"; /* Blue accent */
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                ctx.fillStyle = "#1a73e8";
+                ctx.fillText("Arc AB", centerX + scaledRadius / 1.5 * Math.cos(thetaRad / 2), centerY - scaledRadius / 1.5 * Math.sin(thetaRad / 2));
+            }
+
+            if (calcType === "sector") {
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, scaledRadius, 0, -thetaRad, true);
+                ctx.closePath();
+                ctx.fillStyle = "rgba(26, 115, 232, 0.3)"; /* Light blue fill */
+                ctx.fill();
+                ctx.strokeStyle = "#1a73e8";
+                ctx.stroke();
+                ctx.fillStyle = "#1a73e8";
+                ctx.fillText("Sector OAB", centerX + scaledRadius / 2 * Math.cos(thetaRad / 2), centerY - scaledRadius / 2 * Math.sin(thetaRad / 2));
+            }
+
+            if (calcType === "segment" || calcType === "triangle") {
+                const endX = centerX + scaledRadius * Math.cos(thetaRad);
+                const endY = centerY - scaledRadius * Math.sin(thetaRad);
+                ctx.beginPath();
+                ctx.moveTo(centerX + scaledRadius, centerY);
+                ctx.lineTo(endX, endY); // Chord AB
+                ctx.strokeStyle = "#ff6b6b"; /* Red */
+                ctx.stroke();
+                ctx.fillStyle = "#ff6b6b";
+                ctx.fillText("Chord AB", (centerX + scaledRadius + endX) / 2 + 10, (centerY + endY) / 2 + 10);
+
+                if (calcType === "triangle") {
+                    const midX = (centerX + scaledRadius + endX) / 2;
+                    const midY = (centerY + endY) / 2;
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY);
+                    ctx.lineTo(midX, midY); // Height OM
+                    ctx.strokeStyle = "#ff9500"; /* Orange */
+                    ctx.stroke();
+                    ctx.fillStyle = "#ff9500";
+                    ctx.fillText("M", midX + 5, midY + 5);
+                    ctx.fillText("h", centerX + (midX - centerX) / 2, centerY + (midY - centerY) / 2 + 10);
+                }
+            }
+
+            if (calcType === "segment") {
+                const endX = centerX + scaledRadius * Math.cos(thetaRad);
+                const endY = centerY - scaledRadius * Math.sin(thetaRad);
+                ctx.beginPath();
+                ctx.moveTo(centerX + scaledRadius, centerY);
+                ctx.arc(centerX, centerY, scaledRadius, 0, -thetaRad, true);
+                ctx.lineTo(centerX + scaledRadius, centerY);
+                ctx.fillStyle = "rgba(255, 107, 107, 0.3)"; /* Light red fill */
+                ctx.fill();
+                ctx.strokeStyle = "#ff6b6b";
+                ctx.stroke();
+                ctx.fillStyle = "#ff6b6b";
+                ctx.fillText("Segment", centerX + scaledRadius / 2 * Math.cos(thetaRad / 2), centerY - scaledRadius / 2 * Math.sin(thetaRad / 2));
+            }
+
+            if (calcType === "triangle") {
+                const endX = centerX + scaledRadius * Math.cos(thetaRad);
+                const endY = centerY - scaledRadius * Math.sin(thetaRad);
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(centerX + scaledRadius, centerY);
+                ctx.lineTo(endX, endY);
+                ctx.closePath();
+                ctx.fillStyle = "rgba(255, 149, 0, 0.3)"; /* Light orange fill */
+                ctx.fill();
+                ctx.strokeStyle = "#ff9500";
+                ctx.stroke();
+                ctx.fillStyle = "#ff9500";
+                ctx.fillText("Triangle OAB", centerX + scaledRadius / 3 * Math.cos(thetaRad / 2), centerY - scaledRadius / 3 * Math.sin(thetaRad / 2));
+            }
+
+            if (calcType === "circumference") {
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, scaledRadius, 0, 2 * Math.PI);
+                ctx.strokeStyle = "#1a73e8"; /* Blue circle */
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                ctx.fillStyle = "#1a73e8";
+                ctx.fillText("Circumference", centerX + scaledRadius + 10, centerY);
+            }
+
+            if (calcType === "area") {
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, scaledRadius, 0, 2 * Math.PI);
+                ctx.fillStyle = "rgba(26, 115, 232, 0.3)"; /* Light blue fill */
+                ctx.fill();
+                ctx.strokeStyle = "#1a73e8"; /* Blue circle */
+                ctx.stroke();
+                ctx.fillStyle = "#1a73e8";
+                ctx.fillText("Total Area", centerX - 40, centerY);
+            }
+        }
+    </script>
+    <!-- Removed Cloudflare script as it’s not relevant to the core functionality -->
+</body>
+</html>

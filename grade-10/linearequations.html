@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Equations Solver and Consistency Checker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        body {
+            background: #f9fbfc;
+            line-height: 1.6;
+            color: #2d2d2d;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1300px;
+            margin: 70px auto;
+            padding: 40px;
+            background: #ffffff;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+        h1 {
+            text-align: center;
+            color: #0f5ab5;
+            font-size: 3.8em;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+        h2, h3 {
+            color: #123d82;
+            font-size: 2.4em;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        h3 {
+            font-size: 1.6em;
+            font-weight: 500;
+        }
+        .formula {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #e8eefc;
+            border-radius: 10px;
+            color: #4a4a4a;
+        }
+        .input-section {
+            background: #f9fbfc;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(15, 90, 181, 0.1);
+        }
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .equation-input {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .coefficient {
+            width: 60px;
+            padding: 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin: 0 5px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        .coefficient:focus {
+            border-color: #0f5ab5;
+        }
+        .method-selector {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #4a4a4a;
+        }
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        select:focus {
+            border-color: #0f5ab5;
+        }
+        button {
+            background: linear-gradient(45deg, #1a73e8, #2a85ff);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(26, 115, 232, 0.4);
+            width: 100%;
+        }
+        button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(26, 115, 232, 0.5);
+            background: linear-gradient(45deg, #185abc, #1a73e8);
+        }
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        button:hover::before {
+            width: 100%;
+            height: 100%;
+            max-width: 200px;
+            max-height: 200px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8eefc;
+            border-radius: 10px;
+        }
+        .steps-btn {
+            background: none;
+            color: #1a73e8;
+            border: none;
+            padding: 5px 0;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: underline;
+            width: auto;
+            text-align: left;
+        }
+        .steps {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f2f6ff;
+            border-radius: 10px;
+            display: none;
+        }
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            background: #f9fbfc;
+            padding: 5px;
+            border-radius: 10px 10px 0 0;
+        }
+        .tab {
+            padding: 10px 20px;
+            background: #e8eefc;
+            border-radius: 8px;
+            color: #4a4a4a;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .tab:hover {
+            background: #d1e0ff;
+        }
+        .tab.active {
+            background: linear-gradient(45deg, #1a73e8, #2a85ff);
+            color: white;
+            box-shadow: 0 5px 15px rgba(26, 115, 232, 0.4);
+        }
+        .tabcontent {
+            display: none;
+            padding: 20px;
+            border-radius: 0 0 10px 10px;
+            background: #f9fbfc;
+            box-shadow: 0 4px 15px rgba(15, 90, 181, 0.1);
+        }
+        .graph-container {
+            margin-top: 20px;
+        }
+        svg {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #e0e0e0;
+            background: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .grid-line {
+            stroke: #e0e0e0;
+            stroke-width: 1;
+        }
+        .axis-line {
+            stroke: #999;
+            stroke-width: 2;
+        }
+        .axis-label {
+            font-size: 12px;
+            fill: #666;
+        }
+        .line1 {
+            stroke: #ff6b6b;
+            stroke-width: 2;
+        }
+        .line2 {
+            stroke: #4ecdc4;
+            stroke-width: 2;
+        }
+        .intersection {
+            fill: #1a73e8;
+            stroke: #123d82;
+            stroke-width: 1;
+        }
+        .consistency-indicator {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .consistent {
+            background: #d4edda;
+            color: #155724;
+        }
+        .inconsistent {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .dependent {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background: #f2f6ff;
+            color: #123d82;
+        }
+        .ratio-row {
+            background: #f8f9fa;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin: 20px auto;
+            }
+            h1 {
+                font-size: 2.5em;
+            }
+            h2 {
+                font-size: 1.8em;
+            }
+            h3 {
+                font-size: 1.4em;
+            }
+            .equation-input {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .coefficient {
+                width: 100%;
+                margin: 5px 0;
+            }
+            .tabs {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .tab {
+                padding: 8px 15px;
+            }
+            .input-section, .tabcontent {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Linear Equations Solver and Consistency Checker</h1>
+        
+        <div class="formula">
+            <p>Solve and check the consistency of a system of linear equations:</p>
+            <p><strong>a₁x + b₁y = c₁</strong></p>
+            <p><strong>a₂x + b₂y = c₂</strong></p>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" id="algebraicTab">Algebraic Methods</div>
+            <div class="tab" id="graphicalTab">Graphical Method</div>
+            <div class="tab" id="consistencyTab">Consistency Check</div>
+        </div>
+        
+        <div id="algebraicContent" class="tabcontent" style="display: block;">
+            <div class="input-section">
+                <h2>Algebraic Methods</h2>
+                <h3>Enter Linear Equations</h3>
+                <div class="input-group">
+                    <div class="equation-input">
+                        <input type="number" id="a1" class="coefficient" value="2" step="any"> x +
+                        <input type="number" id="b1" class="coefficient" value="3" step="any"> y =
+                        <input type="number" id="c1" class="coefficient" value="8" step="any">
+                    </div>
+                    <div class="equation-input">
+                        <input type="number" id="a2" class="coefficient" value="1" step="any"> x +
+                        <input type="number" id="b2" class="coefficient" value="-1" step="any"> y =
+                        <input type="number" id="c2" class="coefficient" value="1" step="any">
+                    </div>
+                </div>
+                
+                <div class="method-selector">
+                    <label for="method">Select Solution Method:</label>
+                    <select id="method">
+                        <option value="substitution">Substitution Method</option>
+                        <option value="elimination">Elimination Method</option>
+                    </select>
+                </div>
+                
+                <button id="calculateAlgebraic">Solve System</button>
+                
+                <div class="result" id="algebraicResult" style="display: none;">
+                    <h3>Result:</h3>
+                    <p id="solution"></p>
+                    <button class="steps-btn" id="toggleAlgebraicSteps">Show Steps</button>
+                    <div class="steps" id="algebraicSteps"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="graphicalContent" class="tabcontent">
+            <div class="input-section">
+                <h2>Graphical Method</h2>
+                <h3>Enter Linear Equations</h3>
+                <div class="input-group">
+                    <div class="equation-input">
+                        <input type="number" id="g_a1" class="coefficient" value="2" step="any"> x +
+                        <input type="number" id="g_b1" class="coefficient" value="3" step="any"> y =
+                        <input type="number" id="g_c1" class="coefficient" value="8" step="any">
+                    </div>
+                    <div class="equation-input">
+                        <input type="number" id="g_a2" class="coefficient" value="1" step="any"> x +
+                        <input type="number" id="g_b2" class="coefficient" value="-1" step="any"> y =
+                        <input type="number" id="g_c2" class="coefficient" value="1" step="any">
+                    </div>
+                </div>
+                
+                <button id="calculateGraphical">Graph and Solve</button>
+                
+                <div class="result" id="graphicalResult" style="display: none;">
+                    <h3>Result:</h3>
+                    <p id="graphSolution"></p>
+                </div>
+            </div>
+            
+            <div class="graph-container">
+                <h3>Graph Visualization</h3>
+                <svg id="graph" width="100%" height="300"></svg>
+            </div>
+        </div>
+        
+        <div id="consistencyContent" class="tabcontent">
+            <div class="input-section">
+                <h2>Consistency Check</h2>
+                <h3>Enter Linear Equations</h3>
+                <div class="input-group">
+                    <div class="equation-input">
+                        <input type="number" id="c_a1" class="coefficient" value="2" step="any"> x +
+                        <input type="number" id="c_b1" class="coefficient" value="3" step="any"> y =
+                        <input type="number" id="c_c1" class="coefficient" value="8" step="any">
+                    </div>
+                    <div class="equation-input">
+                        <input type="number" id="c_a2" class="coefficient" value="4" step="any"> x +
+                        <input type="number" id="c_b2" class="coefficient" value="6" step="any"> y =
+                        <input type="number" id="c_c2" class="coefficient" value="16" step="any">
+                    </div>
+                </div>
+                
+                <button id="checkConsistency">Check Consistency</button>
+                
+                <div class="result" id="consistencyResult" style="display: none;">
+                    <h3>Analysis:</h3>
+                    <div id="consistencyIndicator" class="consistency-indicator">
+                        <span class="status-icon">●</span>
+                        <span id="consistencyStatus">Checking...</span>
+                    </div>
+                    <div id="ratioAnalysis"></div>
+                    <button class="steps-btn" id="toggleConsistencySteps">Show Steps</button>
+                    <div class="steps" id="consistencySteps"></div>
+                </div>
+            </div>
+            
+            <div class="graph-container">
+                <h3>Graph Visualization</h3>
+                <svg id="consistencyGraph" width="100%" height="300"></svg>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('algebraicTab').addEventListener('click', function() {
+            openTab('algebraicContent', this);
+        });
+        
+        document.getElementById('graphicalTab').addEventListener('click', function() {
+            openTab('graphicalContent', this);
+            updateGraph();
+        });
+        
+        document.getElementById('consistencyTab').addEventListener('click', function() {
+            openTab('consistencyContent', this);
+            updateConsistencyGraph();
+        });
+        
+        function openTab(tabId, tabElement) {
+            document.querySelectorAll('.tabcontent').forEach(content => content.style.display = 'none');
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId).style.display = 'block';
+            tabElement.classList.add('active');
+        }
+        
+        document.getElementById('calculateAlgebraic').addEventListener('click', function() {
+            const a1 = parseFloat(document.getElementById('a1').value) || 0;
+            const b1 = parseFloat(document.getElementById('b1').value) || 0;
+            const c1 = parseFloat(document.getElementById('c1').value) || 0;
+            const a2 = parseFloat(document.getElementById('a2').value) || 0;
+            const b2 = parseFloat(document.getElementById('b2').value) || 0;
+            const c2 = parseFloat(document.getElementById('c2').value) || 0;
+            const method = document.getElementById('method').value;
+            
+            const determinant = a1 * b2 - a2 * b1;
+            
+            if (determinant === 0) {
+                const ratioA = a1 === 0 && a2 === 0 ? Infinity : a1 === 0 ? NaN : a2 / a1;
+                const ratioB = b1 === 0 && b2 === 0 ? Infinity : b1 === 0 ? NaN : b2 / b1;
+                const ratioC = c1 === 0 && c2 === 0 ? Infinity : c1 === 0 ? NaN : c2 / c1;
+                if (ratioA === ratioB && ratioA === ratioC) {
+                    document.getElementById('solution').textContent = "The system has infinitely many solutions (dependent equations).";
+                    document.getElementById('algebraicSteps').innerHTML = "The determinant is 0 and the ratios of coefficients are equal, so the equations represent the same line.";
+                } else {
+                    document.getElementById('solution').textContent = "No solution exists (inconsistent system).";
+                    document.getElementById('algebraicSteps').innerHTML = "The determinant is 0 but the ratios of coefficients are not equal, so the equations represent parallel lines.";
+                }
+            } else {
+                let x, y;
+                let steps = "";
+                
+                if (method === "substitution") {
+                    steps += "<h4>Substitution Method:</h4>";
+                    if (b1 !== 0) {
+                        steps += `<p>Step 1: Solve for y from the first equation: ${a1}x + ${b1}y = ${c1}</p>`;
+                        steps += `<p>Subtract ${a1}x from both sides: ${b1}y = ${c1} - ${a1}x</p>`;
+                        steps += `<p>Divide both sides by ${b1}: y = (${c1} - ${a1}x) / ${b1}</p>`;
+                        steps += `<p>Step 2: Substitute y into the second equation: ${a2}x + ${b2}y = ${c2}</p>`;
+                        steps += `<p>${a2}x + ${b2} × ((${c1} - ${a1}x) / ${b1}) = ${c2}</p>`;
+                        const factor = b2 / b1;
+                        steps += `<p>Step 3: Simplify and solve for x:</p>`;
+                        steps += `<p>${a2}x + ${b2} × (${c1}/${b1} - ${a1}/${b1}x) = ${c2}</p>`;
+                        steps += `<p>${a2}x + ${b2*c1/b1} - ${b2*a1/b1}x = ${c2}</p>`;
+                        steps += `<p>${a2 - b2*a1/b1}x = ${c2} - ${b2*c1/b1}</p>`;
+                        const coefficient = a2 - (b2 * a1 / b1);
+                        const constant = c2 - (b2 * c1 / b1);
+                        x = constant / coefficient;
+                        steps += `<p>${coefficient}x = ${constant}</p>`;
+                        steps += `<p>x = ${x.toFixed(4)}</p>`;
+                        y = (c1 - a1 * x) / b1;
+                        steps += `<p>Step 4: Substitute x back to find y:</p>`;
+                        steps += `<p>y = (${c1} - ${a1} × ${x.toFixed(4)}) / ${b1}</p>`;
+                        steps += `<p>y = ${y.toFixed(4)}</p>`;
+                    } else if (a1 !== 0) {
+                        steps += `<p>Step 1: Solve for x from the first equation (since b₁ = 0): ${a1}x = ${c1}</p>`;
+                        x = c1 / a1;
+                        steps += `<p>x = ${c1} / ${a1} = ${x.toFixed(4)}</p>`;
+                        steps += `<p>Step 2: Substitute x into the second equation: ${a2}x + ${b2}y = ${c2}</p>`;
+                        steps += `<p>${a2} × ${x.toFixed(4)} + ${b2}y = ${c2}</p>`;
+                        steps += `<p>${b2}y = ${c2} - ${a2 * x.toFixed(4)}</p>`;
+                        y = (c2 - a2 * x) / b2;
+                        steps += `<p>y = ${y.toFixed(4)}</p>`;
+                    } else {
+                        steps += `<p>Error: Both a₁ and b₁ are 0, making the first equation invalid.</p>`;
+                    }
+                } else {
+                    steps += "<h4>Elimination Method:</h4>";
+                    if (a1 !== 0 && a2 !== 0) {
+                        const factor1 = a2;
+                        const factor2 = a1;
+                        steps += `<p>Step 1: Multiply the first equation by ${factor1} and the second by ${factor2} to eliminate x:</p>`;
+                        steps += `<p>(${a1}x + ${b1}y = ${c1}) × ${factor1} gives: ${a1*factor1}x + ${b1*factor1}y = ${c1*factor1}</p>`;
+                        steps += `<p>(${a2}x + ${b2}y = ${c2}) × ${factor2} gives: ${a2*factor2}x + ${b2*factor2}y = ${c2*factor2}</p>`;
+                        steps += `<p>Step 2: Subtract the second equation from the first:</p>`;
+                        const newB = b1 * factor1 - b2 * factor2;
+                        const newC = c1 * factor1 - c2 * factor2;
+                        steps += `<p>(${a1*factor1}x + ${b1*factor1}y) - (${a2*factor2}x + ${b2*factor2}y) = ${c1*factor1} - ${c2*factor2}</p>`;
+                        steps += `<p>${newB}y = ${newC}</p>`;
+                        y = newB !== 0 ? newC / newB : NaN;
+                        steps += `<p>y = ${newC} / ${newB} = ${y.toFixed(4)}</p>`;
+                        steps += `<p>Step 3: Substitute y back into the first equation to find x:</p>`;
+                        steps += `<p>${a1}x + ${b1} × ${y.toFixed(4)} = ${c1}</p>`;
+                        steps += `<p>${a1}x = ${c1} - ${b1 * y.toFixed(4)}</p>`;
+                        x = a1 !== 0 ? (c1 - b1 * y) / a1 : NaN;
+                        steps += `<p>x = ${x.toFixed(4)}</p>`;
+                    } else if (b1 !== 0 && b2 !== 0) {
+                        const factor1 = b2;
+                        const factor2 = b1;
+                        steps += `<p>Step 1: Multiply the first equation by ${factor1} and the second by ${factor2} to eliminate y:</p>`;
+                        steps += `<p>(${a1}x + ${b1}y = ${c1}) × ${factor1} gives: ${a1*factor1}x + ${b1*factor1}y = ${c1*factor1}</p>`;
+                        steps += `<p>(${a2}x + ${b2}y = ${c2}) × ${factor2} gives: ${a2*factor2}x + ${b2*factor2}y = ${c2*factor2}</p>`;
+                        steps += `<p>Step 2: Subtract the second equation from the first:</p>`;
+                        const newA = a1 * factor1 - a2 * factor2;
+                        const newC = c1 * factor1 - c2 * factor2;
+                        steps += `<p>(${a1*factor1}x + ${b1*factor1}y) - (${a2*factor2}x + ${b2*factor2}y) = ${c1*factor1} - ${c2*factor2}</p>`;
+                        steps += `<p>${newA}x = ${newC}</p>`;
+                        x = newA !== 0 ? newC / newA : NaN;
+                        steps += `<p>x = ${newC} / ${newA} = ${x.toFixed(4)}</p>`;
+                        steps += `<p>Step 3: Substitute x back into the first equation to find y:</p>`;
+                        steps += `<p>${a1} × ${x.toFixed(4)} + ${b1}y = ${c1}</p>`;
+                        steps += `<p>${b1}y = ${c1} - ${a1 * x.toFixed(4)}</p>`;
+                        y = b1 !== 0 ? (c1 - a1 * x) / b1 : NaN;
+                        steps += `<p>y = ${y.toFixed(4)}</p>`;
+                    } else {
+                        steps += `<p>Error: Cannot eliminate variables effectively with given coefficients.</p>`;
+                    }
+                }
+                if (isNaN(x) || isNaN(y)) {
+                    document.getElementById('solution').textContent = "Error in calculation. Check coefficients.";
+                } else {
+                    document.getElementById('solution').textContent = `Solution: x = ${x.toFixed(4)}, y = ${y.toFixed(4)}`;
+                }
+                document.getElementById('algebraicSteps').innerHTML = steps;
+            }
+            document.getElementById('algebraicResult').style.display = 'block';
+        });
+        
+        document.getElementById('toggleAlgebraicSteps').addEventListener('click', function() {
+            const steps = document.getElementById('algebraicSteps');
+            steps.style.display = steps.style.display === 'block' ? 'none' : 'block';
+            this.textContent = steps.style.display === 'block' ? 'Hide Steps' : 'Show Steps';
+        });
+        
+        document.getElementById('calculateGraphical').addEventListener('click', function() {
+            updateGraph();
+        });
+        
+        function updateGraph() {
+            const a1 = parseFloat(document.getElementById('g_a1').value) || 0;
+            const b1 = parseFloat(document.getElementById('g_b1').value) || 0;
+            const c1 = parseFloat(document.getElementById('g_c1').value) || 0;
+            const a2 = parseFloat(document.getElementById('g_a2').value) || 0;
+            const b2 = parseFloat(document.getElementById('g_b2').value) || 0;
+            const c2 = parseFloat(document.getElementById('g_c2').value) || 0;
+            
+            if (isNaN(a1) || isNaN(b1) || isNaN(c1) || isNaN(a2) || isNaN(b2) || isNaN(c2)) {
+                document.getElementById('graphSolution').textContent = "Invalid input. Please enter valid numbers.";
+                document.getElementById('graphicalResult').style.display = 'block';
+                return;
+            }
+            
+            const determinant = a1 * b2 - a2 * b1;
+            let x, y, solutionText;
+            
+            if (determinant === 0) {
+                const ratioA = a1 === 0 && a2 === 0 ? Infinity : a1 === 0 ? NaN : a2 / a1;
+                const ratioB = b1 === 0 && b2 === 0 ? Infinity : b1 === 0 ? NaN : b2 / b1;
+                const ratioC = c1 === 0 && c2 === 0 ? Infinity : c1 === 0 ? NaN : c2 / c1;
+                if (ratioA === ratioB && ratioA === ratioC) {
+                    solutionText = "The system has infinitely many solutions. The lines coincide.";
+                } else {
+                    solutionText = "No solution exists. The lines are parallel.";
+                }
+            } else {
+                x = (c1 * b2 - c2 * b1) / determinant;
+                y = (a1 * c2 - a2 * c1) / determinant;
+                solutionText = `Solution: x = ${x.toFixed(4)}, y = ${y.toFixed(4)}`;
+            }
+            
+            document.getElementById('graphSolution').textContent = solutionText;
+            document.getElementById('graphicalResult').style.display = 'block';
+            drawGraph(a1, b1, c1, a2, b2, c2, determinant !== 0 ? x : null, determinant !== 0 ? y : null, 'graph');
+        }
+        
+        function drawGraph(a1, b1, c1, a2, b2, c2, intersectX, intersectY, graphId) {
+            const svg = document.getElementById(graphId);
+            svg.innerHTML = '';
+            
+            const width = svg.clientWidth || 400;
+            const height = svg.clientHeight || 300;
+            
+            let minX = -10, maxX = 10, minY = -10, maxY = 10;
+            if (intersectX !== null && intersectY !== null && !isNaN(intersectX) && !isNaN(intersectY)) {
+                minX = Math.min(minX, intersectX - 5);
+                maxX = Math.max(maxX, intersectX + 5);
+                minY = Math.min(minY, intersectY - 5);
+                maxY = Math.max(maxY, intersectY + 5);
+            }
+            
+            const scaleX = width / (maxX - minX);
+            const scaleY = height / (maxY - minY);
+            
+            function transformX(x) { return (x - minX) * scaleX; }
+            function transformY(y) { return height - (y - minY) * scaleY; }
+            
+            const gridStep = 1;
+            for (let x = Math.ceil(minX); x <= Math.floor(maxX); x += gridStep) {
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", transformX(x));
+                line.setAttribute("y1", 0);
+                line.setAttribute("x2", transformX(x));
+                line.setAttribute("y2", height);
+                line.setAttribute("class", "grid-line");
+                svg.appendChild(line);
+                if (x !== 0 && x % 2 === 0) {
+                    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                    text.setAttribute("x", transformX(x));
+                    text.setAttribute("y", transformY(0) + 15);
+                    text.setAttribute("text-anchor", "middle");
+                    text.setAttribute("class", "axis-label");
+                    text.textContent = x;
+                    svg.appendChild(text);
+                }
+            }
+            for (let y = Math.ceil(minY); y <= Math.floor(maxY); y += gridStep) {
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", 0);
+                line.setAttribute("y1", transformY(y));
+                line.setAttribute("x2", width);
+                line.setAttribute("y2", transformY(y));
+                line.setAttribute("class", "grid-line");
+                svg.appendChild(line);
+                if (y !== 0 && y % 2 === 0) {
+                    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                    text.setAttribute("x", transformX(0) - 10);
+                    text.setAttribute("y", transformY(y) + 5);
+                    text.setAttribute("text-anchor", "end");
+                    text.setAttribute("class", "axis-label");
+                    text.textContent = y;
+                    svg.appendChild(text);
+                }
+            }
+            
+            const xAxis = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            xAxis.setAttribute("x1", 0);
+            xAxis.setAttribute("y1", transformY(0));
+            xAxis.setAttribute("x2", width);
+            xAxis.setAttribute("y2", transformY(0));
+            xAxis.setAttribute("class", "axis-line");
+            svg.appendChild(xAxis);
+            
+            const yAxis = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            yAxis.setAttribute("x1", transformX(0));
+            yAxis.setAttribute("y1", 0);
+            yAxis.setAttribute("x2", transformX(0));
+            yAxis.setAttribute("y2", height);
+            yAxis.setAttribute("class", "axis-line");
+            svg.appendChild(yAxis);
+            
+            const originLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            originLabel.setAttribute("x", transformX(0) - 5);
+            originLabel.setAttribute("y", transformY(0) + 15);
+            originLabel.setAttribute("class", "axis-label");
+            originLabel.textContent = "0";
+            svg.appendChild(originLabel);
+            
+            let x1_1, y1_1, x1_2, y1_2;
+            if (b1 !== 0) {
+                x1_1 = minX;
+                y1_1 = (c1 - a1 * minX) / b1;
+                x1_2 = maxX;
+                y1_2 = (c1 - a1 * maxX) / b1;
+            } else if (a1 !== 0) {
+                x1_1 = c1 / a1;
+                y1_1 = minY;
+                x1_2 = c1 / a1;
+                y1_2 = maxY;
+            } else {
+                x1_1 = minX;
+                y1_1 = c1 === 0 ? 0 : minY;
+                x1_2 = maxX;
+                y1_2 = c1 === 0 ? 0 : maxY;
+            }
+            
+            const line1 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line1.setAttribute("x1", transformX(x1_1));
+            line1.setAttribute("y1", transformY(y1_1));
+            line1.setAttribute("x2", transformX(x1_2));
+            line1.setAttribute("y2", transformY(y1_2));
+            line1.setAttribute("class", "line1");
+            svg.appendChild(line1);
+            
+            let x2_1, y2_1, x2_2, y2_2;
+            if (b2 !== 0) {
+                x2_1 = minX;
+                y2_1 = (c2 - a2 * minX) / b2;
+                x2_2 = maxX;
+                y2_2 = (c2 - a2 * maxX) / b2;
+            } else if (a2 !== 0) {
+                x2_1 = c2 / a2;
+                y2_1 = minY;
+                x2_2 = c2 / a2;
+                y2_2 = maxY;
+            } else {
+                x2_1 = minX;
+                y2_1 = c2 === 0 ? 0 : minY;
+                x2_2 = maxX;
+                y2_2 = c2 === 0 ? 0 : maxY;
+            }
+            
+            const line2 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line2.setAttribute("x1", transformX(x2_1));
+            line2.setAttribute("y1", transformY(y2_1));
+            line2.setAttribute("x2", transformX(x2_2));
+            line2.setAttribute("y2", transformY(y2_2));
+            line2.setAttribute("class", "line2");
+            svg.appendChild(line2);
+            
+            const text1 = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text1.setAttribute("x", transformX(maxX) - 40);
+            text1.setAttribute("y", transformY(y1_2) - 10);
+            text1.setAttribute("fill", "#ff6b6b");
+            text1.setAttribute("font-weight", "bold");
+            text1.textContent = "Line 1";
+            svg.appendChild(text1);
+            
+            const text2 = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text2.setAttribute("x", transformX(maxX) - 40);
+            text2.setAttribute("y", transformY(y2_2) + 20);
+            text2.setAttribute("fill", "#4ecdc4");
+            text2.setAttribute("font-weight", "bold");
+            text2.textContent = "Line 2";
+            svg.appendChild(text2);
+            
+            if (intersectX !== null && intersectY !== null && !isNaN(intersectX) && !isNaN(intersectY)) {
+                const intersection = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                intersection.setAttribute("cx", transformX(intersectX));
+                intersection.setAttribute("cy", transformY(intersectY));
+                intersection.setAttribute("r", 5);
+                intersection.setAttribute("class", "intersection");
+                svg.appendChild(intersection);
+                
+                const intersectionLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                intersectionLabel.setAttribute("x", transformX(intersectX) + 10);
+                intersectionLabel.setAttribute("y", transformY(intersectY) - 10);
+                intersectionLabel.setAttribute("fill", "#1a73e8");
+                intersectionLabel.setAttribute("font-weight", "bold");
+                intersectionLabel.textContent = `(${intersectX.toFixed(2)}, ${intersectY.toFixed(2)})`;
+                svg.appendChild(intersectionLabel);
+            }
+        }
+        
+        document.getElementById('checkConsistency').addEventListener('click', function() {
+            const a1 = parseFloat(document.getElementById('c_a1').value) || 0;
+            const b1 = parseFloat(document.getElementById('c_b1').value) || 0;
+            const c1 = parseFloat(document.getElementById('c_c1').value) || 0;
+            const a2 = parseFloat(document.getElementById('c_a2').value) || 0;
+            const b2 = parseFloat(document.getElementById('c_b2').value) || 0;
+            const c2 = parseFloat(document.getElementById('c_c2').value) || 0;
+            
+            const det = a1 * b2 - a2 * b1;
+            let stepsHTML = "<h4>Analysis Steps:</h4>";
+            stepsHTML += `<p>Step 1: Identify the system of equations.</p>`;
+            stepsHTML += `<p>Equation 1: ${a1}x + ${b1}y = ${c1}</p>`;
+            stepsHTML += `<p>Equation 2: ${a2}x + ${b2}y = ${c2}</p>`;
+            stepsHTML += `<p>Step 2: Calculate the determinant of the coefficient matrix:</p>`;
+            stepsHTML += `<p>|A| = |${a1} ${b1}| = ${a1} × ${b2} - ${a2} × ${b1} = ${det}</p>`;
+            stepsHTML += `<p>      |${a2} ${b2}|</p>`;
+            
+            let statusHTML, ratioHTML, consistencyClass = "";
+            const ratioA = a1 === 0 && a2 === 0 ? Infinity : a1 === 0 ? NaN : a2 / a1;
+            const ratioB = b1 === 0 && b2 === 0 ? Infinity : b1 === 0 ? NaN : b2 / b1;
+            const ratioC = c1 === 0 && c2 === 0 ? Infinity : c1 === 0 ? NaN : c2 / c1;
+            
+            if (det !== 0) {
+                stepsHTML += `<p>Step 3: Since the determinant is not zero (${det}), the system has a unique solution.</p>`;
+                const x = (c1 * b2 - c2 * b1) / det;
+                const y = (a1 * c2 - a2 * c1) / det;
+                stepsHTML += `<p>The solution is x = ${x.toFixed(4)}, y = ${y.toFixed(4)}</p>`;
+                statusHTML = "Consistent System (Unique Solution)";
+                consistencyClass = "consistent";
+                ratioHTML = `<p>The system has a unique solution because the coefficient matrix has a non-zero determinant.</p>`;
+            } else {
+                stepsHTML += `<p>Step 3: The determinant is zero (${det}), so we need to check the ratios of coefficients.</p>`;
+                stepsHTML += `<p>Calculating the ratios:</p>`;
+                stepsHTML += `<p>a₂/a₁ = ${a2}/${a1} = ${isNaN(ratioA) ? "undefined" : ratioA === Infinity ? "∞" : ratioA.toFixed(4)}</p>`;
+                stepsHTML += `<p>b₂/b₁ = ${b2}/${b1} = ${isNaN(ratioB) ? "undefined" : ratioB === Infinity ? "∞" : ratioB.toFixed(4)}</p>`;
+                stepsHTML += `<p>c₂/c₁ = ${c2}/${c1} = ${isNaN(ratioC) ? "undefined" : ratioC === Infinity ? "∞" : ratioC.toFixed(4)}</p>`;
+                
+                ratioHTML = `
+                <h4>Ratio Analysis:</h4>
+                <table>
+                    <tr><th>Coefficients</th><th>Values</th><th>Ratio</th></tr>
+                    <tr><td>a₂/a₁</td><td>${a2}/${a1}</td><td>${isNaN(ratioA) ? "undefined" : ratioA === Infinity ? "∞" : ratioA.toFixed(4)}</td></tr>
+                    <tr><td>b₂/b₁</td><td>${b2}/${b1}</td><td>${isNaN(ratioB) ? "undefined" : ratioB === Infinity ? "∞" : ratioB.toFixed(4)}</td></tr>
+                    <tr class="ratio-row"><td>c₂/c₁</td><td>${c2}/${c1}</td><td>${isNaN(ratioC) ? "undefined" : ratioC === Infinity ? "∞" : ratioC.toFixed(4)}</td></tr>
+                </table>`;
+                
+                const equalRatios = (ratioA === ratioB && ratioA === ratioC) || 
+                                   (isNaN(ratioA) && isNaN(ratioB) && isNaN(ratioC));
+                
+                if (equalRatios && !(a1 === 0 && b1 === 0 && c1 !== 0) && !(a2 === 0 && b2 === 0 && c2 !== 0)) {
+                    stepsHTML += `<p>Step 4: The ratios a₂/a₁ = b₂/b₁ = c₂/c₁, so the equations are dependent.</p>`;
+                    stepsHTML += `<p>The system is consistent with infinitely many solutions.</p>`;
+                    statusHTML = "Consistent System (Infinitely Many Solutions)";
+                    consistencyClass = "dependent";
+                    ratioHTML += `<p>Since all ratios are equal, the equations are dependent and represent the same line.</p>`;
+                } else {
+                    stepsHTML += `<p>Step 4: The ratios are not all equal or the system is invalid, so the equations are inconsistent.</p>`;
+                    stepsHTML += `<p>The system is inconsistent with no solution.</p>`;
+                    statusHTML = "Inconsistent System (No Solution)";
+                    consistencyClass = "inconsistent";
+                    ratioHTML += `<p>Since the ratios are not all equal or coefficients are zero with non-zero constants, the equations represent parallel lines or are invalid.</p>`;
+                }
+            }
+            
+            document.getElementById('consistencyStatus').textContent = statusHTML;
+            document.getElementById('consistencyIndicator').className = `consistency-indicator ${consistencyClass}`;
+            document.getElementById('ratioAnalysis').innerHTML = ratioHTML;
+            document.getElementById('consistencySteps').innerHTML = stepsHTML;
+            document.getElementById('consistencyResult').style.display = 'block';
+            updateConsistencyGraph();
+        });
+        
+        document.getElementById('toggleConsistencySteps').addEventListener('click', function() {
+            const steps = document.getElementById('consistencySteps');
+            steps.style.display = steps.style.display === 'block' ? 'none' : 'block';
+            this.textContent = steps.style.display === 'block' ? 'Hide Steps' : 'Show Steps';
+        });
+        
+        function updateConsistencyGraph() {
+            const a1 = parseFloat(document.getElementById('c_a1').value) || 0;
+            const b1 = parseFloat(document.getElementById('c_b1').value) || 0;
+            const c1 = parseFloat(document.getElementById('c_c1').value) || 0;
+            const a2 = parseFloat(document.getElementById('c_a2').value) || 0;
+            const b2 = parseFloat(document.getElementById('c_b2').value) || 0;
+            const c2 = parseFloat(document.getElementById('c_c2').value) || 0;
+            
+            if (isNaN(a1) || isNaN(b1) || isNaN(c1) || isNaN(a2) || isNaN(b2) || isNaN(c2)) return;
+            
+            const det = a1 * b2 - a2 * b1;
+            let intersectX = null, intersectY = null;
+            if (det !== 0) {
+                intersectX = (c1 * b2 - c2 * b1) / det;
+                intersectY = (a1 * c2 - a2 * c1) / det;
+            }
+            drawGraph(a1, b1, c1, a2, b2, c2, intersectX, intersectY, 'consistencyGraph');
+        }
+    </script>
+</body>
+</html>

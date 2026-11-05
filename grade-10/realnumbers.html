@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Numbers</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        body {
+            background: #f9fbfc;
+            line-height: 1.6;
+            color: #2d2d2d;
+            overflow: auto;
+        }
+        .container {
+            max-width: 1300px;
+            margin: 90px auto 70px;
+            padding: 60px;
+            background: #ffffff;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+        h1 {
+            text-align: center;
+            color: #0f5ab5;
+            font-size: 3.8em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+        .calculator-section {
+            background: #f9fbfc;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(15, 90, 181, 0.1);
+        }
+        .calculator-section h2 {
+            color: #123d82;
+            font-size: 2.4em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            letter-spacing: 0.8px;
+            border-bottom: 2px solid #0f5ab5;
+            padding-bottom: 5px;
+        }
+        .hcf-lcm-calculator {
+            padding: 15px;
+        }
+        .input-container .input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .input-container label {
+            color: #4a4a4a;
+            margin-right: 10px;
+            font-weight: 500;
+        }
+        .input-container input {
+            padding: 8px 12px;
+            width: 150px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        .input-container input:focus {
+            border-color: #0f5ab5;
+        }
+        .hcf-lcm-result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8eefc;
+            border-radius: 10px;
+            display: none;
+        }
+        .steps {
+            margin-top: 15px;
+            border-left: 3px solid #0f5ab5;
+            padding-left: 15px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 10px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background: #f2f6ff;
+            color: #123d82;
+        }
+        .rational-calculator {
+            padding: 15px;
+        }
+        .rational-calculator .input-group {
+            margin-bottom: 15px;
+        }
+        .rational-calculator label {
+            color: #4a4a4a;
+            font-weight: 500;
+        }
+        .rational-calculator input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        .rational-calculator input:focus {
+            border-color: #0f5ab5;
+        }
+        .rational-result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8eefc;
+            border-radius: 10px;
+            display: none;
+        }
+        .proof-steps .step {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .conclusion {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #0f5ab5;
+        }
+        .sqrt-proof {
+            margin-top: 20px;
+            display: none;
+        }
+        .power-calculator {
+            padding: 15px;
+        }
+        .power-calculator .input-group {
+            margin-bottom: 15px;
+        }
+        .power-calculator label {
+            color: #4a4a4a;
+            font-weight: 500;
+            margin-right: 10px;
+        }
+        .power-calculator input, .power-calculator select {
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s ease;
+            width: 100px;
+        }
+        .power-calculator input:focus, .power-calculator select:focus {
+            border-color: #0f5ab5;
+        }
+        .power-result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8eefc;
+            border-radius: 10px;
+            display: none;
+        }
+        .explanation {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f2f6ff;
+            border-left: 4px solid #0f5ab5;
+            border-radius: 0 5px 5px 0;
+        }
+        button {
+            background: linear-gradient(45deg, #1a73e8, #2a85ff);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(26, 115, 232, 0.4);
+            margin-right: 10px;
+        }
+        button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(26, 115, 232, 0.5);
+            background: linear-gradient(45deg, #185abc, #1a73e8);
+        }
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        .remove-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ff8787);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+        .remove-btn:hover {
+            background: linear-gradient(45deg, #e55a5a, #ff6b6b);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5);
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 20px;
+                margin: 50px auto;
+            }
+            h1 {
+                font-size: 2.8em;
+            }
+            .calculator-section h2 {
+                font-size: 1.8em;
+            }
+            .input-container .input-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .input-container input, .power-calculator input, .power-calculator select {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Real Numbers Calculators</h1>
+
+        <div class="calculator-section">
+            <h2>HCF and LCM Calculator with Prime Factorization</h2>
+            <div class="hcf-lcm-calculator">
+                <div class="input-container" id="input-container">
+                    <div class="input-group">
+                        <label for="num1">Number :</label>
+                        <input type="number" id="num1" min="1" placeholder="e.g., 24">
+                        <button class="remove-btn" onclick="removeInput(this)" disabled>Remove</button>
+                    </div>
+                    <div class="input-group">
+                        <label for="num2">Number :</label>
+                        <input type="number" id="num2" min="1" placeholder="e.g., 36">
+                        <button class="remove-btn" onclick="removeInput(this)">Remove</button>
+                    </div>
+                </div>
+                <button id="add-number" onclick="addInputField()">Add Number</button>
+                <button id="calculate-hcf-lcm">Calculate HCF and LCM</button>
+            </div>
+            <div id="hcf-lcm-result" class="hcf-lcm-result">
+                <h3>Results:</h3>
+                <div id="hcf-result"></div>
+                <div id="lcm-result"></div>
+                <div class="steps">
+                    <h4>Step-by-Step Calculation:</h4>
+                    <div id="steps-content"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="calculator-section">
+            <h2>Rational or Irrational Number Calculator</h2>
+            <div class="rational-calculator">
+                <div class="input-group">
+                    <label for="rational-number">Enter a number to check:</label>
+                    <input type="text" id="rational-number" placeholder="e.g., 2, 0.75, √5, ∛2, nthroot(4,16)">
+                </div>
+                <button onclick="checkRationality()">Check Rationality</button>
+            </div>
+            <div id="rational-result" class="rational-result">
+                <h3 id="resultTitle">Result</h3>
+                <p id="resultSummary"></p>
+                <div id="rationalProof" class="proof-steps" style="display:none;">
+                    <h4>Step-by-step Explanation:</h4>
+                    <div id="rationalSteps"></div>
+                </div>
+                <div id="rootProof" class="sqrt-proof">
+                    <h4 id="rootProofTitle">Proof:</h4>
+                    <div id="rootProofSteps"></div>
+                </div>
+                <div id="piProof" class="proof-steps" style="display:none;">
+                    <h4>About π:</h4>
+                    <div class="step">π is a transcendental number, a special class of irrational numbers.</div>
+                    <div class="step">The irrationality of π was proven by Johann Heinrich Lambert in 1768.</div>
+                    <div class="step">π cannot be expressed as the root of any polynomial equation with integer coefficients.</div>
+                    <div class="conclusion">Therefore, π is irrational and cannot be expressed as a simple fraction.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="calculator-section">
+            <h2>Power End Digit Calculator</h2>
+            <div class="power-calculator">
+                <div class="input-group">
+                    <label for="base">Base Number:</label>
+                    <input type="number" id="base" min="1" value="6">
+                </div>
+                <div class="input-group">
+                    <label for="check-digit">Check if last digit is:</label>
+                    <select id="check-digit">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                    </select>
+                </div>
+                <button id="calculate-power">Calculate</button>
+            </div>
+            <div id="power-result" class="power-result">
+                <h3>Analysis for Powers of <span id="result-base"></span></h3>
+                <div id="digit-analysis"></div>
+                <div id="explanation" class="explanation"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let numInputs = 2;
+
+        function addInputField() {
+            if (numInputs >= 4) {
+                alert('Maximum 4 numbers allowed');
+                return;
+            }
+            numInputs++;
+            const container = document.getElementById('input-container');
+            const newInput = document.createElement('div');
+            newInput.className = 'input-group';
+            newInput.innerHTML = `
+                <label for="num${numInputs}">Number ${numInputs}:</label>
+                <input type="number" id="num${numInputs}" min="1" placeholder="Enter a number">
+                <button class="remove-btn" onclick="removeInput(this)">Remove</button>
+            `;
+            container.appendChild(newInput);
+            enableRemoveButtons();
+        }
+
+        function removeInput(button) {
+            if (numInputs <= 1) {
+                alert('At least one number is required');
+                return;
+            }
+            const inputGroup = button.parentNode;
+            inputGroup.parentNode.removeChild(inputGroup);
+            numInputs--;
+            const inputs = document.querySelectorAll('.input-group');
+            inputs.forEach((group, index) => {
+                const label = group.querySelector('label');
+                const input = group.querySelector('input');
+                label.setAttribute('for', `num${index + 1}`);
+                label.textContent = `Number ${index + 1}:`;
+                input.id = `num${index + 1}`;
+            });
+            enableRemoveButtons();
+        }
+
+        function enableRemoveButtons() {
+            const removeButtons = document.querySelectorAll('.remove-btn');
+            removeButtons.forEach(button => {
+                button.disabled = numInputs <= 1;
+            });
+        }
+
+        document.getElementById('calculate-hcf-lcm').addEventListener('click', function() {
+            const numbers = [];
+            for (let i = 1; i <= numInputs; i++) {
+                const value = parseInt(document.getElementById(`num${i}`).value);
+                if (isNaN(value) || value <= 0) {
+                    alert(`Please enter a valid positive integer for Number ${i}.`);
+                    return;
+                }
+                numbers.push(value);
+            }
+            calculateHCFAndLCM(numbers);
+        });
+
+        function findPrimeFactors(num) {
+            const factors = [];
+            let divisor = 2;
+            let n = num;
+            while (n > 1) {
+                while (n % divisor === 0) {
+                    factors.push(divisor);
+                    n /= divisor;
+                }
+                divisor++;
+                if (divisor * divisor > n && n > 1) {
+                    factors.push(n);
+                    break;
+                }
+            }
+            return factors;
+        }
+
+        function createFrequencyMap(factors) {
+            const freqMap = {};
+            factors.forEach(factor => {
+                freqMap[factor] = (freqMap[factor] || 0) + 1;
+            });
+            return freqMap;
+        }
+
+        function calculateHCFAndLCM(numbers) {
+            const allFactorizations = numbers.map(num => findPrimeFactors(num));
+            const allFreqMaps = allFactorizations.map(factors => createFrequencyMap(factors));
+            const allPrimes = new Set();
+            allFreqMaps.forEach(map => {
+                Object.keys(map).forEach(prime => allPrimes.add(prime));
+            });
+
+            const hcfMap = {};
+            allPrimes.forEach(prime => {
+                let minPower = Infinity;
+                allFreqMaps.forEach(map => {
+                    const power = map[prime] || 0;
+                    minPower = Math.min(minPower, power);
+                });
+                if (minPower > 0 && minPower !== Infinity) {
+                    hcfMap[prime] = minPower;
+                }
+            });
+
+            const lcmMap = {};
+            allPrimes.forEach(prime => {
+                let maxPower = 0;
+                allFreqMaps.forEach(map => {
+                    const power = map[prime] || 0;
+                    maxPower = Math.max(maxPower, power);
+                });
+                if (maxPower > 0) {
+                    lcmMap[prime] = maxPower;
+                }
+            });
+
+            let hcf = 1;
+            for (const prime in hcfMap) {
+                hcf *= Math.pow(Number(prime), hcfMap[prime]);
+            }
+            let lcm = 1;
+            for (const prime in lcmMap) {
+                lcm *= Math.pow(Number(prime), lcmMap[prime]);
+            }
+
+            document.getElementById('hcf-result').innerHTML = `<strong>HCF(${numbers.join(', ')}) = ${hcf}</strong>`;
+            document.getElementById('lcm-result').innerHTML = `<strong>LCM(${numbers.join(', ')}) = ${lcm}</strong>`;
+
+            let steps = `<h4>Step 1: Find the prime factorization of each number</h4>`;
+            numbers.forEach((num, index) => {
+                steps += `<p>${num} = ${formatFactorization(allFactorizations[index])}</p>`;
+            });
+            steps += `<h4>Step 2: Express each number as product of prime powers</h4>`;
+            numbers.forEach((num, index) => {
+                steps += `<p>${num} = ${formatPrimePowers(allFreqMaps[index])}</p>`;
+            });
+            steps += `<h4>Step 3: Calculate HCF by taking the minimum power of each common prime factor</h4><table><tr><th>Prime Factor</th>`;
+            numbers.forEach((num) => {
+                steps += `<th>Power in ${num}</th>`;
+            });
+            steps += `<th>Minimum Power (for HCF)</th></tr>`;
+            Array.from(allPrimes).sort((a, b) => Number(a) - Number(b)).forEach(prime => {
+                steps += `<tr><td>${prime}</td>`;
+                const powers = allFreqMaps.map(map => map[prime] || 0);
+                powers.forEach(power => {
+                    steps += `<td>${power}</td>`;
+                });
+                const minPower = Math.min(...powers);
+                steps += `<td>${minPower}</td></tr>`;
+            });
+            steps += `</table><p>HCF = ${formatPrimePowers(hcfMap)} = ${hcf}</p>`;
+            steps += `<h4>Step 4: Calculate LCM by taking the maximum power of each prime factor</h4><table><tr><th>Prime Factor</th>`;
+            numbers.forEach((num) => {
+                steps += `<th>Power in ${num}</th>`;
+            });
+            steps += `<th>Maximum Power (for LCM)</th></tr>`;
+            Array.from(allPrimes).sort((a, b) => Number(a) - Number(b)).forEach(prime => {
+                steps += `<tr><td>${prime}</td>`;
+                const powers = allFreqMaps.map(map => map[prime] || 0);
+                powers.forEach(power => {
+                    steps += `<td>${power}</td>`;
+                });
+                const maxPower = Math.max(...powers);
+                steps += `<td>${maxPower}</td></tr>`;
+            });
+            steps += `</table><p>LCM = ${formatPrimePowers(lcmMap)} = ${lcm}</p>`;
+
+            document.getElementById('steps-content').innerHTML = steps;
+            document.getElementById('hcf-lcm-result').style.display = 'block';
+        }
+
+        function formatFactorization(factors) {
+            if (factors.length === 0) return '1';
+            return factors.join(' × ');
+        }
+
+        function formatPrimePowers(freqMap) {
+            const parts = [];
+            const sortedPrimes = Object.keys(freqMap).sort((a, b) => Number(a) - Number(b));
+            for (const prime of sortedPrimes) {
+                const power = freqMap[prime];
+                if (power === 1) {
+                    parts.push(prime);
+                } else {
+                    parts.push(`${prime}<sup>${power}</sup>`);
+                }
+            }
+            return parts.join(' × ') || '1';
+        }
+
+        function isInteger(num) {
+            return Number.isInteger(parseFloat(num));
+        }
+
+        function isDecimalTerminating(num) {
+            const str = num.toString();
+            if (!str.includes('.')) return true;
+            const decimalPart = str.split('.')[1];
+            return decimalPart.length <= 10;
+        }
+
+        function findFraction(decimal) {
+            if (decimal === 0) return [0, 1];
+            const tolerance = 1.0E-10;
+            let h1 = 1, h2 = 0, k1 = 0, k2 = 1;
+            let b = decimal;
+            do {
+                let a = Math.floor(b);
+                let aux = h1;
+                h1 = a * h1 + h2;
+                h2 = aux;
+                aux = k1;
+                k1 = a * k1 + k2;
+                k2 = aux;
+                b = 1 / (b - a);
+            } while (Math.abs(decimal - h1 / k1) > decimal * tolerance);
+            return [h1, k1];
+        }
+
+        function gcd(a, b) {
+            return b === 0 ? a : gcd(b, a % b);
+        }
+
+        function isPerfectPower(n, power) {
+            const root = Math.pow(n, 1/power);
+            return Math.pow(Math.round(root), power) === n;
+        }
+
+        function generateRootProof(n, rootType) {
+            let rootSymbol, rootWord, rootPower;
+            if (rootType === "square") {
+                rootSymbol = "√";
+                rootWord = "square root";
+                rootPower = 2;
+            } else if (rootType === "cube") {
+                rootSymbol = "∛";
+                rootWord = "cube root";
+                rootPower = 3;
+            } else {
+                rootSymbol = rootType + "√";
+                rootWord = rootType + "th root";
+                rootPower = parseInt(rootType);
+            }
+            if (isPerfectPower(n, rootPower)) {
+                const exactRoot = Math.pow(n, 1/rootPower);
+                let stepsHtml = `<div class="step"><strong>Step 1:</strong> ${rootSymbol}${n} = ${exactRoot}</div>`;
+                stepsHtml += `<div class="step"><strong>Step 2:</strong> ${exactRoot} is an integer or a terminating decimal, which can be written as a fraction.</div>`;
+                stepsHtml += `<div class="conclusion">Therefore, ${rootSymbol}${n} is rational because it equals ${exactRoot}.</div>`;
+                return {
+                    title: `${rootSymbol}${n} is Rational`,
+                    summary: `The ${rootWord} of ${n} (${rootSymbol}${n} = ${exactRoot}) is rational.`,
+                    proof: stepsHtml,
+                    isRational: true
+                };
+            }
+            let stepsHtml = `<div class="step"><strong>Step 1:</strong> Assume ${rootSymbol}${n} is rational. Then ${rootSymbol}${n} = p/q where p and q are integers with no common factors and q ≠ 0.</div>`;
+            stepsHtml += `<div class="step"><strong>Step 2:</strong> This means: ${n} = p<sup>${rootPower}</sup>/q<sup>${rootPower}</sup> ⟹ ${n} × q<sup>${rootPower}</sup> = p<sup>${rootPower}</sup></div>`;
+            stepsHtml += `<div class="step"><strong>Step 3:</strong> This implies p<sup>${rootPower}</sup> is divisible by ${n}.</div>`;
+            if (rootPower === 2) {
+                stepsHtml += `<div class="step"><strong>Step 4:</strong> If p<sup>2</sup> is divisible by ${n}, then p must be divisible by ${n}.</div>`;
+                stepsHtml += `<div class="step"><strong>Step 5:</strong> So, p = ${n}k for some integer k.</div>`;
+                stepsHtml += `<div class="step"><strong>Step 6:</strong> Substituting: ${n} × q<sup>2</sup> = (${n}k)<sup>2</sup> = ${n}<sup>2</sup> × k<sup>2</sup></div>`;
+                stepsHtml += `<div class="step"><strong>Step 7:</strong> Dividing by ${n}: q<sup>2</sup> = ${n} × k<sup>2</sup></div>`;
+                stepsHtml += `<div class="step"><strong>Step 8:</strong> Thus, q<sup>2</sup> is divisible by ${n}, so q must be divisible by ${n}.</div>`;
+            } else {
+                stepsHtml += `<div class="step"><strong>Step 4:</strong> Similarly, this leads to both p and q being divisible by a common factor, contradicting our assumption.</div>`;
+            }
+            stepsHtml += `<div class="step"><strong>Step 9:</strong> But now p and q share a common factor ${n}, contradicting the assumption of no common factors.</div>`;
+            stepsHtml += `<div class="conclusion">This contradiction proves ${rootSymbol}${n} is irrational.</div>`;
+            return {
+                title: `${rootSymbol}${n} is Irrational`,
+                summary: `The ${rootWord} of ${n} (${rootSymbol}${n} ≈ ${Math.pow(n, 1/rootPower).toFixed(10)}) is irrational.`,
+                proof: stepsHtml,
+                isRational: false
+            };
+        }
+
+        function parseRootExpression(input) {
+            if (input.startsWith('√')) {
+                const number = parseInt(input.substring(1));
+                if (!isNaN(number)) return { type: "square", number: number, value: Math.sqrt(number) };
+            }
+            if (input.startsWith('sqrt(') && input.endsWith(')')) {
+                const number = parseInt(input.substring(5, input.length - 1));
+                if (!isNaN(number)) return { type: "square", number: number, value: Math.sqrt(number) };
+            }
+            if (input.startsWith('∛')) {
+                const number = parseInt(input.substring(1));
+                if (!isNaN(number)) return { type: "cube", number: number, value: Math.cbrt(number) };
+            }
+            if (input.startsWith('cbrt(') && input.endsWith(')')) {
+                const number = parseInt(input.substring(5, input.length - 1));
+                if (!isNaN(number)) return { type: "cube", number: number, value: Math.cbrt(number) };
+            }
+            if (input.startsWith('nthroot(') && input.endsWith(')')) {
+                const content = input.substring(8, input.length - 1);
+                const parts = content.split(',');
+                if (parts.length === 2) {
+                    const root = parseInt(parts[0]);
+                    const number = parseInt(parts[1]);
+                    if (!isNaN(root) && !isNaN(number)) return { type: root.toString(), number: number, value: Math.pow(number, 1/root) };
+                }
+            }
+            return null;
+        }
+
+        function checkRationality() {
+            const inputValue = document.getElementById("rational-number").value.trim().toLowerCase();
+            const resultDiv = document.getElementById("rational-result");
+            const resultTitle = document.getElementById("resultTitle");
+            const resultSummary = document.getElementById("resultSummary");
+            const rationalProof = document.getElementById("rationalProof");
+            const rationalSteps = document.getElementById("rationalSteps");
+            const rootProof = document.getElementById("rootProof");
+            const rootProofTitle = document.getElementById("rootProofTitle");
+            const rootProofSteps = document.getElementById("rootProofSteps");
+            const piProof = document.getElementById("piProof");
+
+            resultDiv.style.display = "block";
+            rationalProof.style.display = "none";
+            rootProof.style.display = "none";
+            piProof.style.display = "none";
+
+            if (inputValue === "π" || inputValue === "pi" || 
+                (parseFloat(inputValue) && Math.abs(parseFloat(inputValue) - Math.PI) < 0.0000001)) {
+                resultTitle.innerHTML = "π is Irrational";
+                resultSummary.innerHTML = "π (approximately 3.141592653589793) is a famous irrational number.";
+                piProof.style.display = "block";
+                return;
+            }
+
+            if (inputValue === "e" || 
+                (parseFloat(inputValue) && Math.abs(parseFloat(inputValue) - Math.E) < 0.0000001)) {
+                resultTitle.innerHTML = "e is Irrational";
+                resultSummary.innerHTML = "e (approximately 2.718281828459045) is a famous irrational number.";
+                let stepsHtml = `<div class="step">e is a transcendental number, not just irrational but also not the root of any polynomial with rational coefficients.</div>`;
+                stepsHtml += `<div class="step">The irrationality of e was proven by Leonhard Euler in the 18th century.</div>`;
+                stepsHtml += `<div class="conclusion">Therefore, e is irrational and cannot be expressed as a simple fraction.</div>`;
+                rootProofSteps.innerHTML = stepsHtml;
+                rootProofTitle.innerHTML = "About e:";
+                rootProof.style.display = "block";
+                return;
+            }
+
+            const rootExpression = parseRootExpression(inputValue);
+            if (rootExpression) {
+                const proofResult = generateRootProof(rootExpression.number, rootExpression.type);
+                resultTitle.innerHTML = proofResult.title;
+                resultSummary.innerHTML = proofResult.summary;
+                rootProofTitle.innerHTML = `Proof that ${inputValue} is ${proofResult.isRational ? 'Rational' : 'Irrational'}:`;
+                rootProofSteps.innerHTML = proofResult.proof;
+                rootProof.style.display = "block";
+                return;
+            }
+
+            if (inputValue.includes('/')) {
+                const parts = inputValue.split('/');
+                if (parts.length === 2) {
+                    const numerator = parseInt(parts[0]);
+                    const denominator = parseInt(parts[1]);
+                    if (!isNaN(numerator) && !isNaN(denominator) && denominator !== 0) {
+                        resultTitle.innerHTML = `${numerator}/${denominator} is Rational`;
+                        resultSummary.innerHTML = `A fraction with integer numerator and denominator is rational by definition.`;
+                        let stepsHtml = `<div class="step"><strong>Definition:</strong> A rational number is any number that can be expressed as p/q where p and q are integers and q ≠ 0.</div>`;
+                        const divisor = gcd(Math.abs(numerator), Math.abs(denominator));
+                        if (divisor > 1) {
+                            stepsHtml += `<div class="step"><strong>Step 1:</strong> Simplify ${numerator}/${denominator} by dividing by GCD ${divisor}.</div>`;
+                            stepsHtml += `<div class="step"><strong>Step 2:</strong> ${numerator}/${denominator} = ${numerator/divisor}/${denominator/divisor}</div>`;
+                        }
+                        stepsHtml += `<div class="conclusion">${numerator}/${denominator} is rational as it fits p/q form.</div>`;
+                        rationalSteps.innerHTML = stepsHtml;
+                        rationalProof.style.display = "block";
+                        return;
+                    }
+                }
+            }
+
+            let number;
+            try {
+                number = eval(inputValue
+                    .replace('π', 'Math.PI')
+                    .replace('pi', 'Math.PI')
+                    .replace('√', 'Math.sqrt')
+                    .replace('∛', 'Math.cbrt')
+                    .replace('e', 'Math.E')
+                );
+            } catch (e) {
+                resultTitle.innerHTML = "Invalid Input";
+                resultSummary.innerHTML = "Please enter a valid number or expression.";
+                return;
+            }
+
+            if (isNaN(number)) {
+                resultTitle.innerHTML = "Invalid Input";
+                resultSummary.innerHTML = "Please enter a valid number.";
+                return;
+            }
+
+            const isRational = isInteger(number) || isDecimalTerminating(number);
+            if (isRational) {
+                resultTitle.innerHTML = number + " is Rational";
+                let stepsHtml = "";
+                if (isInteger(number)) {
+                    stepsHtml += `<div class="step"><strong>Step 1:</strong> ${number} is an integer.</div>`;
+                    stepsHtml += `<div class="step"><strong>Step 2:</strong> All integers can be expressed as n/1.</div>`;
+                    stepsHtml += `<div class="conclusion">Therefore, ${number} is rational.</div>`;
+                } else {
+                    const [numerator, denominator] = findFraction(number);
+                    stepsHtml += `<div class="step"><strong>Step 1:</strong> ${number} is a decimal number.</div>`;
+                    stepsHtml += `<div class="step"><strong>Step 2:</strong> Convert to fraction: ${number} ≈ ${numerator}/${denominator}</div>`;
+                    const divisor = gcd(numerator, denominator);
+                    if (divisor > 1) {
+                        stepsHtml += `<div class="step"><strong>Step 3:</strong> Simplify by GCD ${divisor}.</div>`;
+                        stepsHtml += `<div class="step"><strong>Step 4:</strong> ${numerator}/${denominator} = ${numerator/divisor}/${denominator/divisor}</div>`;
+                    }
+                    stepsHtml += `<div class="conclusion">Therefore, ${number} is rational.</div>`;
+                }
+                resultSummary.innerHTML = `A rational number is any number expressible as p/q where p and q are integers and q ≠ 0.`;
+                rationalSteps.innerHTML = stepsHtml;
+                rationalProof.style.display = "block";
+            } else {
+                resultTitle.innerHTML = number + " is Irrational";
+                resultSummary.innerHTML = `${number} cannot be expressed as a simple fraction of two integers.`;
+                let stepsHtml = `<div class="step"><strong>Definition:</strong> An irrational number cannot be a ratio of two integers.</div>`;
+                stepsHtml += `<div class="step"><strong>Analysis:</strong> ${number} has a non-terminating, non-repeating decimal expansion.</div>`;
+                stepsHtml += `<div class="conclusion">Therefore, ${number} is irrational.</div>`;
+                rationalSteps.innerHTML = stepsHtml;
+                rationalProof.style.display = "block";
+            }
+        }
+
+        document.getElementById('calculate-power').addEventListener('click', calculateLastDigit);
+        document.addEventListener('DOMContentLoaded', calculateLastDigit);
+
+        function calculateLastDigit() {
+            const base = parseInt(document.getElementById('base').value);
+            const checkDigit = parseInt(document.getElementById('check-digit').value);
+            if (isNaN(base) || base < 1) {
+                alert('Please enter a valid base number');
+                return;
+            }
+
+            const lastDigits = [];
+            let currentBase = base % 10;
+            const seen = new Set();
+            let cycleLength = 0;
+            
+            for (let power = 1; power <= 10; power++) {
+                const lastDigit = currentBase % 10;
+                lastDigits.push(lastDigit);
+                if (seen.has(lastDigit)) {
+                    cycleLength = power - 1;
+                    break;
+                }
+                seen.add(lastDigit);
+                currentBase = (currentBase * base) % 10;
+            }
+
+            const isPossible = lastDigits.includes(checkDigit);
+            const baseLastDigit = base % 10;
+
+            let analysisHTML = `
+                <p><strong>Last digit to check:</strong> ${checkDigit}</p>
+                <p><strong>Possible:</strong> ${isPossible ? 'Yes' : 'No'}</p>
+                <p><strong>Last digits of powers of ${base}:</strong> ${lastDigits.join(', ')} ${cycleLength ? `(repeats every ${cycleLength})` : ''}</p>
+            `;
+            document.getElementById('digit-analysis').innerHTML = analysisHTML;
+
+            let explanationHTML = `<h4>Explanation</h4>`;
+            if (baseLastDigit === 0) {
+                explanationHTML += `<p>The base ${base} ends with 0. Any power of ${base} ends with 0 because it’s divisible by 10.</p>`;
+                if (checkDigit === 0) {
+                    explanationHTML += `<p>Since ${checkDigit} is 0, ${base}<sup>n</sup> will always end with ${checkDigit} for any positive integer n.</p>`;
+                } else {
+                    explanationHTML += `<p>Thus, it cannot end with ${checkDigit} (not 0).</p>`;
+                }
+            } else {
+                explanationHTML += `<p>Powers of ${base} produce last digits: ${lastDigits.join(', ')}${cycleLength ? `, repeating every ${cycleLength} powers` : ''}, due to multiplication modulo 10.</p>`;
+                if (isPossible) {
+                    explanationHTML += `<p>Since ${checkDigit} is in the cycle (${lastDigits.join(', ')}), ${base}<sup>n</sup> can end with ${checkDigit} at powers: ${lastDigits.map((digit, idx) => digit === checkDigit ? idx + 1 : '').filter(Boolean).join(', ')}.</p>`;
+                } else {
+                    explanationHTML += `<p>Since ${checkDigit} isn’t in the cycle (${lastDigits.join(', ')}), ${base}<sup>n</sup> never ends with ${checkDigit}.</p>`;
+                    if (checkDigit === 0) {
+                        explanationHTML += `<p>A number ending in 0 must be divisible by 10. ${base} ends in ${baseLastDigit}, lacking ${baseLastDigit % 2 === 0 ? '5' : baseLastDigit % 5 === 0 ? '2' : '2 or 5'} as a factor, so its powers can’t end in 0.</p>`;
+                    } else if (checkDigit === 5) {
+                        explanationHTML += `<p>For a last digit of 5, the base must end in 5. ${base} ends in ${baseLastDigit}, so its powers can’t end in 5.</p>`;
+                    } else {
+                        explanationHTML += `<p>The cycle for ${base} (${lastDigits.join(', ')}) is determined by ${baseLastDigit} modulo 10, and ${checkDigit} isn’t achievable.</p>`;
+                    }
+                }
+            }
+
+            document.getElementById('explanation').innerHTML = explanationHTML;
+            document.getElementById('result-base').textContent = base;
+            document.getElementById('power-result').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

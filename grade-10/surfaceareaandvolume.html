@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geometric and 3D Shape Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9fbfc;
+            color: #2d2d2d;
+            line-height: 1.6;
+        }
+        .container {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(15, 90, 181, 0.1);
+            max-width: 800px;
+            margin: auto;
+        }
+        h1 {
+            color: #0f5ab5;
+            text-align: center;
+            font-size: 2.4em;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #123d82;
+            font-size: 1.8em;
+            font-weight: 500;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #e8eefc;
+            border-radius: 8px;
+            color: #123d82;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .tab.active, .tab:hover {
+            background-color: #1a73e8;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            text-align: center;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #4a4a4a;
+            font-size: 0.9em;
+        }
+        input, select {
+            padding: 8px;
+            width: 80%;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            outline: none;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus {
+            border-color: #0f5ab5;
+        }
+        button {
+            display: block;
+            width: 80%;
+            padding: 10px;
+            background: linear-gradient(135deg, #1a73e8, #2a85ff);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin: 20px auto;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(26, 115, 232, 0.4);
+        }
+        button::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            top: var(--y);
+            left: var(--x);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease;
+        }
+        button:hover::after {
+            width: 200px;
+            height: 200px;
+        }
+        .shape-container {
+            position: relative;
+            display: inline-block;
+            margin: 20px auto;
+        }
+        .shape {
+            background-color: #1a73e8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0 auto;
+        }
+        .circle {
+            border-radius: 50%;
+        }
+        .triangle {
+            width: 0 !important;
+            height: 0 !important;
+            background-color: transparent !important;
+            border-left: 75px solid transparent;
+            border-right: 75px solid transparent;
+            border-bottom: 150px solid #1a73e8;
+            position: relative;
+        }
+        .triangle-text {
+            position: absolute;
+            bottom: -75px;
+            color: white;
+        }
+        .trapezium {
+            width: 150px;
+            height: 100px;
+            background-color: #1a73e8;
+            position: relative;
+            clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+        }
+        .rhombus {
+            width: 150px;
+            height: 150px;
+            background-color: #1a73e8;
+            transform: skew(-20deg);
+        }
+        .parallelogram {
+            width: 150px;
+            height: 100px;
+            background-color: #1a73e8;
+            transform: skewX(-20deg);
+        }
+        .label {
+            position: absolute;
+            font-size: 14px;
+            font-weight: 500;
+            color: #4a4a4a;
+        }
+        .result {
+            font-size: 1em;
+            margin-top: 20px;
+            color: #4a4a4a;
+            background-color: #e8eefc;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .result h3 {
+            color: #123d82;
+            font-size: 1.5em;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        .formula {
+            background-color: #f2f6ff;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 15px auto;
+            display: inline-block;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #4a4a4a;
+            font-size: 0.95em;
+        }
+        .steps {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f2f6ff;
+            border-radius: 10px;
+            display: none;
+            font-size: 0.9em;
+            line-height: 1.4;
+            color: #4a4a4a;
+        }
+        .steps-btn {
+            background: none;
+            color: #1a73e8;
+            border: none;
+            padding: 5px 0;
+            font-size: 0.9em;
+            cursor: pointer;
+            text-decoration: underline;
+            width: auto;
+            text-align: left;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            transition: color 0.3s ease;
+        }
+        .steps-btn:hover {
+            color: #0f5ab5;
+        }
+        .shape-3d {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(-20deg) rotateY(30deg);
+        }
+        .face {
+            position: absolute;
+            border: 1px solid #e0e0e0;
+            background-color: rgba(26, 115, 232, 0.7);
+        }
+        .cube .face, .cuboid .face {
+            width: 100%;
+            height: 100%;
+        }
+        .cone {
+            width: 100px;
+            height: 200px;
+            position: relative;
+            transform-style: preserve-3d;
+            margin: 0 auto;
+        }
+        .cone .base {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: rgba(26, 115, 232, 0.7);
+            position: absolute;
+            bottom: 0;
+            transform: translateZ(-50px);
+        }
+        .cone .side {
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 200px solid rgba(26, 115, 232, 0.7);
+            position: absolute;
+            top: 0;
+            transform-origin: top;
+        }
+        .sphere {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: rgba(26, 115, 232, 0.7);
+            position: relative;
+            transform-style: preserve-3d;
+            margin: 0 auto;
+        }
+        .hemisphere {
+            width: 100px;
+            height: 50px;
+            border-radius: 50% 50% 0 0;
+            background-color: rgba(26, 115, 232, 0.7);
+            position: relative;
+            transform-style: preserve-3d;
+            margin: 0 auto;
+        }
+        input:disabled {
+            background-color: #f0f0f0;
+            color: #888;
+        }
+        .cone-diagram {
+            margin: 20px auto;
+            text-align: center;
+        }
+        .cone-diagram svg {
+            width: 200px;
+            height: 200px;
+        }
+        .cone-diagram path, .cone-diagram circle {
+            fill: rgba(26, 115, 232, 0.3);
+            stroke: #1a73e8;
+        }
+        .cone-diagram text {
+            font-size: 12px;
+            font-weight: 500;
+            color: #4a4a4a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Geometric and 3D Shape Calculator</h1>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="openTab('square')">Square</div>
+            <div class="tab" onclick="openTab('circle')">Circle</div>
+            <div class="tab" onclick="openTab('trapezium')">Trapezium</div>
+            <div class="tab" onclick="openTab('rhombus')">Rhombus</div>
+            <div class="tab" onclick="openTab('triangle')">Triangle</div>
+            <div class="tab" onclick="openTab('parallelogram')">Parallelogram</div>
+            <div class="tab" onclick="openTab('3d-calculator')">3D Shapes</div>
+        </div>
+
+        <!-- Square Calculator -->
+        <div id="square" class="tab-content active">
+            <h2>Square Calculator</h2>
+            <div class="formula">Area = side² | Perimeter = 4 × side</div>
+            <div class="input-group">
+                <label for="squareSide">Enter side length:</label>
+                <input type="number" id="squareSide" min="0" step="any">
+            </div>
+            <div class="shape-container">
+                <div id="squareShape" class="shape" style="width: 100px; height: 100px;">0</div>
+                <div class="label" style="top: 100%; left: 50%; transform: translate(-50%, 10px);">
+                    <span id="squareSideLabel">0</span>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="squareProperty">Calculate:</label>
+                <select id="squareProperty">
+                    <option value="area">Area</option>
+                    <option value="perimeter">Perimeter</option>
+                </select>
+            </div>
+            <button onclick="calculateAll2D('square')">Calculate All</button>
+            <div id="squareResult" class="result" style="display: none;">
+                <h3>Result:</h3>
+                <p id="squareResultValue"></p>
+                <button class="steps-btn" onclick="toggleSteps('squareSteps')">Show Steps</button>
+                <div id="squareSteps" class="steps"></div>
+            </div>
+        </div>
+
+        <!-- Circle Calculator -->
+        <div id="circle" class="tab-content">
+            <h2>Circle Calculator</h2>
+            <div class="formula">Area = π × r² | Circumference = 2 × π × r</div>
+            <div class="input-group">
+                <label for="circleRadius">Enter radius:</label>
+                <input type="number" id="circleRadius" min="0" step="any">
+            </div>
+            <div class="shape-container">
+                <div id="circleShape" class="shape circle" style="width: 100px; height: 100px;">0</div>
+                <div class="label" style="top: 100%; left: 50%; transform: translate(-50%, 10px);">
+                    r = <span id="circleRadiusLabel">0</span>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="circleProperty">Calculate:</label>
+                <select id="circleProperty">
+                    <option value="area">Area</option>
+                    <option value="circumference">Circumference</option>
+                </select>
+            </div>
+            <button onclick="calculateAll2D('circle')">Calculate All</button>
+            <div id="circleResult" class="result" style="display: none;">
+                <h3>Result:</h3>
+                <p id="circleResultValue"></p>
+                <button class="steps-btn" onclick="toggleSteps('circleSteps')">Show Steps</button>
+                <div id="circleSteps" class="steps"></div>
+            </div>
+        </div>
+
+        <!-- Trapezium Calculator -->
+        <div id="trapezium" class="tab-content">
+            <h2>Trapezium Calculator</h2>
+            <div class="formula">Area = ½ × (a + b) × h | Perimeter = a + b + 2 × side</div>
+            <div class="input-group">
+                <label for="trapeziumTopBase">Enter top base (a):</label>
+                <input type="number" id="trapeziumTopBase" min="0" step="any">
+            </div>
+            <div class="input-group">
+                <label for="trapeziumBottomBase">Enter bottom base (b):</label>
+                <input type="number" id="trapeziumBottomBase" min="0" step="any">
+            </div>
+            <div class="input-group">
+                <label for="trapeziumHeight">Enter height (h):</label>
+                <input type="number" id="trapeziumHeight" min="0" step="any">
+            </div>
+            <div class="shape-container">
+                <div id="trapeziumShape" class="shape trapezium"></div>
+                <div id="trapeziumLabels" style="position: relative; height: 40px; margin-top: 10px; text-align: center;">
+                    <span style="position: absolute; left: 25%; transform: translateX(-50%);">a = <span id="trapeziumTopBaseLabel">0</span></span>
+                    <span style="position: absolute; left: 75%; transform: translateX(-50%);">b = <span id="trapeziumBottomBaseLabel">0</span></span>
+                    <span style="position: absolute; left: 50%; transform: translateX(-50%); top: 20px;">h = <span id="trapeziumHeightLabel">0</span></span>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="trapeziumProperty">Calculate:</label>
+                <select id="trapeziumProperty">
+                    <option value="area">Area</option>
+                    <option value="perimeter">Perimeter (approx.)</option>
+                </select>
+            </div>
+            <button onclick="calculateAll2D('trapezium')">Calculate All</button>
+            <div id="trapeziumResult" class="result" style="display: none;">
+                <h3>Result:</h3>
+                <p id="trapeziumResultValue"></p>
+                <button class="steps-btn" onclick="toggleSteps('trapeziumSteps')">Show Steps</button>
+                <div id="trapeziumSteps" class="steps"></div>
+            </div>
+        </div>
+
+        <!-- Rhombus Calculator -->
+        <div id="rhombus" class="tab-content">
+            <h2>Rhombus Calculator</h2>
+            <div class="formula">Area = ½ × d₁ × d₂ | Perimeter = 4 × side</div>
+            <div class="input-group">
+                <label for="rhombusDiagonal1">Enter diagonal 1 (d₁):</label>
+                <input type="number" id="rhombusDiagonal1" min="0" step="any">
+            </div>
+            <div class="input-group">
+                <label for="rhombusDiagonal2">Enter diagonal 2 (d₂):</label>
+                <input type="number" id="rhombusDiagonal2" min="0" step="any">
+            </div>
+            <div class="shape-container" style="width: 200px; height: 200px; position: relative;">
+                <div id="rhombusShape" class="shape rhombus" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) skew(-20deg);"></div>
+                <div style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; pointer-events: none;">
+                    <div style="position: absolute; top: 50%; left: 0; right: 0; border-top: 1px dashed #4a4a4a;"></div>
+                    <div style="position: absolute; top: 0; bottom: 0; left: 50%; border-left: 1px dashed #4a4a4a;"></div>
+                    <div style="position: absolute; top: 50%; left: 0; transform: translateY(-100%);">d₁ = <span id="rhombusDiagonal1Label">0</span></div>
+                    <div style="position: absolute; top: 100%; left: 50%; transform: translateX(-100%);">d₂ = <span id="rhombusDiagonal2Label">0</span></div>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="rhombusProperty">Calculate:</label>
+                <select id="rhombusProperty">
+                    <option value="area">Area</option>
+                    <option value="perimeter">Perimeter</option>
+                </select>
+            </div>
+            <button onclick="calculateAll2D('rhombus')">Calculate All</button>
+            <div id="rhombusResult" class="result" style="display: none;">
+                <h3>Result:</h3>
+                <p id="rhombusResultValue"></p>
+                <button class="steps-btn" onclick="toggleSteps('rhombusSteps')">Show Steps</button>
+                <div id="rhombusSteps" class="steps"></div>
+            </div>
+        </div>
+
+        <!-- Triangle Calculator -->
+        <div id="triangle" class="tab-content">
+            <h2>Triangle Calculator</h2>
+            <div class="formula">Area = ½ × base × height | Perimeter = base + 2 × side (approx.)</div>
+            <div class="input-group">
+                <label for="triangleBase">Enter base:</label>
+                <input type="number" id="triangleBase" min="0" step="any">
+            </div>
+            <div class="input-group">
+                <label for="triangleHeight">Enter height:</label>
+                <input type="number" id="triangleHeight" min="0" step="any">
+            </div>
+            <div class="shape-container" style="height: 200px;">
+                <div id="triangleShape" class="triangle">
+                    <span class="triangle-text">0</span>
+                </div>
+                <div style="position: relative; margin-top: 10px; text-align: center;">
+                    <span>base = <span id="triangleBaseLabel">0</span></span>
+                    <span style="margin-left: 20px;">height = <span id="triangleHeightLabel">0</span></span>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="triangleProperty">Calculate:</label>
+                <select id="triangleProperty">
+                    <option value="area">Area</option>
+                    <option value="perimeter">Perimeter (approx.)</option>
+                </select>
+            </div>
+            <button onclick="calculateAll2D('triangle')">Calculate All</button>
+            <div id="triangleResult" class="result" style="display: none;">
+                <h3>Result:</h3>
+                <p id="triangleResultValue"></p>
+                <button class="steps-btn" onclick="toggleSteps('triangleSteps')">Show Steps</button>
+                <div id="triangleSteps" class="steps"></div>
+            </div>
+        </div>
+
+        <!-- Parallelogram Calculator -->
+        <div id="parallelogram" class="tab-content">
+            <h2>Parallelogram Calculator</h2>
+            <div class="formula">Area = base × height | Perimeter = 2 × (base + side)</div>
+            <div class="input-group">
+                <label for="parallelogramBase">Enter base:</label>
+                <input type="number" id="parallelogramBase" min="0" step="any">
+            </div>
+            <div class="input-group">
+                <label for="parallelogramHeight">Enter height:</label>
+                <input type="number" id="parallelogramHeight" min="0" step="any">
+            </div>
+            <div class="shape-container" style="width: 200px; height: 150px; position: relative;">
+                <div id="parallelogramShape" class="shape parallelogram" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) skewX(-20deg);"></div>
+                <div style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; pointer-events: none;">
+                    <div style="position: absolute; top: 0; bottom: 0; left: 20%; border-left: 1px dashed #4a4a4a;"></div>
+                    <div style="position: absolute; top: 100%; left: 50%; transform: translateX(-50%);">base = <span id="parallelogramBaseLabel">0</span></div>
+                    <div style="position: absolute; top: 50%; left: 20%; transform: translate(-100%, -50%);">height = <span id="parallelogramHeightLabel">0</span></div>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="parallelogramProperty">Calculate:</label>
+                <select id="parallelogramProperty">
+                    <option value="area">Area</option>
+                    <option value="perimeter">Perimeter (approx.)</option>
+                </select>
+            </div>
+            <button onclick="calculateAll2D('parallelogram')">Calculate All</button>
+            <div id="parallelogramResult" class="result" style="display: none;">
+                <h3>Result:</h3>
+                <p id="parallelogramResultValue"></p>
+                <button class="steps-btn" onclick="toggleSteps('parallelogramSteps')">Show Steps</button>
+                <div id="parallelogramSteps" class="steps"></div>
+            </div>
+        </div>
+
+        <!-- 3D Shape Calculator -->
+        <div id="3d-calculator" class="tab-content">
+            <h2>3D Shape Calculator</h2>
+            <div class="formula">Calculate LSA, TSA, and Volume for 3D Shapes</div>
+            <div class="input-group">
+                <label for="shape3d">Select Shape:</label>
+                <select id="shape3d" onchange="update3DInputs()">
+                    <option value="cube">Cube</option>
+                    <option value="cuboid">Cuboid</option>
+                    <option value="cone">Cone</option>
+                    <option value="sphere">Sphere</option>
+                    <option value="hemisphere">Hemisphere</option>
+                </select>
+            </div>
+            <div id="inputs3d"></div>
+            <div class="input-group">
+                <label for="unknown3d">Unknown Value:</label>
+                <select id="unknown3d" onchange="toggle3DUnknownFields()">
+                    <option value="lsa">LSA</option>
+                    <option value="tsa">TSA</option>
+                    <option value="volume">Volume</option>
+                    <option value="side">Side Length (Cube)</option>
+                    <option value="radius">Radius (Cone/Sphere/Hemisphere)</option>
+                    <option value="height">Height (Cuboid/Cone)</option>
+                    <option value="slant-height">Slant Height (Cone)</option>
+                </select>
+            </div>
+            <button onclick="calculate3D()">Calculate</button>
+            <div id="result3d" class="result" style="display: none;">
+                <h3>Result:</h3>
+                <p id="result-value3d"></p>
+                <button class="steps-btn" onclick="toggleSteps('steps3d')">Show Steps</button>
+                <div id="steps3d" class="steps"></div>
+            </div>
+            <div id="shape-3d-container" style="margin-top: 30px;">
+                <h3>3D Visualization</h3>
+                <div id="shape-3d"></div>
+            </div>
+            <div id="cone-diagram" class="cone-diagram" style="display: none;">
+                <svg viewBox="0 0 200 200">
+                    <path d="M100,20 L180,180 L20,180 Z" stroke-width="2"/>
+                    <circle cx="100" cy="180" r="80" stroke-width="2"/>
+                    <line x1="100" y1="20" x2="100" y2="180" stroke="#4a4a4a" stroke-width="1" stroke-dasharray="5,5"/>
+                    <line x1="20" y1="180" x2="180" y2="180" stroke="#4a4a4a" stroke-width="1"/>
+                    <line x1="100" y1="180" x2="180" y2="180" stroke="#4a4a4a" stroke-width="1" stroke-dasharray="5,5"/>
+                    <text x="50" y="190">r</text>
+                    <text x="190" y="190">r</text>
+                    <text x="110" y="100">h</text>
+                    <text x="150" y="120">l</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching function
+        function openTab(tabName) {
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+            const tabs = document.getElementsByClassName('tab');
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            document.getElementById(tabName).classList.add('active');
+            document.querySelector(`.tab[onclick="openTab('${tabName}')"]`).classList.add('active');
+            updateVisualization(tabName);
+            if (tabName === '3d-calculator') update3DInputs();
+        }
+
+        // Visualization Updates
+        function updateVisualization(tabName) {
+            switch (tabName) {
+                case 'square':
+                    updateSquareVisualization();
+                    break;
+                case 'circle':
+                    updateCircleVisualization();
+                    break;
+                case 'trapezium':
+                    updateTrapeziumVisualization();
+                    break;
+                case 'rhombus':
+                    updateRhombusVisualization();
+                    break;
+                case 'triangle':
+                    updateTriangleVisualization();
+                    break;
+                case 'parallelogram':
+                    updateParallelogramVisualization();
+                    break;
+            }
+        }
+
+        function updateSquareVisualization() {
+            const sideInput = document.getElementById('squareSide');
+            if (!sideInput) return;
+            const side = parseFloat(sideInput.value) || 0;
+            const shape = document.getElementById('squareShape');
+            const label = document.getElementById('squareSideLabel');
+            if (shape && label) {
+                label.textContent = side;
+                const maxSize = 150;
+                const displaySize = Math.min(side * 20, maxSize);
+                shape.style.width = displaySize + 'px';
+                shape.style.height = displaySize + 'px';
+                shape.textContent = (side * side).toFixed(2);
+            }
+        }
+
+        function updateCircleVisualization() {
+            const radiusInput = document.getElementById('circleRadius');
+            if (!radiusInput) return;
+            const radius = parseFloat(radiusInput.value) || 0;
+            const shape = document.getElementById('circleShape');
+            const label = document.getElementById('circleRadiusLabel');
+            if (shape && label) {
+                label.textContent = radius;
+                const maxSize = 150;
+                const displaySize = Math.min(radius * 20, maxSize);
+                shape.style.width = displaySize + 'px';
+                shape.style.height = displaySize + 'px';
+                shape.textContent = (Math.PI * radius * radius).toFixed(2);
+            }
+        }
+
+        function updateTrapeziumVisualization() {
+            const topBaseInput = document.getElementById('trapeziumTopBase');
+            const bottomBaseInput = document.getElementById('trapeziumBottomBase');
+            const heightInput = document.getElementById('trapeziumHeight');
+            if (!topBaseInput || !bottomBaseInput || !heightInput) return;
+            const a = parseFloat(topBaseInput.value) || 0;
+            const b = parseFloat(bottomBaseInput.value) || 0;
+            const h = parseFloat(heightInput.value) || 0;
+            const shape = document.getElementById('trapeziumShape');
+            const topLabel = document.getElementById('trapeziumTopBaseLabel');
+            const bottomLabel = document.getElementById('trapeziumBottomBaseLabel');
+            const heightLabel = document.getElementById('trapeziumHeightLabel');
+            if (shape && topLabel && bottomLabel && heightLabel) {
+                topLabel.textContent = a;
+                bottomLabel.textContent = b;
+                heightLabel.textContent = h;
+                if (a > 0 && b > 0) {
+                    const ratio = a / b;
+                    shape.style.clipPath = `polygon(${Math.max(0, 50 - 30 * ratio)}% 0%, ${Math.min(100, 50 + 30 * ratio)}% 0%, 100% 100%, 0% 100%)`;
+                }
+            }
+        }
+
+        function updateRhombusVisualization() {
+            const d1Input = document.getElementById('rhombusDiagonal1');
+            const d2Input = document.getElementById('rhombusDiagonal2');
+            if (!d1Input || !d2Input) return;
+            const d1 = parseFloat(d1Input.value) || 0;
+            const d2 = parseFloat(d2Input.value) || 0;
+            const shape = document.getElementById('rhombusShape');
+            const d1Label = document.getElementById('rhombusDiagonal1Label');
+            const d2Label = document.getElementById('rhombusDiagonal2Label');
+            if (shape && d1Label && d2Label) {
+                d1Label.textContent = d1;
+                d2Label.textContent = d2;
+                const maxSize = 150;
+                const displayWidth = Math.min(d1 * 5, maxSize);
+                const displayHeight = Math.min(d2 * 5, maxSize);
+                shape.style.width = displayWidth + 'px';
+                shape.style.height = displayHeight + 'px';
+            }
+        }
+
+        function updateTriangleVisualization() {
+            const baseInput = document.getElementById('triangleBase');
+            const heightInput = document.getElementById('triangleHeight');
+            if (!baseInput || !heightInput) return;
+            const base = parseFloat(baseInput.value) || 0;
+            const height = parseFloat(heightInput.value) || 0;
+            const shape = document.getElementById('triangleShape');
+            const baseLabel = document.getElementById('triangleBaseLabel');
+            const heightLabel = document.getElementById('triangleHeightLabel');
+            const text = document.querySelector('.triangle-text');
+            if (shape && baseLabel && heightLabel && text) {
+                baseLabel.textContent = base;
+                heightLabel.textContent = height;
+                const maxSize = 150;
+                const displayBase = Math.min(base * 10, maxSize);
+                const displayHeight = Math.min(height * 10, maxSize);
+                shape.style.borderLeft = (displayBase / 2) + 'px solid transparent';
+                shape.style.borderRight = (displayBase / 2) + 'px solid transparent';
+                shape.style.borderBottom = displayHeight + 'px solid #1a73e8';
+                text.textContent = (0.5 * base * height).toFixed(2);
+            }
+        }
+
+        function updateParallelogramVisualization() {
+            const baseInput = document.getElementById('parallelogramBase');
+            const heightInput = document.getElementById('parallelogramHeight');
+            if (!baseInput || !heightInput) return;
+            const base = parseFloat(baseInput.value) || 0;
+            const height = parseFloat(heightInput.value) || 0;
+            const shape = document.getElementById('parallelogramShape');
+            const baseLabel = document.getElementById('parallelogramBaseLabel');
+            const heightLabel = document.getElementById('parallelogramHeightLabel');
+            if (shape && baseLabel && heightLabel) {
+                baseLabel.textContent = base;
+                heightLabel.textContent = height;
+                const maxSize = 150;
+                const displayWidth = Math.min(base * 10, maxSize);
+                const displayHeight = Math.min(height * 10, maxSize);
+                shape.style.width = displayWidth + 'px';
+                shape.style.height = displayHeight + 'px';
+                shape.textContent = (base * height).toFixed(2);
+            }
+        }
+
+        // Calculate All for 2D Shapes
+        function calculateAll2D(shape) {
+            let result, steps;
+            const propertySelect = document.getElementById(`${shape}Property`);
+            if (!propertySelect) return;
+            const property = propertySelect.value;
+
+            switch (shape) {
+                case 'square':
+                    const side = parseFloat(document.getElementById('squareSide')?.value) || 0;
+                    if (property === 'area') {
+                        result = side * side;
+                        steps = `Area = side² = ${side}² = ${result.toFixed(2)} square units`;
+                    } else if (property === 'perimeter') {
+                        result = 4 * side;
+                        steps = `Perimeter = 4 × side = 4 × ${side} = ${result.toFixed(2)} units`;
+                    }
+                    break;
+
+                case 'circle':
+                    const radius = parseFloat(document.getElementById('circleRadius')?.value) || 0;
+                    if (property === 'area') {
+                        result = Math.PI * radius * radius;
+                        steps = `Area = π × r² = π × ${radius}² = ${result.toFixed(2)} square units`;
+                    } else if (property === 'circumference') {
+                        result = 2 * Math.PI * radius;
+                        steps = `Circumference = 2 × π × r = 2 × π × ${radius} = ${result.toFixed(2)} units`;
+                    }
+                    break;
+
+                case 'trapezium':
+                    const a = parseFloat(document.getElementById('trapeziumTopBase')?.value) || 0;
+                    const b = parseFloat(document.getElementById('trapeziumBottomBase')?.value) || 0;
+                    const h = parseFloat(document.getElementById('trapeziumHeight')?.value) || 0;
+                    if (property === 'area') {
+                        result = 0.5 * (a + b) * h;
+                        steps = `Area = ½ × (a + b) × h = ½ × (${a} + ${b}) × ${h} = ${result.toFixed(2)} square units`;
+                    } else if (property === 'perimeter') {
+                        const side = h > 0 && Math.abs(b - a) >= 0 ? Math.sqrt(h * h + ((b - a) / 2) * ((b - a) / 2)) : 0;
+                        result = a + b + 2 * side;
+                        steps = `Approximate side length = √(h² + ((b - a) / 2)²) = √(${h}² + (${b - a} / 2)²) = ${side.toFixed(2)}<br>`;
+                        steps += `Perimeter = a + b + 2 × side = ${a} + ${b} + 2 × ${side.toFixed(2)} = ${result.toFixed(2)} units`;
+                    }
+                    break;
+
+                case 'rhombus':
+                    const d1 = parseFloat(document.getElementById('rhombusDiagonal1')?.value) || 0;
+                    const d2 = parseFloat(document.getElementById('rhombusDiagonal2')?.value) || 0;
+                    if (property === 'area') {
+                        result = 0.5 * d1 * d2;
+                        steps = `Area = ½ × d₁ × d₂ = ½ × ${d1} × ${d2} = ${result.toFixed(2)} square units`;
+                    } else if (property === 'perimeter') {
+                        const side = Math.sqrt((d1 / 2) * (d1 / 2) + (d2 / 2) * (d2 / 2));
+                        result = 4 * side;
+                        steps = `Side length = √((d₁/2)² + (d₂/2)²) = √((${d1}/2)² + (${d2}/2)²) = ${side.toFixed(2)}<br>`;
+                        steps += `Perimeter = 4 × side = 4 × ${side.toFixed(2)} = ${result.toFixed(2)} units`;
+                    }
+                    break;
+
+                case 'triangle':
+                    const base = parseFloat(document.getElementById('triangleBase')?.value) || 0;
+                    const height = parseFloat(document.getElementById('triangleHeight')?.value) || 0;
+                    if (property === 'area') {
+                        result = 0.5 * base * height;
+                        steps = `Area = ½ × base × height = ½ × ${base} × ${height} = ${result.toFixed(2)} square units`;
+                    } else if (property === 'perimeter') {
+                        const side = height > 0 ? Math.sqrt((base / 2) * (base / 2) + height * height) : 0;
+                        result = base + 2 * side;
+                        steps = `Approximate side length = √((base/2)² + height²) = √((${base}/2)² + ${height}²) = ${side.toFixed(2)}<br>`;
+                        steps += `Perimeter = base + 2 × side = ${base} + 2 × ${side.toFixed(2)} = ${result.toFixed(2)} units`;
+                    }
+                    break;
+
+                case 'parallelogram':
+                    const pBase = parseFloat(document.getElementById('parallelogramBase')?.value) || 0;
+                    const pHeight = parseFloat(document.getElementById('parallelogramHeight')?.value) || 0;
+                    if (property === 'area') {
+                        result = pBase * pHeight;
+                        steps = `Area = base × height = ${pBase} × ${pHeight} = ${result.toFixed(2)} square units`;
+                    } else if (property === 'perimeter') {
+                        const side = pHeight > 0 ? pHeight / Math.sin(20 * Math.PI / 180) : 0;
+                        result = 2 * (pBase + side);
+                        steps = `Approximate side length = height / sin(20°) = ${pHeight} / ${Math.sin(20 * Math.PI / 180).toFixed(2)} = ${side.toFixed(2)}<br>`;
+                        steps += `Perimeter = 2 × (base + side) = 2 × (${pBase} + ${side.toFixed(2)}) = ${result.toFixed(2)} units`;
+                    }
+                    break;
+            }
+
+            const resultDiv = document.getElementById(`${shape}Result`);
+            const resultValue = document.getElementById(`${shape}ResultValue`);
+            const stepsDiv = document.getElementById(`${shape}Steps`);
+            if (resultDiv && resultValue && stepsDiv) {
+                resultValue.textContent = `Result: ${isNaN(result) ? 'Invalid input' : result.toFixed(2)}`;
+                resultDiv.style.display = 'block';
+                stepsDiv.innerHTML = steps || 'No steps available';
+                stepsDiv.style.display = 'none';
+            }
+        }
+
+        // 3D Shape Calculator Logic
+        const inputs3d = {
+            cube: `
+                <div class="input-group">
+                    <label for="side3d">Side Length (a):</label>
+                    <input type="number" id="side3d" placeholder="Enter side length" min="0" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="lsa3d">LSA:</label>
+                    <input type="number" id="lsa3d" placeholder="Enter LSA" min="0" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="tsa3d">TSA:</label>
+                    <input type="number" id="tsa3d" placeholder="Enter TSA" min="0" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="volume3d">Volume:</label>
+                    <input type="number" id="volume3d" placeholder="Enter Volume" min="0" step="any">
+                </div>
+            `,
+            cuboid: `
+                <div class="input-group">
+                    <label for="length3d">Length (l):</label>
+                    <input type="number" id="length3d" placeholder="Enter length" min="0" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="width3d">Width (w):</label>
+                    <input type="number" id="width3d" placeholder="Enter width" min="0" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="height3d">Height (h):</label>
+                    <input type="number" id="height3d" placeholder="Enter height" min="0" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="lsa3d">LSA:</label>
+                    <input type="number" id="lsa3d" placeholder="Enter LSA" min="0" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="tsa3d">TSA:</label>
+                    <input type="number" id="tsa3d" placeholder="Enter TSA" min="0" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="volume3d">Volume:</label>
+                    <input type="number" id="volume3d" placeholder="Enter Volume" min="0" step="any">
+                </div>
+            `,
+            cone: `
+                <div class="input-group">
+                    <label for="radius3d">Radius (r):</label>
+                    <input type="number" id="radius3d" placeholder="Enter radius" min="0" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="height3d">Height (h):</label>
+                    <input type="number" id="height3d" placeholder="Enter height" min="0" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="slantHeight3d">Slant Height (l):</label>
+                    <input type="number" id="slantHeight3d" placeholder="Enter slant height" min="0" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="lsa3d">LSA:</label>
+                    <input type="number" id="lsa3d" placeholder="Enter LSA" min="0" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="tsa3d">TSA:</label>
+                    <input type="number" id="tsa3d" placeholder="Enter TSA" min="0" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="volume3d">Volume:</label>
+                    <input type="number" id="volume3d" placeholder="Enter Volume" min="0" step="any">
+                </div>
+            `,
+            sphere: `
+                <div class="input-group">
+                    <label for="radius3d">Radius (r):</label>
+                    <input type="number" id="radius3d" placeholder="Enter radius" min="0" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="tsa3d">TSA:</label>
+                    <input type="number" id="tsa3d" placeholder="Enter TSA" min="0" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="volume3d">Volume:</label>
+                    <input type="number" id="volume3d" placeholder="Enter Volume" min="0" step="any">
+                </div>
+            `,
+            hemisphere: `
+                <div class="input-group">
+                    <label for="radius3d">Radius (r):</label>
+                    <input type="number" id="radius3d" placeholder="Enter radius" min="0" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="lsa3d">LSA:</label>
+                    <input type="number" id="lsa3d" placeholder="Enter LSA" min="0" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="tsa3d">TSA:</label>
+                    <input type="number" id="tsa3d" placeholder="Enter TSA" min="0" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="volume3d">Volume:</label>
+                    <input type="number" id="volume3d" placeholder="Enter Volume" min="0" step="any">
+                </div>
+            `
+        };
+
+        function update3DInputs() {
+            const shape = document.getElementById('shape3d')?.value;
+            const inputsDiv = document.getElementById('inputs3d');
+            if (shape && inputsDiv) {
+                inputsDiv.innerHTML = inputs3d[shape];
+                toggle3DUnknownFields();
+                draw3DShape(shape);
+                document.getElementById('cone-diagram').style.display = shape === 'cone' ? 'block' : 'none';
+            }
+        }
+
+        function toggle3DUnknownFields() {
+            const unknown = document.getElementById('unknown3d')?.value;
+            const shape = document.getElementById('shape3d')?.value;
+            if (!unknown || !shape) return;
+            const fields = ['side3d', 'radius3d', 'height3d', 'slantHeight3d', 'lsa3d', 'tsa3d', 'volume3d', 'length3d', 'width3d'];
+            fields.forEach(field => {
+                const input = document.getElementById(field);
+                if (input) input.disabled = false;
+            });
+            if (unknown === 'side' && shape === 'cube') document.getElementById('side3d').disabled = true;
+            else if (unknown === 'radius' && (shape === 'cone' || shape === 'sphere' || shape === 'hemisphere')) document.getElementById('radius3d').disabled = true;
+            else if (unknown === 'height' && (shape === 'cuboid' || shape === 'cone')) document.getElementById('height3d').disabled = true;
+            else if (unknown === 'slant-height' && shape === 'cone') document.getElementById('slantHeight3d').disabled = true;
+            else if (unknown === 'lsa') document.getElementById('lsa3d').disabled = true;
+            else if (unknown === 'tsa') document.getElementById('tsa3d').disabled = true;
+            else if (unknown === 'volume') document.getElementById('volume3d').disabled = true;
+        }
+
+        function calculate3D() {
+            const shape = document.getElementById('shape3d')?.value;
+            const unknown = document.getElementById('unknown3d')?.value;
+            if (!shape || !unknown) return;
+            let result, steps;
+
+            switch (shape) {
+                case 'cube':
+                    const side = parseFloat(document.getElementById('side3d')?.value) || 0;
+                    const cubeLSA = parseFloat(document.getElementById('lsa3d')?.value) || 0;
+                    const cubeTSA = parseFloat(document.getElementById('tsa3d')?.value) || 0;
+                    const cubeVolume = parseFloat(document.getElementById('volume3d')?.value) || 0;
+                    if (unknown === 'side') {
+                        if (cubeLSA > 0) {
+                            result = Math.sqrt(cubeLSA / 4);
+                            steps = `LSA = 4 × a² ⇒ a = √(LSA / 4) = √(${cubeLSA} / 4) = ${result.toFixed(2)}`;
+                        } else if (cubeTSA > 0) {
+                            result = Math.sqrt(cubeTSA / 6);
+                            steps = `TSA = 6 × a² ⇒ a = √(TSA / 6) = √(${cubeTSA} / 6) = ${result.toFixed(2)}`;
+                        } else if (cubeVolume > 0) {
+                            result = Math.cbrt(cubeVolume);
+                            steps = `Volume = a³ ⇒ a = ³√(Volume) = ³√(${cubeVolume}) = ${result.toFixed(2)}`;
+                        }
+                    } else if (unknown === 'lsa') {
+                        result = 4 * side * side;
+                        steps = `LSA = 4 × a² = 4 × ${side}² = ${result.toFixed(2)}`;
+                    } else if (unknown === 'tsa') {
+                        result = 6 * side * side;
+                        steps = `TSA = 6 × a² = 6 × ${side}² = ${result.toFixed(2)}`;
+                    } else if (unknown === 'volume') {
+                        result = side * side * side;
+                        steps = `Volume = a³ = ${side}³ = ${result.toFixed(2)}`;
+                    }
+                    break;
+
+                case 'cuboid':
+                    const length = parseFloat(document.getElementById('length3d')?.value) || 0;
+                    const width = parseFloat(document.getElementById('width3d')?.value) || 0;
+                    const height = parseFloat(document.getElementById('height3d')?.value) || 0;
+                    const cuboidLSA = parseFloat(document.getElementById('lsa3d')?.value) || 0;
+                    const cuboidTSA = parseFloat(document.getElementById('tsa3d')?.value) || 0;
+                    const cuboidVolume = parseFloat(document.getElementById('volume3d')?.value) || 0;
+                    if (unknown === 'height') {
+                        if (cuboidLSA > 0 && length > 0 && width > 0) {
+                            result = cuboidLSA / (2 * (length + width));
+                            steps = `LSA = 2(l + w)h ⇒ h = LSA / (2(l + w)) = ${cuboidLSA} / (2(${length} + ${width})) = ${result.toFixed(2)}`;
+                        } else if (cuboidVolume > 0 && length > 0 && width > 0) {
+                            result = cuboidVolume / (length * width);
+                            steps = `Volume = l × w × h ⇒ h = Volume / (l × w) = ${cuboidVolume} / (${length} × ${width}) = ${result.toFixed(2)}`;
+                        }
+                    } else if (unknown === 'lsa') {
+                        result = 2 * (length + width) * height;
+                        steps = `LSA = 2(l + w)h = 2(${length} + ${width}) × ${height} = ${result.toFixed(2)}`;
+                    } else if (unknown === 'tsa') {
+                        result = 2 * (length * width + width * height + height * length);
+                        steps = `TSA = 2(lw + wh + hl) = 2(${length * width} + ${width * height} + ${height * length}) = ${result.toFixed(2)}`;
+                    } else if (unknown === 'volume') {
+                        result = length * width * height;
+                        steps = `Volume = l × w × h = ${length} × ${width} × ${height} = ${result.toFixed(2)}`;
+                    }
+                    break;
+
+                case 'cone':
+                    const radius = parseFloat(document.getElementById('radius3d')?.value) || 0;
+                    const coneHeight = parseFloat(document.getElementById('height3d')?.value) || 0;
+                    const coneSlantHeight = parseFloat(document.getElementById('slantHeight3d')?.value) || 0;
+                    const coneLSA = parseFloat(document.getElementById('lsa3d')?.value) || 0;
+                    const coneTSA = parseFloat(document.getElementById('tsa3d')?.value) || 0;
+                    const coneVolume = parseFloat(document.getElementById('volume3d')?.value) || 0;
+                    if (unknown === 'radius') {
+                        if (coneLSA > 0 && coneSlantHeight > 0) {
+                            result = coneLSA / (Math.PI * coneSlantHeight);
+                            steps = `LSA = πrl ⇒ r = LSA / (πl) = ${coneLSA} / (π × ${coneSlantHeight}) = ${result.toFixed(2)}`;
+                        } else if (coneTSA > 0 && coneSlantHeight > 0) {
+                            const a = Math.PI;
+                            const b = Math.PI * coneSlantHeight;
+                            const c = -coneTSA;
+                            result = (-b + Math.sqrt(b*b - 4*a*c)) / (2*a);
+                            steps = `TSA = πr(r + l) ⇒ πr² + πrl - TSA = 0<br>`;
+                            steps += `r = [ -πl + √((πl)² + 4π × TSA) ] / (2π)<br>`;
+                            steps += `r = [ -${(Math.PI * coneSlantHeight).toFixed(2)} + √(${(Math.PI * coneSlantHeight).toFixed(2)}² + 4 × ${Math.PI.toFixed(2)} × ${coneTSA}) ] / (2 × ${Math.PI.toFixed(2)})<br>`;
+                            steps += `r = ${result.toFixed(2)}`;
+                        } else if (coneVolume > 0 && coneHeight > 0) {
+                            result = Math.sqrt((3 * coneVolume) / (Math.PI * coneHeight));
+                            steps = `Volume = (1/3)πr²h ⇒ r = √((3 × Volume) / (πh)) = √((3 × ${coneVolume}) / (π × ${coneHeight})) = ${result.toFixed(2)}`;
+                        }
+                    } else if (unknown === 'height') {
+                        if (coneVolume > 0 && radius > 0) {
+                            result = (3 * coneVolume) / (Math.PI * radius * radius);
+                            steps = `Volume = (1/3)πr²h ⇒ h = (3 × Volume) / (πr²) = (3 × ${coneVolume}) / (π × ${radius}²) = ${result.toFixed(2)}`;
+                        } else if (coneSlantHeight > 0 && radius > 0) {
+                            result = Math.sqrt(coneSlantHeight * coneSlantHeight - radius * radius);
+                            steps = `l² = r² + h² ⇒ h = √(l² - r²) = √(${coneSlantHeight}² - ${radius}²) = ${result.toFixed(2)}`;
+                        }
+                    } else if (unknown === 'slant-height') {
+                        result = Math.sqrt(radius * radius + coneHeight * coneHeight);
+                        steps = `Slant Height (l) = √(r² + h²) = √(${radius}² + ${coneHeight}²) = ${result.toFixed(2)}`;
+                    } else if (unknown === 'lsa') {
+                        result = Math.PI * radius * coneSlantHeight;
+                        steps = `LSA = πrl = π × ${radius} × ${coneSlantHeight} = ${result.toFixed(2)}`;
+                    } else if (unknown === 'tsa') {
+                        result = Math.PI * radius * (radius + coneSlantHeight);
+                        steps = `TSA = πr(r + l) = π × ${radius} × (${radius} + ${coneSlantHeight}) = ${result.toFixed(2)}`;
+                    } else if (unknown === 'volume') {
+                        result = (1 / 3) * Math.PI * radius * radius * coneHeight;
+                        steps = `Volume = (1/3)πr²h = (1/3) × π × ${radius}² × ${coneHeight} = ${result.toFixed(2)}`;
+                    }
+                    break;
+
+                case 'sphere':
+                    const sphereRadius = parseFloat(document.getElementById('radius3d')?.value) || 0;
+                    const sphereTSA = parseFloat(document.getElementById('tsa3d')?.value) || 0;
+                    const sphereVolume = parseFloat(document.getElementById('volume3d')?.value) || 0;
+                    if (unknown === 'radius') {
+                        if (sphereTSA > 0) {
+                            result = Math.sqrt(sphereTSA / (4 * Math.PI));
+                            steps = `TSA = 4πr² ⇒ r = √(TSA / (4π)) = √(${sphereTSA} / (4π)) = ${result.toFixed(2)}`;
+                        } else if (sphereVolume > 0) {
+                            result = Math.cbrt((3 * sphereVolume) / (4 * Math.PI));
+                            steps = `Volume = (4/3)πr³ ⇒ r = ³√((3 × Volume) / (4π)) = ³√((3 × ${sphereVolume}) / (4π)) = ${result.toFixed(2)}`;
+                        }
+                    } else if (unknown === 'tsa') {
+                        result = 4 * Math.PI * sphereRadius * sphereRadius;
+                        steps = `TSA = 4πr² = 4 × π × ${sphereRadius}² = ${result.toFixed(2)}`;
+                    } else if (unknown === 'volume') {
+                        result = (4 / 3) * Math.PI * sphereRadius * sphereRadius * sphereRadius;
+                        steps = `Volume = (4/3)πr³ = (4/3) × π × ${sphereRadius}³ = ${result.toFixed(2)}`;
+                    }
+                    break;
+
+                case 'hemisphere':
+                    const hemisphereRadius = parseFloat(document.getElementById('radius3d')?.value) || 0;
+                    const hemisphereLSA = parseFloat(document.getElementById('lsa3d')?.value) || 0;
+                    const hemisphereTSA = parseFloat(document.getElementById('tsa3d')?.value) || 0;
+                    const hemisphereVolume = parseFloat(document.getElementById('volume3d')?.value) || 0;
+                    if (unknown === 'radius') {
+                        if (hemisphereLSA > 0) {
+                            result = Math.sqrt(hemisphereLSA / (2 * Math.PI));
+                            steps = `LSA = 2πr² ⇒ r = √(LSA / (2π)) = √(${hemisphereLSA} / (2π)) = ${result.toFixed(2)}`;
+                        } else if (hemisphereTSA > 0) {
+                            result = Math.sqrt(hemisphereTSA / (3 * Math.PI));
+                            steps = `TSA = 3πr² ⇒ r = √(TSA / (3π)) = √(${hemisphereTSA} / (3π)) = ${result.toFixed(2)}`;
+                        } else if (hemisphereVolume > 0) {
+                            result = Math.cbrt((3 * hemisphereVolume) / (2 * Math.PI));
+                            steps = `Volume = (2/3)πr³ ⇒ r = ³√((3 × Volume) / (2π)) = ³√((3 × ${hemisphereVolume}) / (2π)) = ${result.toFixed(2)}`;
+                        }
+                    } else if (unknown === 'lsa') {
+                        result = 2 * Math.PI * hemisphereRadius * hemisphereRadius;
+                        steps = `LSA = 2πr² = 2 × π × ${hemisphereRadius}² = ${result.toFixed(2)}`;
+                    } else if (unknown === 'tsa') {
+                        result = 3 * Math.PI * hemisphereRadius * hemisphereRadius;
+                        steps = `TSA = 3πr² = 3 × π × ${hemisphereRadius}² = ${result.toFixed(2)}`;
+                    } else if (unknown === 'volume') {
+                        result = (2 / 3) * Math.PI * hemisphereRadius * hemisphereRadius * hemisphereRadius;
+                        steps = `Volume = (2/3)πr³ = (2/3) × π × ${hemisphereRadius}³ = ${result.toFixed(2)}`;
+                    }
+                    break;
+            }
+
+            const resultDiv = document.getElementById('result3d');
+            const resultValue = document.getElementById('result-value3d');
+            const stepsDiv = document.getElementById('steps3d');
+            if (resultDiv && resultValue && stepsDiv) {
+                resultValue.textContent = `Result: ${isNaN(result) || result === 0 ? 'Invalid input' : result.toFixed(2)}`;
+                resultDiv.style.display = 'block';
+                stepsDiv.innerHTML = steps || 'No steps available';
+                stepsDiv.style.display = 'none';
+            }
+            draw3DShape(shape);
+        }
+
+        function draw3DShape(shape) {
+            const shape3d = document.getElementById('shape-3d');
+            if (!shape3d) return;
+            shape3d.innerHTML = '';
+            switch (shape) {
+                case 'cube':
+                    shape3d.innerHTML = `
+                        <div class="shape-3d cube">
+                            <div class="face front"></div>
+                            <div class="face back"></div>
+                            <div class="face left"></div>
+                            <div class="face right"></div>
+                            <div class="face top"></div>
+                            <div class="face bottom"></div>
+                        </div>
+                    `;
+                    break;
+                case 'cuboid':
+                    shape3d.innerHTML = `
+                        <div class="shape-3d cuboid">
+                            <div class="face front"></div>
+                            <div class="face back"></div>
+                            <div class="face left"></div>
+                            <div class="face right"></div>
+                            <div class="face top"></div>
+                            <div class="face bottom"></div>
+                        </div>
+                    `;
+                    break;
+                case 'cone':
+                    shape3d.innerHTML = `
+                        <div class="cone">
+                            <div class="base"></div>
+                            <div class="side"></div>
+                        </div>
+                    `;
+                    break;
+                case 'sphere':
+                    shape3d.innerHTML = `
+                        <div class="sphere"></div>
+                    `;
+                    break;
+                case 'hemisphere':
+                    shape3d.innerHTML = `
+                        <div class="hemisphere"></div>
+                    `;
+                    break;
+            }
+        }
+
+        function toggleSteps(id) {
+            const stepsDiv = document.getElementById(id);
+            if (stepsDiv) {
+                stepsDiv.style.display = stepsDiv.style.display === 'block' ? 'none' : 'block';
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add input event listeners
+            ['squareSide', 'circleRadius', 'trapeziumTopBase', 'trapeziumBottomBase', 'trapeziumHeight', 
+             'rhombusDiagonal1', 'rhombusDiagonal2', 'triangleBase', 'triangleHeight', 
+             'parallelogramBase', 'parallelogramHeight'].forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('input', () => updateVisualization(document.querySelector('.tab-content.active')?.id));
+                }
+            });
+
+            // Button ripple effect
+            document.querySelectorAll('button:not(.steps-btn)').forEach(btn => {
+                btn.addEventListener('mousemove', (e) => {
+                    const rect = btn.getBoundingClientRect();
+                    btn.style.setProperty('--x', `${e.clientX - rect.left}px`);
+                    btn.style.setProperty('--y', `${e.clientY - rect.top}px`);
+                });
+            });
+
+            // Initial visualization for active tab
+            updateVisualization('square');
+            update3DInputs();
+        });
+    </script>
+</body>
+</html>

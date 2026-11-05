@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Circle Tangent Demonstrations</title>
+    <style>
+        body {
+            min-height: 100vh;
+            background: #f9fbfc; /* Light background */
+            padding: 1.25rem;
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #2d2d2d; /* Dark text */
+        }
+        .container {
+            max-width: 64rem;
+            margin: 0 auto;
+            background: #ffffff; /* White card */
+            padding: 1.25rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(15, 90, 181, 0.1); /* Subtle blue shadow */
+        }
+        h1 {
+            font-size: 2.4em; /* Matches Polynomial Calculator */
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #0f5ab5; /* Blue heading */
+            font-weight: 600;
+        }
+        h2 {
+            font-size: 1.8em; /* Matches Polynomial Calculator */
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            color: #123d82; /* Darker blue subheading */
+            font-weight: 500;
+        }
+        p {
+            color: #4a4a4a; /* Grayish text */
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 1em; /* Standard body text size */
+            line-height: 1.5;
+        }
+        .info-box {
+            background: #e8eefc; /* Light blue result */
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: center;
+        }
+        .info-text {
+            color: #123d82; /* Darker blue text */
+            font-size: 0.95em; /* Slightly smaller for info */
+        }
+        .canvas-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        canvas {
+            border: 1px solid #e0e0e0; /* Light gray border */
+            border-radius: 10px;
+            background-color: #ffffff; /* White canvas background */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+        }
+        .legend {
+            margin-top: 1.5rem;
+            text-align: center;
+            color: #4a4a4a; /* Grayish text */
+            font-size: 0.9em; /* Slightly smaller for legend */
+            line-height: 1.4;
+        }
+        .bold {
+            font-weight: bold;
+        }
+        .input-group {
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            justify-content: center;
+        }
+        label {
+            display: block;
+            color: #4a4a4a; /* Grayish label */
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+            font-size: 0.9em; /* Matches input labels */
+        }
+        input {
+            border: 1px solid #e0e0e0; /* Light gray border */
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            width: 8rem;
+            font-size: 0.9em; /* Matches Polynomial Calculator inputs */
+            font-family: 'Segoe UI', Arial, sans-serif;
+            outline: none;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+        input:focus {
+            border-color: #0f5ab5; /* Blue focus */
+        }
+        .demo-section {
+            margin-bottom: 3rem;
+        }
+        .theorem {
+            background: #f2f6ff; /* Light blue steps */
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+            border-left: 4px solid #1a73e8; /* Blue accent */
+        }
+        .theorem-title {
+            font-weight: bold;
+            color: #0f5ab5; /* Blue heading */
+            margin-bottom: 1rem;
+            font-size: 1.2em; /* Slightly larger for emphasis */
+        }
+        .proof {
+            background: #e8eefc; /* Light blue result */
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            color: #4a4a4a; /* Grayish text */
+            font-size: 0.9em; /* Consistent with body text */
+            line-height: 1.4;
+        }
+        .proof-step {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Interactive Circle Tangent Demonstrations</h1>
+        
+        <!-- Perpendicular Tangent Demo -->
+        <div class="demo-section">
+            <h2>Perpendicular Tangent Demonstration</h2>
+            
+            <p>
+                The tangent at any point of a circle is perpendicular (90°) to the
+                radius through the point of contact. Drag point T around the circle to
+                see this relationship in action.
+            </p>
+
+            <div class="info-box">
+                <p class="info-text">
+                    Click and drag the red point T to move it around the circle's circumference
+                </p>
+            </div>
+
+            <div class="canvas-container">
+                <canvas id="perpendicularCanvas" width="500" height="500"></canvas>
+            </div>
+
+            <div class="legend">
+                <p>
+                    <span class="bold">Blue line:</span> Tangent line<br>
+                    <span class="bold">Black line:</span> Radius<br>
+                    <span class="bold">Orange square:</span> 90° angle indicator<br>
+                    <span class="bold">Blue circle:</span> Original circle
+                </p>
+            </div>
+
+            <!-- Theorem 1: Perpendicular Tangent Theorem -->
+            <div class="theorem">
+                <div class="theorem-title">Theorem 1: Perpendicular Tangent Theorem</div>
+                <p><em>The tangent at any point of a circle is perpendicular to the radius through the point of contact.</em></p>
+                
+                <div class="proof">
+<strong>Proof (Using RHS Congruence)</strong>
+
+<strong>Given:</strong>
+- A circle with center O.
+- PQ is a tangent at point P on the circle.
+- OP is the radius.
+
+<strong>To Prove:</strong>
+OP ⊥ PQ (i.e., ∠OPQ = 90°).
+
+<strong>Proof by Contradiction:</strong>
+1. Assume OP is not perpendicular to PQ.
+2. Draw a perpendicular OM from O to PQ, meeting at M (where M ≠ P).
+3. Take another point N on PQ such that PM = MN.
+4. In △OMP and △OMN:
+   - OM is common.
+   - PM = MN (by construction).
+   - ∠OMP = ∠OMN = 90°.
+5. Thus, △OMP ≅ △OMN (by SAS).
+6. Therefore, ON = OP (CPCT).
+7. But ON is a new radius, meaning N lies on the circle.
+8. This contradicts the definition of a tangent (which touches the circle at only one point).
+9. Hence, our assumption is false, and OP ⊥ PQ.
+
+<strong>Conclusion:</strong> The tangent is perpendicular to the radius at the point of contact.
+                </div>
+            </div>
+        </div>
+
+        <!-- External Point Tangent Demo -->
+        <div class="demo-section">
+            <h2>External Point Tangent Demonstration</h2>
+            
+            <div class="input-group">
+                <div>
+                    <label>Distance PT1 (cm)</label>
+                    <input type="number" id="pt1Distance" value="5.29" step="0.1" min="0">
+                </div>
+                <div>
+                    <label>Distance PT2 (cm)</label>
+                    <input type="number" id="pt2Distance" value="5.29" step="0.1" min="0">
+                </div>
+            </div>
+            
+            <p id="coordinates">
+                Drag point P to see how tangent lines change. Current coordinates: (300, 100)
+                <br>PT1: 5.29 cm
+                <br>PT2: 5.29 cm
+            </p>
+            
+            <div class="info-box">
+                <p class="info-text">
+                    Drag the blue point P or change the distance values to see the tangent lines adjust
+                </p>
+            </div>
+
+            <div class="canvas-container">
+                <canvas id="externalCanvas" width="500" height="500"></canvas>
+            </div>
+
+            <div class="legend">
+                <p>
+                    <span class="bold">Blue lines:</span> Tangent lines from external point P<br>
+                    <span class="bold">Red points:</span> Points of tangency (T1 and T2)<br>
+                    <span class="bold">Blue circle:</span> Original circle
+                </p>
+            </div>
+
+            <!-- Theorem 2: Equal Tangents Theorem -->
+            <div class="theorem">
+                <div class="theorem-title">Theorem 2: Equal Tangents Theorem</div>
+                <p><em>The lengths of two tangents drawn from an external point to a circle are equal.</em></p>
+                
+                <div class="proof">
+<strong>Proof (Using Right Triangles)</strong>
+
+<strong>Given:</strong>
+- A circle with center O.
+- P is an external point.
+- PT₁ and PT₂ are tangents from P to the circle, touching at T₁ and T₂.
+
+<strong>To Prove:</strong>
+PT₁ = PT₂.
+
+<strong>Proof:</strong>
+1. Join OT₁, OT₂, and OP.
+2. ∠OT₁P = ∠OT₂P = 90° (by Theorem 1).
+3. In △OT₁P and △OT₂P:
+   - OP is common (hypotenuse).
+   - OT₁ = OT₂ (radii of the same circle).
+4. ∴ △OT₁P ≅ △OT₂P (by RHS congruency).
+5. ⇒ PT₁ = PT₂ (CPCT).
+
+<strong>Conclusion:</strong> Both tangents from an external point are equal in length.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Perpendicular Tangent Demonstration
+        const perpendicularCanvas = document.getElementById('perpendicularCanvas');
+        const perpendicularCtx = perpendicularCanvas.getContext('2d');
+        const centerX1 = 250;
+        const centerY1 = 250;
+        const radius1 = 100;
+
+        let pointT = { x: 350, y: 250 };
+        let isDraggingT = false;
+
+        function calculateTangentAngle() {
+            const dx = pointT.x - centerX1;
+            const dy = pointT.y - centerY1;
+            const radiusAngle = Math.atan2(dy, dx);
+            return radiusAngle + Math.PI / 2;
+        }
+
+        function snapToCircle(x, y) {
+            const dx = x - centerX1;
+            const dy = y - centerY1;
+            const angle = Math.atan2(dy, dx);
+            return {
+                x: centerX1 + radius1 * Math.cos(angle),
+                y: centerY1 + radius1 * Math.sin(angle)
+            };
+        }
+
+        function drawPerpendicular() {
+            perpendicularCtx.clearRect(0, 0, perpendicularCanvas.width, perpendicularCanvas.height);
+
+            // Draw circle
+            perpendicularCtx.beginPath();
+            perpendicularCtx.arc(centerX1, centerY1, radius1, 0, Math.PI * 2);
+            perpendicularCtx.fillStyle = "#1a73e8"; /* Blue circle */
+            perpendicularCtx.fill();
+            perpendicularCtx.strokeStyle = "#1a73e8";
+            perpendicularCtx.stroke();
+
+            // Draw tangent line
+            const tangentLength = 100;
+            const tangentAngle = calculateTangentAngle();
+            perpendicularCtx.beginPath();
+            perpendicularCtx.moveTo(
+                pointT.x - Math.cos(tangentAngle) * tangentLength,
+                pointT.y - Math.sin(tangentAngle) * tangentLength
+            );
+            perpendicularCtx.lineTo(
+                pointT.x + Math.cos(tangentAngle) * tangentLength,
+                pointT.y + Math.sin(tangentAngle) * tangentLength
+            );
+            perpendicularCtx.strokeStyle = "#1a73e8"; /* Blue tangent */
+            perpendicularCtx.stroke();
+
+            // Draw radius
+            perpendicularCtx.beginPath();
+            perpendicularCtx.moveTo(centerX1, centerY1);
+            perpendicularCtx.lineTo(pointT.x, pointT.y);
+            perpendicularCtx.strokeStyle = "black";
+            perpendicularCtx.stroke();
+
+            // Draw square angle indicator
+            const squareSize = 15;
+            const radiusAngle = Math.atan2(pointT.y - centerY1, pointT.x - centerX1);
+            const squareDistance = radius1 * 0.2;
+            const squareCenter = {
+                x: centerX1 + Math.cos(radiusAngle) * squareDistance,
+                y: centerY1 + Math.sin(radiusAngle) * squareDistance
+            };
+
+            perpendicularCtx.beginPath();
+            perpendicularCtx.moveTo(squareCenter.x, squareCenter.y);
+            perpendicularCtx.lineTo(
+                squareCenter.x + squareSize * Math.cos(radiusAngle),
+                squareCenter.y + squareSize * Math.sin(radiusAngle)
+            );
+            perpendicularCtx.lineTo(
+                squareCenter.x + squareSize * (Math.cos(radiusAngle) + Math.cos(tangentAngle)),
+                squareCenter.y + squareSize * (Math.sin(radiusAngle) + Math.sin(tangentAngle))
+            );
+            perpendicularCtx.strokeStyle = "#ff9500"; /* Orange indicator */
+            perpendicularCtx.stroke();
+
+            // Draw point T
+            perpendicularCtx.beginPath();
+            perpendicularCtx.arc(pointT.x, pointT.y, 6, 0, Math.PI * 2);
+            perpendicularCtx.fillStyle = "#ff6b6b"; /* Red point */
+            perpendicularCtx.fill();
+            perpendicularCtx.fillStyle = "#4a4a4a"; /* Grayish text */
+            perpendicularCtx.font = "14px 'Segoe UI'"; /* Consistent font size */
+            perpendicularCtx.fillText("T", pointT.x + 8, pointT.y + 8);
+            perpendicularCtx.fillText("90°", squareCenter.x + 15, squareCenter.y + 15);
+        }
+
+        // Mouse events for perpendicular demo
+        perpendicularCanvas.addEventListener('mousedown', (e) => {
+            const rect = perpendicularCanvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const dx = x - pointT.x;
+            const dy = y - pointT.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < 20) {
+                isDraggingT = true;
+            }
+        });
+
+        perpendicularCanvas.addEventListener('mousemove', (e) => {
+            if (!isDraggingT) return;
+            const rect = perpendicularCanvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            pointT = snapToCircle(x, y);
+            drawPerpendicular();
+        });
+
+        perpendicularCanvas.addEventListener('mouseup', () => {
+            isDraggingT = false;
+        });
+
+        perpendicularCanvas.addEventListener('mouseleave', () => {
+            isDraggingT = false;
+        });
+
+        // External Point Tangent Demonstration
+        const externalCanvas = document.getElementById('externalCanvas');
+        const externalCtx = externalCanvas.getContext('2d');
+        const pt1Input = document.getElementById('pt1Distance');
+        const pt2Input = document.getElementById('pt2Distance');
+        const coordinatesText = document.getElementById('coordinates');
+        const PIXELS_PER_CM = 37.8;
+        const centerX2 = 250;
+        const centerY2 = 250;
+        const radius2 = 100;
+
+        let pointP = { x: 300, y: 100 };
+        let isDraggingP = false;
+
+        function calculateTangentPoints() {
+            const dx = pointP.x - centerX2;
+            const dy = pointP.y - centerY2;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            
+            if (dist <= radius2) return { t1: null, t2: null };
+
+            const angle = Math.atan2(dy, dx);
+            const theta = Math.acos(radius2 / dist);
+            
+            const t1 = {
+                x: centerX2 + radius2 * Math.cos(angle + theta),
+                y: centerY2 + radius2 * Math.sin(angle + theta)
+            };
+            const t2 = {
+                x: centerX2 + radius2 * Math.cos(angle - theta),
+                y: centerY2 + radius2 * Math.sin(angle - theta)
+            };
+            return { t1, t2 };
+        }
+
+        function calculateDistance(p1, p2) {
+            const dx = p2.x - p1.x;
+            const dy = p2.y - p1.y;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        function drawExternal() {
+            externalCtx.clearRect(0, 0, externalCanvas.width, externalCanvas.height);
+            const { t1, t2 } = calculateTangentPoints();
+
+            // Draw tangent lines
+            if (t1 && t2) {
+                const extensionLength = 100;
+                [t1, t2].forEach(t => {
+                    const dx = t.x - pointP.x;
+                    const dy = t.y - pointP.y;
+                    const length = Math.sqrt(dx * dx + dy * dy);
+                    const unitX = dx / length;
+                    const unitY = dy / length;
+                    const extendedX = t.x + extensionLength * unitX;
+                    const extendedY = t.y + extensionLength * unitY;
+
+                    externalCtx.beginPath();
+                    externalCtx.moveTo(pointP.x - extensionLength * unitX, pointP.y - extensionLength * unitY);
+                    externalCtx.lineTo(extendedX, extendedY);
+                    externalCtx.strokeStyle = "#1a73e8"; /* Blue tangent */
+                    externalCtx.stroke();
+                });
+            }
+
+            // Draw circle
+            externalCtx.beginPath();
+            externalCtx.arc(centerX2, centerY2, radius2, 0, Math.PI * 2);
+            externalCtx.fillStyle = "#1a73e8"; /* Blue circle */
+            externalCtx.fill();
+            externalCtx.strokeStyle = "#1a73e8";
+            externalCtx.stroke();
+
+            // Draw tangent points and labels
+            if (t1 && t2) {
+                externalCtx.beginPath();
+                externalCtx.arc(t1.x, t1.y, 5, 0, Math.PI * 2);
+                externalCtx.arc(t2.x, t2.y, 5, 0, Math.PI * 2);
+                externalCtx.fillStyle = "#ff6b6b"; /* Red points */
+                externalCtx.fill();
+
+                const distT1 = (calculateDistance(pointP, t1) / PIXELS_PER_CM).toFixed(2);
+                const distT2 = (calculateDistance(pointP, t2) / PIXELS_PER_CM).toFixed(2);
+                
+                externalCtx.font = "14px 'Segoe UI'"; /* Consistent font size */
+                externalCtx.fillStyle = "#4a4a4a"; /* Grayish text */
+                externalCtx.fillText("T1", t1.x + 8, t1.y + 8);
+                externalCtx.fillText("T2", t2.x + 8, t2.y + 8);
+
+                const labelOffset = 20;
+                externalCtx.fillText(`${distT1} cm`, (pointP.x + t1.x) / 2 + labelOffset, (pointP.y + t1.y) / 2 + labelOffset);
+                externalCtx.fillText(`${distT2} cm`, (pointP.x + t2.x) / 2 + labelOffset, (pointP.y + t2.y) / 2 + labelOffset);
+
+                // Update coordinates text
+                coordinatesText.innerHTML = `Drag point P to see how tangent lines change. Current coordinates: (${Math.round(pointP.x)}, ${Math.round(pointP.y)})
+                    <br>PT1: ${distT1} cm
+                    <br>PT2: ${distT2} cm`;
+                
+                // Only update inputs when dragging
+                if (isDraggingP) {
+                    pt1Input.value = distT1;
+                    pt2Input.value = distT2;
+                }
+            }
+
+            // Draw point P
+            externalCtx.beginPath();
+            externalCtx.arc(pointP.x, pointP.y, 8, 0, Math.PI * 2);
+            externalCtx.fillStyle = "#0f5ab5"; /* Blue point */
+            externalCtx.fill();
+            externalCtx.fillStyle = "#4a4a4a"; /* Grayish text */
+            externalCtx.font = "14px 'Segoe UI'"; /* Consistent font size */
+            externalCtx.fillText("P", pointP.x + 8, pointP.y + 8);
+        }
+
+        // Mouse events for external demo
+        externalCanvas.addEventListener('mousedown', (e) => {
+            const rect = externalCanvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const dx = x - pointP.x;
+            const dy = y - pointP.y;
+            if (Math.sqrt(dx * dx + dy * dy) < 20) {
+                isDraggingP = true;
+            }
+        });
+
+        externalCanvas.addEventListener('mousemove', (e) => {
+            if (!isDraggingP) return;
+            const rect = externalCanvas.getBoundingClientRect();
+            pointP = {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+            drawExternal();
+        });
+
+        externalCanvas.addEventListener('mouseup', () => {
+            isDraggingP = false;
+        });
+
+        externalCanvas.addEventListener('mouseleave', () => {
+            isDraggingP = false;
+        });
+
+        // Input event listeners
+        pt1Input.addEventListener('input', (e) => {
+            const dist = parseFloat(e.target.value);
+            if (!isNaN(dist)) {
+                const pixels = dist * PIXELS_PER_CM;
+                const t1 = calculateTangentPoints().t1;
+                if (t1) {
+                    const angle = Math.atan2(t1.y - pointP.y, t1.x - pointP.x);
+                    pointP = {
+                        x: t1.x - pixels * Math.cos(angle),
+                        y: t1.y - pixels * Math.sin(angle)
+                    };
+                    drawExternal();
+                }
+            }
+        });
+
+        pt2Input.addEventListener('input', (e) => {
+            const dist = parseFloat(e.target.value);
+            if (!isNaN(dist)) {
+                const pixels = dist * PIXELS_PER_CM;
+                const t2 = calculateTangentPoints().t2;
+                if (t2) {
+                    const angle = Math.atan2(t2.y - pointP.y, t2.x - pointP.x);
+                    pointP = {
+                        x: t2.x - pixels * Math.cos(angle),
+                        y: t2.y - pixels * Math.sin(angle)
+                    };
+                    drawExternal();
+                }
+            }
+        });
+
+        // Initial draws
+        drawPerpendicular();
+        drawExternal();
+    </script>
+</body>
+</html>

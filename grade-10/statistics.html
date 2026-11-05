@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics Calculator with MMM</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        body {
+            background: #f9fbfc;
+            line-height: 1.6;
+            color: #2d2d2d;
+            padding: 20px;
+            overflow: auto;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 90px auto 70px;
+            background: #ffffff;
+            padding: 60px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            text-align: center;
+            color: #0f5ab5;
+            font-size: 3.8em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+
+        .input-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        input[type="number"] {
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s ease;
+            width: 80px;
+        }
+
+        input[type="number"]:focus {
+            border-color: #0f5ab5;
+        }
+
+        button {
+            background: linear-gradient(45deg, #1a73e8, #2a85ff);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(26, 115, 232, 0.4);
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(26, 115, 232, 0.5);
+            background: linear-gradient(45deg, #185abc, #1a73e8);
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .button-section {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background: #f2f6ff;
+            color: #123d82;
+            font-weight: bold;
+            padding: 12px;
+        }
+
+        td {
+            padding: 10px;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8eefc;
+            border-radius: 10px;
+            line-height: 1.6;
+        }
+
+        .formula-section {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .formula-section h2 {
+            color: #123d82;
+            font-size: 2.4em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            letter-spacing: 0.8px;
+            border-bottom: 2px solid #0f5ab5;
+            padding-bottom: 5px;
+        }
+
+        .required-field {
+            border: 1px solid #ff9999;
+            background-color: #fff8f8;
+        }
+
+        .highlight-row {
+            background-color: #e8eefc;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(15, 90, 181, 0.3);
+            border-radius: 50%;
+            border-top-color: #0f5ab5;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .row-actions {
+            width: 40px;
+        }
+
+        .delete-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ff8787);
+            color: white;
+            font-size: 18px;
+            padding: 5px 10px;
+            margin: 0;
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+            transition: all 0.4s ease;
+        }
+
+        .delete-btn:hover {
+            background: linear-gradient(45deg, #e55a5a, #ff6b6b);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5);
+        }
+
+        .delete-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .delete-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .error-msg {
+            color: #dc3545;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .success-msg {
+            color: #28a745;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        /* MMM Calculator Styles */
+        .mmm-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f9fbfc;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(15, 90, 181, 0.1);
+        }
+
+        .mmm-container h2 {
+            color: #123d82;
+            font-size: 2.4em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            letter-spacing: 0.8px;
+            border-bottom: 2px solid #0f5ab5;
+            padding-bottom: 5px;
+            text-align: center;
+        }
+
+        .mmm-container input {
+            padding: 8px 12px;
+            margin: 10px;
+            width: 150px;
+            font-size: 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .mmm-container input:focus {
+            border-color: #0f5ab5;
+        }
+
+        .mmm-container button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            background: linear-gradient(45deg, #1a73e8, #2a85ff);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(26, 115, 232, 0.4);
+            transition: all 0.4s ease;
+        }
+
+        .mmm-container button:hover {
+            background: linear-gradient(45deg, #185abc, #1a73e8);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(26, 115, 232, 0.5);
+        }
+
+        .mmm-container button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .mmm-container button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        #mmm-steps {
+            text-align: left;
+            margin: 20px 10px;
+            padding: 10px;
+            background: #e8eefc;
+            border-left: 4px solid #0f5ab5;
+            border-radius: 0 5px 5px 0;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 20px;
+                margin: 50px auto;
+            }
+            h1 {
+                font-size: 2.8em;
+            }
+            .formula-section h2, .mmm-container h2 {
+                font-size: 1.8em;
+            }
+            .input-section {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            input[type="number"], .mmm-container input {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            button, .mmm-container button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            .button-section {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Statistics Calculator -->
+    <div class="container">
+        <h1>Statistics Calculator</h1>
+        <div class="input-section">
+            <button onclick="addRow()">Add Class Interval</button>
+            <button onclick="clearTable()" style="background: linear-gradient(45deg, #6c757d, #8a9299);">Clear All</button>
+        </div>
+
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>Class Interval</th>
+                    <th>Frequency (f<sub>i</sub>)</th>
+                    <th>Midpoint (x<sub>i</sub>)</th>
+                    <th>d<sub>i</sub></th>
+                    <th>u<sub>i</sub></th>
+                    <th>cf</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+
+        <div class="button-section">
+            <button onclick="calculateMean()">Calculate Mean</button>
+            <button onclick="calculateMedian()">Calculate Median</button>
+            <button onclick="calculateMode()">Calculate Mode</button>
+        </div>
+
+        <p id="errorMessage" class="error-msg" style="display: none;"></p>
+
+        <div id="meanResult" class="result" style="display: none;"></div>
+        <div id="medianResult" class="result" style="display: none;"></div>
+        <div id="modeResult" class="result" style="display: none;"></div>
+
+        <div class="formula-section">
+            <h2>Formulas</h2>
+            <p><strong>Direct Mean:</strong> Σf<sub>i</sub>x<sub>i</sub>/Σf<sub>i</sub></p>
+            <p><strong>Assumed Mean:</strong> A + Σf<sub>i</sub>d<sub>i</sub>/Σf<sub>i</sub></p>
+            <p><strong>Step-Deviation Mean:</strong> A + Σf<sub>i</sub>u<sub>i</sub>/Σf<sub>i</sub> × h</p>
+            <p><strong>Median:</strong> L + [n/<sub>2</sub>-cf/f] × h</p>
+            <p><strong>Mode:</strong> L + (f<sub>1</sub> - f<sub>0</sub>)/(2f<sub>1</sub> - f<sub>0</sub> - f<sub>2</sub>) × h</p>
+        </div>
+    </div>
+
+    <!-- MMM Calculator -->
+    <div class="mmm-container">
+        <h2>Mean-Median-Mode Calculator</h2>
+        <p>Enter two values, leave one blank, and click "Calculate".</p>
+
+        <input type="number" id="median" placeholder="Enter Median" step="any">
+        <input type="number" id="mean" placeholder="Enter Mean" step="any">
+        <input type="number" id="mode" placeholder="Enter Mode" step="any">
+        <button onclick="calculateMissing()">Calculate</button>
+
+        <div id="mmm-steps"></div>
+        <h3 id="mmm-result"></h3>
+    </div>
+
+    <script>
+        // Statistics Calculator Functions
+        function addRow() {
+            const tableBody = document.getElementById('tableBody');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>
+                    <input type="number" class="class-lower" placeholder="Lower" required step="any"> - 
+                    <input type="number" class="class-upper" placeholder="Upper" required step="any">
+                </td>
+                <td><input type="number" class="frequency" placeholder="Frequency" required step="any"></td>
+                <td><span class="midpoint">-</span></td>
+                <td><span class="di">-</span></td>
+                <td><span class="ui">-</span></td>
+                <td><span class="cf">-</span></td>
+                <td class="row-actions">
+                    <button class="delete-btn" onclick="deleteRow(this)">×</button>
+                </td>
+            `;
+            tableBody.appendChild(newRow);
+
+            const inputs = newRow.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() { validateInput(this); });
+                input.addEventListener('blur', function() {
+                    if (!this.value) this.classList.add('required-field');
+                    else this.classList.remove('required-field');
+                });
+            });
+        }
+
+        function validateInput(input) {
+            if (input.value) input.classList.remove('required-field');
+
+            if (input.classList.contains('class-upper')) {
+                const row = input.closest('tr');
+                const lowerInput = row.querySelector('.class-lower');
+                const upperValue = parseFloat(input.value);
+                const lowerValue = parseFloat(lowerInput.value);
+                if (!isNaN(lowerValue) && !isNaN(upperValue) && lowerValue >= upperValue) {
+                    input.classList.add('required-field');
+                } else {
+                    input.classList.remove('required-field');
+                }
+            }
+        }
+
+        function deleteRow(button) {
+            const row = button.closest('tr');
+            row.remove();
+        }
+
+        function clearTable() {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+            document.getElementById('meanResult').style.display = 'none';
+            document.getElementById('medianResult').style.display = 'none';
+            document.getElementById('modeResult').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+            addRow();
+        }
+
+        function calculateCumulativeFrequencies(rows) {
+            let cumulativeSum = 0;
+            rows.forEach((row) => {
+                const frequency = parseFloat(row.querySelector('.frequency').value);
+                if (!isNaN(frequency)) {
+                    cumulativeSum += frequency;
+                    row.querySelector('.cf').textContent = cumulativeSum.toFixed(2);
+                }
+            });
+        }
+
+        function calculateMean() {
+            document.getElementById('errorMessage').innerHTML = 'Calculating... <span class="loading"></span>';
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('meanResult').style.display = 'none';
+
+            setTimeout(() => {
+                try {
+                    const rows = document.querySelectorAll('#tableBody tr');
+                    if (rows.length === 0) {
+                        document.getElementById('errorMessage').textContent = "Please add at least one class interval.";
+                        return;
+                    }
+
+                    let allValid = true;
+                    rows.forEach(row => {
+                        const inputs = row.querySelectorAll('input');
+                        inputs.forEach(input => {
+                            if (!input.value.trim()) {
+                                input.classList.add('required-field');
+                                allValid = false;
+                            }
+                        });
+                        const lowerInput = row.querySelector('.class-lower');
+                        const upperInput = row.querySelector('.class-upper');
+                        if (lowerInput.value && upperInput.value && parseFloat(lowerInput.value) >= parseFloat(upperInput.value)) {
+                            upperInput.classList.add('required-field');
+                            allValid = false;
+                        }
+                    });
+
+                    if (!allValid) {
+                        document.getElementById('errorMessage').textContent = "Please fill in all fields correctly and ensure upper limits exceed lower limits.";
+                        return;
+                    }
+
+                    const midpoints = [];
+                    let sum_fi = 0, sum_fi_xi = 0, sum_fi_di = 0, sum_fi_ui = 0;
+                    const classWidths = [];
+
+                    calculateCumulativeFrequencies(rows);
+
+                    rows.forEach((row) => {
+                        row.classList.remove('highlight-row');
+                        const lowerLimit = parseFloat(row.querySelector('.class-lower').value);
+                        const upperLimit = parseFloat(row.querySelector('.class-upper').value);
+                        const frequency = parseFloat(row.querySelector('.frequency').value);
+                        const mid = (lowerLimit + upperLimit) / 2;
+                        midpoints.push(mid);
+                        row.querySelector('.midpoint').textContent = mid.toFixed(2);
+                        const classWidth = upperLimit - lowerLimit;
+                        classWidths.push(classWidth);
+                        sum_fi += frequency;
+                        sum_fi_xi += frequency * mid;
+                    });
+
+                    const firstWidth = classWidths[0];
+                    const allWidthsEqual = classWidths.every(width => Math.abs(width - firstWidth) < 0.001);
+                    if (!allWidthsEqual) {
+                        document.getElementById('errorMessage').textContent = "Warning: Class intervals have different widths. Results may not be accurate.";
+                    }
+
+                    const averageClassWidth = classWidths.reduce((a, b) => a + b, 0) / classWidths.length;
+                    let A = midpoints[midpoints.length % 2 === 1 ? Math.floor(midpoints.length / 2) : midpoints.length / 2 - 1];
+                    const assumedMeanIndex = midpoints.indexOf(A);
+                    rows[assumedMeanIndex].classList.add('highlight-row');
+
+                    let meanClassInterval = "Not found";
+                    rows.forEach((row) => {
+                        const lowerLimit = parseFloat(row.querySelector('.class-lower').value);
+                        const upperLimit = parseFloat(row.querySelector('.class-upper').value);
+                        if (A >= lowerLimit && A <= upperLimit) {
+                            meanClassInterval = `${lowerLimit} - ${upperLimit}`;
+                        }
+                    });
+
+                    rows.forEach((row, index) => {
+                        const frequency = parseFloat(row.querySelector('.frequency').value);
+                        const mid = midpoints[index];
+                        const di = mid - A;
+                        const ui = di / averageClassWidth;
+                        row.querySelector('.di').textContent = di.toFixed(2);
+                        row.querySelector('.ui').textContent = ui.toFixed(2);
+                        sum_fi_di += frequency * di;
+                        sum_fi_ui += frequency * ui;
+                    });
+
+                    const mean = A + (sum_fi_ui * averageClassWidth) / sum_fi;
+                    const resultHTML = `
+                        <h2>Mean Results</h2>
+                        <table style="width: 100%; margin-bottom: 15px;">
+                            <tr><td><strong>Assumed Mean (A):</strong></td><td>${A.toFixed(2)}</td><td><strong>Class Width (h):</strong></td><td>${averageClassWidth.toFixed(2)}</td></tr>
+                            <tr><td><strong>Mean Class Interval:</strong></td><td>${meanClassInterval}</td><td><strong>Mean:</strong></td><td><strong>${mean.toFixed(2)}</strong></td></tr>
+                        </table>
+                        <h3>Summary Statistics:</h3>
+                        <table style="width: 100%;">
+                            <tr><td><strong>Sum of Frequencies (Σf<sub>i</sub>):</strong></td><td>${sum_fi.toFixed(2)}</td></tr>
+                            <tr><td><strong>Sum of f<sub>i</sub>x<sub>i</sub>:</strong></td><td>${sum_fi_xi.toFixed(2)}</td></tr>
+                            <tr><td><strong>Sum of f<sub>i</sub>d<sub>i</sub>:</strong></td><td>${sum_fi_di.toFixed(2)}</td></tr>
+                            <tr><td><strong>Sum of f<sub>i</sub>u<sub>i</sub>:</strong></td><td>${sum_fi_ui.toFixed(2)}</td></tr>
+                        </table>
+                        <p class="success-msg">✓ Calculation successful! The row highlighted in blue contains the assumed mean.</p>
+                    `;
+                    document.getElementById('meanResult').innerHTML = resultHTML;
+                    document.getElementById('meanResult').style.display = 'block';
+                    document.getElementById('errorMessage').style.display = allWidthsEqual ? 'none' : 'block';
+                } catch (error) {
+                    document.getElementById('errorMessage').textContent = "An error occurred during calculation. Please check your inputs.";
+                    console.error("Calculation error:", error);
+                }
+            }, 100);
+        }
+
+        function calculateMedian() {
+            document.getElementById('errorMessage').innerHTML = 'Calculating... <span class="loading"></span>';
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('medianResult').style.display = 'none';
+
+            setTimeout(() => {
+                try {
+                    const rows = document.querySelectorAll('#tableBody tr');
+                    if (rows.length === 0) {
+                        document.getElementById('errorMessage').textContent = "Please add at least one class interval.";
+                        return;
+                    }
+
+                    let allValid = true;
+                    rows.forEach(row => {
+                        const inputs = row.querySelectorAll('input');
+                        inputs.forEach(input => {
+                            if (!input.value.trim()) {
+                                input.classList.add('required-field');
+                                allValid = false;
+                            }
+                        });
+                        const lowerInput = row.querySelector('.class-lower');
+                        const upperInput = row.querySelector('.class-upper');
+                        if (lowerInput.value && upperInput.value && parseFloat(lowerInput.value) >= parseFloat(upperInput.value)) {
+                            upperInput.classList.add('required-field');
+                            allValid = false;
+                        }
+                    });
+
+                    if (!allValid) {
+                        document.getElementById('errorMessage').textContent = "Please fill in all fields correctly and ensure upper limits exceed lower limits.";
+                        return;
+                    }
+
+                    const frequencies = [], midpoints = [], classWidths = [];
+                    let sum_fi = 0;
+
+                    calculateCumulativeFrequencies(rows);
+
+                    rows.forEach((row) => {
+                        row.classList.remove('highlight-row');
+                        const lowerLimit = parseFloat(row.querySelector('.class-lower').value);
+                        const upperLimit = parseFloat(row.querySelector('.class-upper').value);
+                        const frequency = parseFloat(row.querySelector('.frequency').value);
+                        const mid = (lowerLimit + upperLimit) / 2;
+                        midpoints.push(mid);
+                        row.querySelector('.midpoint').textContent = mid.toFixed(2);
+                        const classWidth = upperLimit - lowerLimit;
+                        classWidths.push(classWidth);
+                        sum_fi += frequency;
+                        frequencies.push(frequency);
+                    });
+
+                    const firstWidth = classWidths[0];
+                    const allWidthsEqual = classWidths.every(width => Math.abs(width - firstWidth) < 0.001);
+                    if (!allWidthsEqual) {
+                        document.getElementById('errorMessage').textContent = "Warning: Class intervals have different widths. Results may not be accurate.";
+                    }
+
+                    const averageClassWidth = classWidths.reduce((a, b) => a + b, 0) / classWidths.length;
+                    const cumulativeFrequencies = [];
+                    let cumulativeSum = 0;
+                    frequencies.forEach(frequency => {
+                        cumulativeSum += frequency;
+                        cumulativeFrequencies.push(cumulativeSum);
+                    });
+
+                    const medianPosition = sum_fi / 2;
+                    let medianClassIndex = 0;
+                    for (let i = 0; i < cumulativeFrequencies.length; i++) {
+                        if (cumulativeFrequencies[i] >= medianPosition) {
+                            medianClassIndex = i;
+                            break;
+                        }
+                    }
+
+                    const medianClassLower = parseFloat(rows[medianClassIndex].querySelector('.class-lower').value);
+                    const medianClassUpper = parseFloat(rows[medianClassIndex].querySelector('.class-upper').value);
+                    const medianClassFrequency = frequencies[medianClassIndex];
+                    const cumulativeFrequencyBeforeMedian = medianClassIndex === 0 ? 0 : cumulativeFrequencies[medianClassIndex - 1];
+                    const median = medianClassLower + ((medianPosition - cumulativeFrequencyBeforeMedian) / medianClassFrequency) * averageClassWidth;
+                    rows[medianClassIndex].classList.add('highlight-row');
+
+                    const resultHTML = `
+                        <h2>Median Results</h2>
+                        <table style="width: 100%; margin-bottom: 15px;">
+                            <tr><td><strong>Median Class:</strong></td><td>${medianClassLower} - ${medianClassUpper}</td><td><strong>Median:</strong></td><td><strong>${median.toFixed(2)}</strong></td></tr>
+                        </table>
+                        <h3>Summary Statistics:</h3>
+                        <table style="width: 100%;">
+                            <tr><td><strong>Sum of Frequencies (Σf<sub>i</sub>):</strong></td><td>${sum_fi.toFixed(2)}</td></tr>
+                            <tr><td><strong>Cumulative Frequency Before Median Class:</strong></td><td>${cumulativeFrequencyBeforeMedian.toFixed(2)}</td></tr>
+                            <tr><td><strong>Median Class Frequency:</strong></td><td>${medianClassFrequency.toFixed(2)}</td></tr>
+                        </table>
+                        <p class="success-msg">✓ Calculation successful! The row highlighted in blue contains the median class.</p>
+                    `;
+                    document.getElementById('medianResult').innerHTML = resultHTML;
+                    document.getElementById('medianResult').style.display = 'block';
+                    document.getElementById('errorMessage').style.display = allWidthsEqual ? 'none' : 'block';
+                } catch (error) {
+                    document.getElementById('errorMessage').textContent = "An error occurred during calculation. Please check your inputs.";
+                    console.error("Calculation error:", error);
+                }
+            }, 100);
+        }
+
+        function calculateMode() {
+            document.getElementById('errorMessage').innerHTML = 'Calculating... <span class="loading"></span>';
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('modeResult').style.display = 'none';
+
+            setTimeout(() => {
+                try {
+                    const rows = document.querySelectorAll('#tableBody tr');
+                    if (rows.length === 0) {
+                        document.getElementById('errorMessage').textContent = "Please add at least one class interval.";
+                        return;
+                    }
+
+                    let allValid = true;
+                    rows.forEach(row => {
+                        const inputs = row.querySelectorAll('input');
+                        inputs.forEach(input => {
+                            if (!input.value.trim()) {
+                                input.classList.add('required-field');
+                                allValid = false;
+                            }
+                        });
+                        const lowerInput = row.querySelector('.class-lower');
+                        const upperInput = row.querySelector('.class-upper');
+                        if (lowerInput.value && upperInput.value && parseFloat(lowerInput.value) >= parseFloat(upperInput.value)) {
+                            upperInput.classList.add('required-field');
+                            allValid = false;
+                        }
+                    });
+
+                    if (!allValid) {
+                        document.getElementById('errorMessage').textContent = "Please fill in all fields correctly and ensure upper limits exceed lower limits.";
+                        return;
+                    }
+
+                    const frequencies = [], midpoints = [], classWidths = [];
+                    let sum_fi = 0;
+
+                    calculateCumulativeFrequencies(rows);
+
+                    rows.forEach((row) => {
+                        row.classList.remove('highlight-row');
+                        const lowerLimit = parseFloat(row.querySelector('.class-lower').value);
+                        const upperLimit = parseFloat(row.querySelector('.class-upper').value);
+                        const frequency = parseFloat(row.querySelector('.frequency').value);
+                        const mid = (lowerLimit + upperLimit) / 2;
+                        midpoints.push(mid);
+                        row.querySelector('.midpoint').textContent = mid.toFixed(2);
+                        const classWidth = upperLimit - lowerLimit;
+                        classWidths.push(classWidth);
+                        sum_fi += frequency;
+                        frequencies.push(frequency);
+                    });
+
+                    const firstWidth = classWidths[0];
+                    const allWidthsEqual = classWidths.every(width => Math.abs(width - firstWidth) < 0.001);
+                    if (!allWidthsEqual) {
+                        document.getElementById('errorMessage').textContent = "Warning: Class intervals have different widths. Results may not be accurate.";
+                    }
+
+                    const averageClassWidth = classWidths.reduce((a, b) => a + b, 0) / classWidths.length;
+                    let modalClassIndex = 0, maxFrequency = frequencies[0];
+                    for (let i = 1; i < frequencies.length; i++) {
+                        if (frequencies[i] > maxFrequency) {
+                            maxFrequency = frequencies[i];
+                            modalClassIndex = i;
+                        }
+                    }
+
+                    const modalClassLower = parseFloat(rows[modalClassIndex].querySelector('.class-lower').value);
+                    const modalClassUpper = parseFloat(rows[modalClassIndex].querySelector('.class-upper').value);
+                    const modalClassFrequency = frequencies[modalClassIndex];
+                    const frequencyBeforeModal = modalClassIndex === 0 ? 0 : frequencies[modalClassIndex - 1];
+                    const frequencyAfterModal = modalClassIndex === frequencies.length - 1 ? 0 : frequencies[modalClassIndex + 1];
+                    
+                    const denominator = (2 * modalClassFrequency - frequencyBeforeModal - frequencyAfterModal);
+                    let mode;
+                    if (denominator === 0) {
+                        mode = modalClassLower; // WARN: Possible bug in original code
+                        document.getElementById('errorMessage').textContent = "Warning: Mode calculation has zero denominator. Using lower limit of modal class.";
+                    } else {
+                        mode = modalClassLower + ((modalClassFrequency - frequencyBeforeModal) / denominator) * averageClassWidth;
+                    }
+                    rows[modalClassIndex].classList.add('highlight-row');
+
+                    const resultHTML = `
+                        <h2>Mode Results</h2>
+                        <table style="width: 100%; margin-bottom: 15px;">
+                            <tr><td><strong>Modal Class:</strong></td><td>${modalClassLower} - ${modalClassUpper}</td><td><strong>Mode:</strong></td><td><strong>${mode.toFixed(2)}</strong></td></tr>
+                        </table>
+                        <h3>Summary Statistics:</h3>
+                        <table style="width: 100%;">
+                            <tr><td><strong>Sum of Frequencies (Σf<sub>i</sub>):</strong></td><td>${sum_fi.toFixed(2)}</td></tr>
+                            <tr><td><strong>Modal Class Frequency:</strong></td><td>${modalClassFrequency.toFixed(2)}</td></tr>
+                            <tr><td><strong>Frequency Before Modal Class:</strong></td><td>${frequencyBeforeModal.toFixed(2)}</td></tr>
+                            <tr><td><strong>Frequency After Modal Class:</strong></td><td>${frequencyAfterModal.toFixed(2)}</td></tr>
+                        </table>
+                        <p class="success-msg">✓ Calculation successful! The row highlighted in blue contains the modal class.</p>
+                    `;
+                    document.getElementById('modeResult').innerHTML = resultHTML;
+                    document.getElementById('modeResult').style.display = 'block';
+                    document.getElementById('errorMessage').style.display = (allWidthsEqual && denominator !== 0) ? 'none' : 'block';
+                } catch (error) {
+                    document.getElementById('errorMessage').textContent = "An error occurred during calculation. Please check your inputs.";
+                    console.error("Calculation error:", error);
+                }
+            }, 100);
+        }
+
+        // MMM Calculator Function
+        function calculateMissing() {
+            const medianInput = document.getElementById("median");
+            const meanInput = document.getElementById("mean");
+            const modeInput = document.getElementById("mode");
+            let median = parseFloat(medianInput.value);
+            let mean = parseFloat(meanInput.value);
+            let mode = parseFloat(modeInput.value);
+            const stepsDiv = document.getElementById("mmm-steps");
+            const resultDiv = document.getElementById("mmm-result");
+            stepsDiv.innerHTML = "";
+            resultDiv.innerHTML = "";
+
+            const inputsFilled = [!medianInput.value.trim(), !meanInput.value.trim(), !modeInput.value.trim()];
+            const emptyCount = inputsFilled.filter(Boolean).length;
+
+            if (emptyCount !== 1) {
+                resultDiv.innerHTML = `<span style="color:red;">Please enter exactly two values and leave one blank to calculate it.</span>`;
+                stepsDiv.style.display = "none";
+                return;
+            }
+
+            if (isNaN(median)) {
+                if (isNaN(mean) || isNaN(mode)) {
+                    resultDiv.innerHTML = `<span style="color:red;">Please enter valid numbers for Mean and Mode.</span>`;
+                    stepsDiv.style.display = "none";
+                    return;
+                }
+                median = (2 * mean + mode) / 3;
+                stepsDiv.innerHTML = `
+                    <h3>Step-by-Step Calculation:</h3>
+                    <p>Using: 3 × Median = 2 × Mean + Mode</p>
+                    <p>3 × Median = 2 × (${mean}) + ${mode}</p>
+                    <p>3 × Median = ${2 * mean + mode}</p>
+                    <p>Median = ${2 * mean + mode} ÷ 3</p>
+                    <p><b>Median = ${median.toFixed(2)}</b></p>
+                `;
+                resultDiv.innerHTML = `Calculated Median: ${median.toFixed(2)}`;
+            } else if (isNaN(mean)) {
+                if (isNaN(median) || isNaN(mode)) {
+                    resultDiv.innerHTML = `<span style="color:red;">Please enter valid numbers for Median and Mode.</span>`;
+                    stepsDiv.style.display = "none";
+                    return;
+                }
+                mean = (3 * median - mode) / 2;
+                stepsDiv.innerHTML = `
+                    <h3>Step-by-Step Calculation:</h3>
+                    <p>Using: 3 × Median = 2 × Mean + Mode</p>
+                    <p>3 × ${median} = 2 × Mean + ${mode}</p>
+                    <p>${3 * median} = 2 × Mean + ${mode}</p>
+                    <p>${3 * median} - ${mode} = 2 × Mean</p>
+                    <p>Mean = (${3 * median} - ${mode}) ÷ 2</p>
+                    <p><b>Mean = ${mean.toFixed(2)}</b></p>
+                `;
+                resultDiv.innerHTML = `Calculated Mean: ${mean.toFixed(2)}`;
+            } else if (isNaN(mode)) {
+                if (isNaN(median) || isNaN(mean)) {
+                    resultDiv.innerHTML = `<span style="color:red;">Please enter valid numbers for Median and Mean.</span>`;
+                    stepsDiv.style.display = "none";
+                    return;
+                }
+                mode = 3 * median - 2 * mean;
+                stepsDiv.innerHTML = `
+                    <h3>Step-by-Step Calculation:</h3>
+                    <p>Using: 3 × Median = 2 × Mean + Mode</p>
+                    <p>3 × ${median} = 2 × ${mean} + Mode</p>
+                    <p>${3 * median} = ${2 * mean} + Mode</p>
+                    <p>${3 * median} - ${2 * mean} = Mode</p>
+                    <p><b>Mode = ${mode.toFixed(2)}</b></p>
+                `;
+                resultDiv.innerHTML = `Calculated Mode: ${mode.toFixed(2)}`;
+            }
+
+            stepsDiv.style.display = "block";
+        }
+
+        // Initial row for Statistics Calculator
+        document.addEventListener('DOMContentLoaded', function() {
+            addRow();
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9298533e0d92ad62',t:'MTc0MzUxMzAxMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

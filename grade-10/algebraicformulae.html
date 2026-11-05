@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algebraic Formula Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 1300px;
+            margin: 90px auto 70px;
+            padding: 20px;
+            background-color: #f9fbfc;
+            color: #2d2d2d;
+        }
+        .calculator {
+            background-color: #ffffff;
+            border-radius: 25px;
+            padding: 60px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        h1 {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            text-align: center;
+            color: #0f5ab5;
+            font-size: 3.8em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .formula {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #e8eefc;
+            border-radius: 10px;
+            display: none;
+        }
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .input-field {
+            flex: 1;
+            min-width: 120px;
+        }
+        label {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #5a5a5a;
+        }
+        input, select {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        input:focus, select:focus {
+            border-color: #0f5ab5;
+        }
+        button {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            display: block;
+            width: 100%;
+            padding: 12px 20px;
+            background: linear-gradient(45deg, #1a73e8, #2a85ff);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(26, 115, 232, 0.4);
+        }
+        button:hover {
+            background: linear-gradient(45deg, #185abc, #1a73e8);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(26, 115, 232, 0.5);
+        }
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        .result {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8eefc;
+            border-radius: 10px;
+            display: none;
+        }
+        .steps-btn {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: none;
+            color: #0f5ab5;
+            border: none;
+            padding: 5px 0;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: underline;
+            width: auto;
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+        .steps-btn:hover {
+            color: #123d82;
+            transform: translateY(-2px);
+        }
+        .steps {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f5f7fa;
+            border-radius: 10px;
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .calculator {
+                padding: 40px 20px;
+                margin: 50px auto;
+            }
+            h1 {
+                font-size: 2.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>Algebraic Formula Calculator</h1>
+
+        <div class="section">
+            <div id="formulaDisplay" class="formula"></div>
+
+            <div class="input-group">
+                <div class="input-field">
+                    <label for="formulaSelect">Select Formula:</label>
+                    <select id="formulaSelect" onchange="updateInputs()">
+                        <option value="">-- Choose a Formula --</option>
+                        <option value="ab2">(a + b)²</option>
+                        <option value="a_b2">(a - b)²</option>
+                        <option value="a2_b2">a² - b²</option>
+                        <option value="ab3">(a + b)³</option>
+                        <option value="a_b3">(a - b)³</option>
+                        <option value="a3_b3">a³ - b³</option>
+                        <option value="a3b3">a³ + b³</option>
+                        <option value="a2b2">a² + b²</option>
+                        <option value="xab">(x + a)(x + b)</option>
+                    </select>
+                </div>
+                <div class="input-field" id="xInput" style="display: none;">
+                    <label for="xValue">x:</label>
+                    <input type="number" id="xValue" step="any" value="1">
+                </div>
+                <div class="input-field">
+                    <label for="aValue">a:</label>
+                    <input type="number" id="aValue" step="any" value="2">
+                </div>
+                <div class="input-field">
+                    <label for="bValue">b:</label>
+                    <input type="number" id="bValue" step="any" value="3">
+                </div>
+            </div>
+            <button onclick="calculate()">Calculate</button>
+            <div id="result" class="result">
+                <h3>Result:</h3>
+                <p id="output"></p>
+                <button class="steps-btn" id="toggleSteps">Show Steps</button>
+                <div class="steps" id="steps"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateInputs() {
+            const formula = document.getElementById('formulaSelect').value;
+            const xInput = document.getElementById('xInput');
+            const formulaDisplay = document.getElementById('formulaDisplay');
+            formulaDisplay.style.display = 'block';
+
+            xInput.style.display = formula === 'xab' ? 'block' : 'none';
+
+            const formulas = {
+                'ab2': '(a + b)² = a² + 2ab + b²',
+                'a_b2': '(a - b)² = a² - 2ab + b²',
+                'a2_b2': 'a² - b² = (a - b)(a + b)',
+                'ab3': '(a + b)³ = a³ + 3a²b + 3ab² + b³',
+                'a_b3': '(a - b)³ = a³ - 3a²b + 3ab² - b³',
+                'a3_b3': 'a³ - b³ = (a - b)(a² + ab + b²)',
+                'a3b3': 'a³ + b³ = (a + b)(a² - ab + b²)',
+                'a2b2': 'a² + b² = (a + b)² - 2ab  or  (a - b)² + 2ab',
+                'xab': '(x + a)(x + b) = x² + (a + b)x + ab'
+            };
+            formulaDisplay.innerHTML = formula ? `<p><strong>Formula:</strong></p><p>${formulas[formula]}</p>` : '';
+        }
+
+        function calculate() {
+            const formula = document.getElementById('formulaSelect').value;
+            const aInput = document.getElementById('aValue');
+            const bInput = document.getElementById('bValue');
+            const xInput = document.getElementById('xValue');
+            const a = parseFloat(aInput.value);
+            const b = parseFloat(bInput.value);
+            const x = parseFloat(xInput.value);
+            const output = document.getElementById('output');
+            const steps = document.getElementById('steps');
+            const resultDiv = document.getElementById('result');
+
+            if (!formula) {
+                output.textContent = "Please select a formula.";
+                resultDiv.style.display = 'block';
+                steps.style.display = 'none';
+                document.getElementById('toggleSteps').textContent = 'Show Steps';
+                return;
+            }
+
+            const filledCount = [
+                aInput.value.trim() !== '',
+                bInput.value.trim() !== '',
+                formula === 'xab' ? xInput.value.trim() !== '' : true
+            ].filter(Boolean).length;
+
+            if (filledCount !== (formula === 'xab' ? 3 : 2) || isNaN(a) || isNaN(b) || (formula === 'xab' && isNaN(x))) {
+                output.textContent = "Please enter valid numbers for all required fields.";
+                resultDiv.style.display = 'block';
+                steps.style.display = 'none';
+                document.getElementById('toggleSteps').textContent = 'Show Steps';
+                return;
+            }
+
+            let result, stepsHTML;
+            switch (formula) {
+                case 'ab2':
+                    result = a * a + 2 * a * b + b * b;
+                    stepsHTML = `
+                        <p>(a + b)² = ${a}² + 2*${a}*${b} + ${b}²</p>
+                        <p>= ${a * a} + ${2 * a * b} + ${b * b} = ${result.toFixed(2)}</p>
+                    `;
+                    output.innerHTML = `(a + b)² = ${result.toFixed(2)}`;
+                    break;
+                case 'a_b2':
+                    result = a * a - 2 * a * b + b * b;
+                    stepsHTML = `
+                        <p>(a - b)² = ${a}² - 2*${a}*${b} + ${b}²</p>
+                        <p>= ${a * a} - ${2 * a * b} + ${b * b} = ${result.toFixed(2)}</p>
+                    `;
+                    output.innerHTML = `(a - b)² = ${result.toFixed(2)}`;
+                    break;
+                case 'a2_b2':
+                    result = (a - b) * (a + b);
+                    stepsHTML = `
+                        <p>a² - b² = (${a} - ${b}) * (${a} + ${b})</p>
+                        <p>= ${a - b} * ${a + b} = ${result.toFixed(2)}</p>
+                    `;
+                    output.innerHTML = `a² - b² = ${result.toFixed(2)}`;
+                    break;
+                case 'ab3':
+                    result = a * a * a + 3 * a * a * b + 3 * a * b * b + b * b * b;
+                    stepsHTML = `
+                        <p>(a + b)³ = ${a}³ + 3*${a}²*${b} + 3*${a}*${b}² + ${b}³</p>
+                        <p>= ${a * a * a} + ${3 * a * a * b} + ${3 * a * b * b} + ${b * b * b} = ${result.toFixed(2)}</p>
+                    `;
+                    output.innerHTML = `(a + b)³ = ${result.toFixed(2)}`;
+                    break;
+                case 'a_b3':
+                    result = a * a * a - 3 * a * a * b + 3 * a * b * b - b * b * b;
+                    stepsHTML = `
+                        <p>(a - b)³ = ${a}³ - 3*${a}²*${b} + 3*${a}*${b}² - ${b}³</p>
+                        <p>= ${a * a * a} - ${3 * a * a * b} + ${3 * a * b * b} - ${b * b * b} = ${result.toFixed(2)}</p>
+                    `;
+                    output.innerHTML = `(a - b)³ = ${result.toFixed(2)}`;
+                    break;
+                case 'a3_b3':
+                    result = (a - b) * (a * a + a * b + b * b);
+                    stepsHTML = `
+                        <p>a³ - b³ = (${a} - ${b}) * (${a}² + ${a}*${b} + ${b}²)</p>
+                        <p>= ${a - b} * ${a * a + a * b + b * b} = ${result.toFixed(2)}</p>
+                    `;
+                    output.innerHTML = `a³ - b³ = ${result.toFixed(2)}`;
+                    break;
+                case 'a3b3':
+                    result = (a + b) * (a * a - a * b + b * b);
+                    stepsHTML = `
+                        <p>a³ + b³ = (${a} + ${b}) * (${a}² - ${a}*${b} + ${b}²)</p>
+                        <p>= ${a + b} * ${a * a - a * b + b * b} = ${result.toFixed(2)}</p>
+                    `;
+                    output.innerHTML = `a³ + b³ = ${result.toFixed(2)}`;
+                    break;
+                case 'a2b2':
+                    result = a * a + b * b;
+                    const method1 = (a + b) * (a + b) - 2 * a * b;
+                    const method2 = (a - b) * (a - b) + 2 * a * b;
+                    stepsHTML = `
+                        <p>Method 1: a² + b² = (a + b)² - 2ab</p>
+                        <p>= (${a} + ${b})² - 2*${a}*${b}</p>
+                        <p>= ${a + b}² - ${2 * a * b}</p>
+                        <p>= ${(a + b) * (a + b)} - ${2 * a * b} = ${method1.toFixed(2)}</p>
+                        <p>Method 2: a² + b² = (a - b)² + 2ab</p>
+                        <p>= (${a} - ${b})² + 2*${a}*${b}</p>
+                        <p>= ${a - b}² + ${2 * a * b}</p>
+                        <p>= ${(a - b) * (a - b)} + ${2 * a * b} = ${method2.toFixed(2)}</p>
+                    `;
+                    output.innerHTML = `a² + b² = ${result.toFixed(2)}`;
+                    break;
+                case 'xab':
+                    result = x * lambdalambdax + (a + b) * x + a * b;
+                    stepsHTML = `
+                        <p>(x + a)(x + b) = ${x}² + (${a} + ${b})*${x} + ${a}*${b}</p>
+                        <p>= ${x * x} + ${(a + b) * x} + ${a * b} = ${result.toFixed(2)}</p>
+                    `;
+                    output.innerHTML = `(x + a)(x + b) = ${result.toFixed(2)}`;
+                    break;
+            }
+
+            steps.innerHTML = stepsHTML;
+            resultDiv.style.display = 'block';
+            steps.style.display = 'none';
+            document.getElementById('toggleSteps').textContent = 'Show Steps';
+        }
+
+        document.getElementById('toggleSteps').addEventListener('click', function() {
+            const steps = document.getElementById('steps');
+            if (steps.style.display === 'block') {
+                steps.style.display = 'none';
+                this.textContent = 'Show Steps';
+            } else {
+                steps.style.display = 'block';
+                this.textContent = 'Hide Steps';
+            }
+        });
+    </script>
+</body>
+</html>

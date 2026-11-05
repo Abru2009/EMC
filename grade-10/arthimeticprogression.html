@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arithmetic Progression Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        body {
+            background: #f9fbfc;
+            line-height: 1.6;
+            color: #2d2d2d;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1300px;
+            margin: 70px auto;
+            padding: 40px;
+            background: #ffffff;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+        h1 {
+            text-align: center;
+            color: #0f5ab5;
+            font-size: 3.8em;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #123d82;
+            font-size: 2.4em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        h3 {
+            color: #123d82;
+            font-size: 1.6em;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+        .formula {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #e8eefc;
+            border-radius: 10px;
+            color: #4a4a4a;
+        }
+        .tab-container {
+            margin-bottom: 20px;
+        }
+        .tab-buttons {
+            display: flex;
+            gap: 5px;
+            background: #f9fbfc;
+            padding: 5px;
+            border-radius: 10px 10px 0 0;
+        }
+        .tab-button {
+            padding: 10px 20px;
+            background: #e8eefc;
+            border-radius: 8px;
+            color: #4a4a4a;
+            cursor: pointer;
+            transition: 0.3s;
+            flex: 1;
+            text-align: center;
+        }
+        .tab-button:hover {
+            background: #d1e0ff;
+        }
+        .tab-button.active {
+            background: linear-gradient(45deg, #1a73e8, #2a85ff);
+            color: white;
+            box-shadow: 0 5px 15px rgba(26, 115, 232, 0.4);
+        }
+        .tab-content {
+            padding: 20px;
+            border-radius: 0 0 10px 10px;
+            background: #f9fbfc;
+            box-shadow: 0 4px 15px rgba(15, 90, 181, 0.1);
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .input-field {
+            flex: 1;
+            min-width: 120px;
+        }
+        .checkbox-field {
+            display: flex;
+            align-items: center;
+            margin-left: 5px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #4a4a4a;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        input:focus, select:focus {
+            border-color: #0f5ab5;
+        }
+        button {
+            background: linear-gradient(45deg, #1a73e8, #2a85ff);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(26, 115, 232, 0.4);
+            width: 100%;
+        }
+        button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(26, 115, 232, 0.5);
+            background: linear-gradient(45deg, #185abc, #1a73e8);
+        }
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        button:hover::before {
+            width: 100%;
+            height: 100%;
+            max-width: 200px;
+            max-height: 200px;
+        }
+        .steps-btn {
+            background: none;
+            color: #1a73e8;
+            border: none;
+            padding: 5px 0;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: underline;
+            width: auto;
+            text-align: left;
+            box-shadow: none;
+        }
+        .steps-btn:hover {
+            transform: none;
+            background: none;
+            color: #0f5ab5;
+        }
+        .steps-btn::before {
+            display: none;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8eefc;
+            border-radius: 10px;
+            display: none;
+        }
+        .steps {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f9fbfc;
+            border-radius: 10px;
+            display: none;
+        }
+        .graph-container {
+            margin-top: 20px;
+        }
+        #graph {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #e0e0e0;
+            background: #ffffff;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(15, 90, 181, 0.1);
+        }
+        .grid-line {
+            stroke: #e0e0e0;
+            stroke-width: 1;
+        }
+        .axis-line {
+            stroke: #4a4a4a;
+            stroke-width: 2;
+        }
+        .axis-label {
+            font-size: 12px;
+            fill: #666;
+        }
+        .point {
+            fill: #1a73e8;
+            stroke: #2d2d2d;
+            stroke-width: 1;
+        }
+        .ap-line {
+            stroke: #1a73e8;
+            stroke-width: 2;
+        }
+        .term-label {
+            font-size: 12px;
+            fill: #2d2d2d;
+        }
+        .choose-unknown-text {
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: #1a73e8;
+        }
+        input:disabled, select:disabled {
+            background: #f0f0f0;
+            color: #888;
+            border-color: #e0e0e0;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin: 20px auto;
+            }
+            h1 {
+                font-size: 2.5em;
+            }
+            h2 {
+                font-size: 1.8em;
+            }
+            h3 {
+                font-size: 1.4em;
+            }
+            .input-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .tab-buttons {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .tab-button {
+                padding: 8px 15px;
+            }
+            .tab-content {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Arithmetic Progression Calculator</h1>
+        
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <button class="tab-button active" onclick="openTab(event, 'nthTerm')">nth Term</button>
+                <button class="tab-button" onclick="openTab(event, 'sumOfTerms')">Sum of n Terms</button>
+                <button class="tab-button" onclick="openTab(event, 'commonDiff')">Common Difference</button>
+            </div>
+            
+            <!-- nth Term Calculator -->
+            <div id="nthTerm" class="tab-content active">
+                <div class="formula">
+                    <p>Formula: <strong>aₙ = a + (n-1)d</strong></p>
+                    <p>Where 'a' is the first term, 'd' is the common difference, 'n' is the position, and 'aₙ' is the nth term.</p>
+                </div>
+                
+                <p class="choose-unknown-text">Select the value you want to calculate:</p>
+                <div class="input-group">
+                    <div class="input-field">
+                        <label for="nth-unknown">Unknown Value:</label>
+                        <select id="nth-unknown" onchange="toggleNthTermFields()">
+                            <option value="an">nth Term (aₙ)</option>
+                            <option value="a">First Term (a)</option>
+                            <option value="d">Common Difference (d)</option>
+                            <option value="n">Position (n)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <div class="input-field">
+                        <label for="nth-a">First Term (a):</label>
+                        <input type="number" id="nth-a" value="2" step="any">
+                    </div>
+                    <div class="input-field">
+                        <label for="nth-d">Common Difference (d):</label>
+                        <input type="number" id="nth-d" value="3" step="any">
+                    </div>
+                    <div class="input-field">
+                        <label for="nth-n">Position (n):</label>
+                        <input type="number" id="nth-n" value="5" min="1" step="1">
+                    </div>
+                    <div class="input-field">
+                        <label for="nth-an">nth Term (aₙ):</label>
+                        <input type="number" id="nth-an" step="any" disabled>
+                    </div>
+                </div>
+                
+                <button onclick="calculateNthTerm()">Calculate</button>
+                
+                <div id="nth-result" class="result">
+                    <h3>Result:</h3>
+                    <p id="nth-value"></p>
+                    <button class="steps-btn" onclick="toggleSteps('nth-steps')">Show Steps</button>
+                    <div id="nth-steps" class="steps"></div>
+                </div>
+            </div>
+            
+            <!-- Sum of n Terms Calculator -->
+            <div id="sumOfTerms" class="tab-content">
+                <div class="formula">
+                    <p>Formulas: <strong>Sₙ = n/2[2a + (n-1)d]</strong> or <strong>Sₙ = n/2(a + aₙ)</strong></p>
+                    <p>Where 'a' is the first term, 'd' is the common difference, 'n' is the number of terms, and 'Sₙ' is the sum.</p>
+                </div>
+                
+                <p class="choose-unknown-text">Select the value you want to calculate:</p>
+                <div class="input-group">
+                    <div class="input-field">
+                        <label for="sum-unknown">Unknown Value:</label>
+                        <select id="sum-unknown" onchange="toggleSumFields()">
+                            <option value="sn">Sum (Sₙ)</option>
+                            <option value="a">First Term (a)</option>
+                            <option value="d">Common Difference (d)</option>
+                            <option value="n">Number of Terms (n)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <div class="input-field">
+                        <label for="sum-a">First Term (a):</label>
+                        <input type="number" id="sum-a" value="2" step="any">
+                    </div>
+                    <div class="input-field">
+                        <label for="sum-d">Common Difference (d):</label>
+                        <input type="number" id="sum-d" value="3" step="any">
+                    </div>
+                    <div class="input-field">
+                        <label for="sum-n">Number of Terms (n):</label>
+                        <input type="number" id="sum-n" value="5" min="1" step="1">
+                    </div>
+                    <div class="input-field">
+                        <label for="sum-sn">Sum (Sₙ):</label>
+                        <input type="number" id="sum-sn" step="any" disabled>
+                    </div>
+                </div>
+                
+                <button onclick="calculateSum()">Calculate</button>
+                
+                <div id="sum-result" class="result">
+                    <h3>Result:</h3>
+                    <p id="sum-value"></p>
+                    <button class="steps-btn" onclick="toggleSteps('sum-steps')">Show Steps</button>
+                    <div id="sum-steps" class="steps"></div>
+                </div>
+            </div>
+            
+            <!-- Common Difference Calculator -->
+            <div id="commonDiff" class="tab-content">
+                <div class="formula">
+                    <p>For consecutive terms: <strong>d = aₙ - aₙ₋₁</strong></p>
+                    <p>Using first term and nth term: <strong>d = (aₙ - a) / (n - 1)</strong></p>
+                </div>
+                
+                <p class="choose-unknown-text">Choose calculation method:</p>
+                <div class="input-group">
+                    <div class="input-field">
+                        <label for="diff-method">Calculation Method:</label>
+                        <select id="diff-method" onchange="toggleDiffFields()">
+                            <option value="consecutive">Using Consecutive Terms</option>
+                            <option value="firstNth">Using First Term and nth Term</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="consecutive-method">
+                    <div class="input-group">
+                        <div class="input-field">
+                            <label for="diff-an">Current Term (aₙ):</label>
+                            <input type="number" id="diff-an" value="8" step="any">
+                        </div>
+                        <div class="input-field">
+                            <label for="diff-an1">Previous Term (aₙ₋₁):</label>
+                            <input type="number" id="diff-an1" value="5" step="any">
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="firstNth-method" style="display: none;">
+                    <div class="input-group">
+                        <div class="input-field">
+                            <label for="diff-first">First Term (a):</label>
+                            <input type="number" id="diff-first" value="2" step="any">
+                        </div>
+                        <div class="input-field">
+                            <label for="diff-nth">nth Term (aₙ):</label>
+                            <input type="number" id="diff-nth" value="14" step="any">
+                        </div>
+                        <div class="input-field">
+                            <label for="diff-pos">Position (n):</label>
+                            <input type="number" id="diff-pos" value="5" min="2" step="1">
+                        </div>
+                    </div>
+                </div>
+                
+                <button onclick="calculateCommonDiff()">Calculate</button>
+                
+                <div id="diff-result" class="result">
+                    <h3>Result:</h3>
+                    <p id="diff-value">Common Difference (d) = </p>
+                    <button class="steps-btn" onclick="toggleSteps('diff-steps')">Show Steps</button>
+                    <div id="diff-steps" class="steps"></div>
+                </div>
+            </div>
+        </div>
+
+        <h2>Visualization</h2>
+        <div class="graph-container">
+            <svg id="graph" width="100%" height="300"></svg>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleNthTermFields();
+            toggleSumFields();
+            toggleDiffFields();
+            calculateNthTerm();
+        });
+
+        function openTab(evt, tabName) {
+            let tabcontent = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+
+            let tablinks = document.getElementsByClassName("tab-button");
+            for (let i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+
+            if (tabName === "nthTerm") {
+                toggleNthTermFields();
+            } else if (tabName === "sumOfTerms") {
+                toggleSumFields();
+            } else if (tabName === "commonDiff") {
+                toggleDiffFields();
+            }
+        }
+
+        function toggleNthTermFields() {
+            const unknown = document.getElementById('nth-unknown').value;
+            document.getElementById('nth-a').disabled = false;
+            document.getElementById('nth-d').disabled = false;
+            document.getElementById('nth-n').disabled = false;
+            document.getElementById('nth-an').disabled = false;
+            document.getElementById('nth-' + unknown).disabled = true;
+        }
+
+        function toggleSumFields() {
+            const unknown = document.getElementById('sum-unknown').value;
+            document.getElementById('sum-a').disabled = false;
+            document.getElementById('sum-d').disabled = false;
+            document.getElementById('sum-n').disabled = false;
+            document.getElementById('sum-sn').disabled = false;
+            document.getElementById('sum-' + unknown).disabled = true;
+        }
+
+        function toggleDiffFields() {
+            const method = document.getElementById('diff-method').value;
+            document.getElementById('consecutive-method').style.display = method === 'consecutive' ? 'block' : 'none';
+            document.getElementById('firstNth-method').style.display = method === 'firstNth' ? 'block' : 'none';
+        }
+
+        function calculateNthTerm() {
+            const unknown = document.getElementById('nth-unknown').value;
+            let a, d, n, an;
+
+            if (unknown !== 'a') a = parseFloat(document.getElementById('nth-a').value);
+            if (unknown !== 'd') d = parseFloat(document.getElementById('nth-d').value);
+            if (unknown !== 'n') n = parseInt(document.getElementById('nth-n').value);
+            if (unknown !== 'an') an = parseFloat(document.getElementById('nth-an').value);
+
+            if (unknown !== 'n' && n < 1) {
+                alert("Position (n) must be at least 1.");
+                return;
+            }
+
+            const requiredInputs = ['a', 'd', 'n', 'an'].filter(input => input !== unknown);
+            for (const input of requiredInputs) {
+                const value = input === 'a' ? a : input === 'd' ? d : input === 'n' ? n : an;
+                if (isNaN(value)) {
+                    alert(`Please enter a valid value for ${input === 'a' ? 'First Term (a)' : input === 'd' ? 'Common Difference (d)' : input === 'n' ? 'Position (n)' : 'nth Term (aₙ)'}`);
+                    return;
+                }
+            }
+
+            let result, steps;
+            if (unknown === 'an') {
+                result = a + (n - 1) * d;
+                steps = `
+                    <p>aₙ = a + (n-1)d</p>
+                    <p>aₙ = ${a} + (${n}-1) × ${d}</p>
+                    <p>aₙ = ${a} + ${n-1} × ${d}</p>
+                    <p>aₙ = ${a} + ${(n-1)*d}</p>
+                    <p>aₙ = ${result}</p>
+                `;
+                document.getElementById('nth-value').textContent = `nth Term (a${n}) = ${result}`;
+            } else if (unknown === 'a') {
+                result = an - (n - 1) * d;
+                steps = `
+                    <p>a = aₙ - (n-1)d</p>
+                    <p>a = ${an} - (${n}-1) × ${d}</p>
+                    <p>a = ${an} - ${n-1} × ${d}</p>
+                    <p>a = ${an} - ${(n-1)*d}</p>
+                    <p>a = ${result}</p>
+                `;
+                document.getElementById('nth-value').textContent = `First Term (a) = ${result}`;
+            } else if (unknown === 'd') {
+                result = (an - a) / (n - 1);
+                steps = `
+                    <p>d = (aₙ - a) / (n-1)</p>
+                    <p>d = (${an} - ${a}) / (${n}-1)</p>
+                    <p>d = ${an-a} / ${n-1}</p>
+                    <p>d = ${result}</p>
+                `;
+                document.getElementById('nth-value').textContent = `Common Difference (d) = ${result}`;
+            } else if (unknown === 'n') {
+                result = (an - a) / d + 1;
+                if (result % 1 !== 0) {
+                    const roundedResult = Math.round(result);
+                    steps = `
+                        <p>n = (aₙ - a) / d + 1</p>
+                        <p>n = (${an} - ${a}) / ${d} + 1</p>
+                        <p>n = ${an-a} / ${d} + 1</p>
+                        <p>n = ${(an-a)/d} + 1</p>
+                        <p>n = ${result}</p>
+                        <p>Note: The result is not an integer. The closest integer position is ${roundedResult}.</p>
+                        <p>The term at position ${roundedResult} would be ${a + (roundedResult-1)*d}.</p>
+                    `;
+                } else {
+                    steps = `
+                        <p>n = (aₙ - a) / d + 1</p>
+                        <p>n = (${an} - ${a}) / ${d} + 1</p>
+                        <p>n = ${an-a} / ${d} + 1</p>
+                        <p>n = ${(an-a)/d} + 1</p>
+                        <p>n = ${result}</p>
+                    `;
+                }
+                document.getElementById('nth-value').textContent = `Position (n) = ${result}`;
+            }
+
+            document.getElementById('nth-' + unknown).value = result;
+            document.getElementById('nth-result').style.display = 'block';
+            document.getElementById('nth-steps').innerHTML = steps;
+
+            if (unknown === 'a') a = result;
+            if (unknown === 'd') d = result;
+            if (unknown === 'n') n = Math.round(result);
+            if (unknown === 'an') an = result;
+
+            drawAPGraph(a, d, n);
+        }
+
+        function calculateSum() {
+            const unknown = document.getElementById('sum-unknown').value;
+            let a, d, n, sn;
+
+            if (unknown !== 'a') a = parseFloat(document.getElementById('sum-a').value);
+            if (unknown !== 'd') d = parseFloat(document.getElementById('sum-d').value);
+            if (unknown !== 'n') n = parseInt(document.getElementById('sum-n').value);
+            if (unknown !== 'sn') sn = parseFloat(document.getElementById('sum-sn').value);
+
+            if (unknown !== 'n' && n < 1) {
+                alert("Number of terms (n) must be at least 1.");
+                return;
+            }
+
+            const requiredInputs = ['a', 'd', 'n', 'sn'].filter(input => input !== unknown);
+            for (const input of requiredInputs) {
+                const value = input === 'a' ? a : input === 'd' ? d : input === 'n' ? n : sn;
+                if (isNaN(value)) {
+                    alert(`Please enter a valid value for ${input === 'a' ? 'First Term (a)' : input === 'd' ? 'Common Difference (d)' : input === 'n' ? 'Number of Terms (n)' : 'Sum (Sₙ)'}`);
+                    return;
+                }
+            }
+
+            let result, steps, lastTerm;
+            if (unknown === 'sn') {
+                lastTerm = a + (n - 1) * d;
+                result = (n / 2) * (2 * a + (n - 1) * d);
+                steps = `
+                    <p>Formula: Sₙ = n/2[2a + (n-1)d]</p>
+                    <p>S${n} = ${n}/2[2×${a} + (${n}-1)×${d}]</p>
+                    <p>S${n} = ${n}/2[${2*a} + ${n-1}×${d}]</p>
+                    <p>S${n} = ${n}/2[${2*a} + ${(n-1)*d}]</p>
+                    <p>S${n} = ${n}/2[${2*a + (n-1)*d}]</p>
+                    <p>S${n} = ${n/2} × ${2*a + (n-1)*d}</p>
+                    <p>S${n} = ${result}</p>
+                    <br>
+                    <p>Alternative Formula: Sₙ = n/2(a + aₙ)</p>
+                    <p>Last term (a${n}) = ${lastTerm}</p>
+                    <p>S${n} = ${n}/2(${a} + ${lastTerm})</p>
+                    <p>S${n} = ${n}/2(${a + lastTerm})</p>
+                    <p>S${n} = ${n/2} × ${a + lastTerm}</p>
+                    <p>S${n} = ${(n/2) * (a + lastTerm)}</p>
+                `;
+                document.getElementById('sum-value').textContent = `Sum (S${n}) = ${result}`;
+            } else if (unknown === 'a') {
+                result = (2 * sn / n - (n - 1) * d) / 2;
+                lastTerm = result + (n - 1) * d;
+                steps = `
+                    <p>From: Sₙ = n/2[2a + (n-1)d]</p>
+                    <p>Rearranging to solve for a:</p>
+                    <p>2a + (n-1)d = 2Sₙ/n</p>
+                    <p>2a = 2Sₙ/n - (n-1)d</p>
+                    <p>a = (2Sₙ/n - (n-1)d) / 2</p>
+                    <p>a = (2×${sn}/${n} - (${n}-1)×${d}) / 2</p>
+                    <p>a = (${2*sn/n} - ${(n-1)*d}) / 2</p>
+                    <p>a = ${(2*sn/n - (n-1)*d) / 2}</p>
+                    <p>a = ${result}</p>
+                `;
+                document.getElementById('sum-value').textContent = `First Term (a) = ${result}`;
+            } else if (unknown === 'd') {
+                result = (2 * sn / n - 2 * a) / (n - 1);
+                lastTerm = a + (n - 1) * result;
+                steps = `
+                    <p>From: Sₙ = n/2[2a + (n-1)d]</p>
+                    <p>Rearranging to solve for d:</p>
+                    <p>2a + (n-1)d = 2Sₙ/n</p>
+                    <p>(n-1)d = 2Sₙ/n - 2a</p>
+                    <p>d = (2Sₙ/n - 2a) / (n-1)</p>
+                    <p>d = (2×${sn}/${n} - 2×${a}) / (${n}-1)</p>
+                    <p>d = (${2*sn/n} - ${2*a}) / ${n-1}</p>
+                    <p>d = ${2*sn/n - 2*a} / ${n-1}</p>
+                    <p>d = ${(2*sn/n - 2*a) / (n-1)}</p>
+                `;
+                document.getElementById('sum-value').textContent = `Common Difference (d) = ${result}`;
+            } else if (unknown === 'n') {
+                const A = d / 2;
+                const B = a - d / 2;
+                const C = -sn;
+                const discriminant = B * B - 4 * A * C;
+
+                if (discriminant < 0) {
+                    alert("No real solution exists with these values.");
+                    return;
+                }
+
+                const n1 = (-B + Math.sqrt(discriminant)) / (2 * A);
+                const n2 = (-B - Math.sqrt(discriminant)) / (2 * A);
+                result = n1 > 0 ? n1 : n2;
+
+                const roundedResult = Math.round(result);
+                if (Math.abs(result - roundedResult) < 0.0001) {
+                    result = roundedResult;
+                }
+
+                lastTerm = a + (result - 1) * d;
+                steps = `
+                    <p>From: Sₙ = n/2[2a + (n-1)d]</p>
+                    <p>Expanding: Sₙ = n×a + n(n-1)×d/2</p>
+                    <p>Rearranging to standard form: (d/2)n² + (a-d/2)n - Sₙ = 0</p>
+                    <p>This is a quadratic equation in the form: An² + Bn + C = 0</p>
+                    <p>Where: A = ${A}, B = ${B}, C = ${C}</p>
+                    <p>Using the quadratic formula: n = (-B ± √(B² - 4AC)) / 2A</p>
+                    <p>Discriminant (B² - 4AC) = ${B}² - 4×${A}×${C} = ${discriminant}</p>
+                    <p>n = (-${B} ± √${discriminant}) / (2×${A})</p>
+                    <p>n = (${-B} ± ${Math.sqrt(discriminant)}) / ${2*A}</p>
+                    <p>n₁ = ${n1}, n₂ = ${n2}</p>
+                    <p>Valid solution: n = ${result}</p>
+                    <p>Last term (a${result}) = ${lastTerm}</p>
+                `;
+                document.getElementById('sum-value').textContent = `Number of Terms (n) = ${result}`;
+            }
+
+            document.getElementById('sum-' + unknown).value = result;
+            document.getElementById('sum-result').style.display = 'block';
+            document.getElementById('sum-steps').innerHTML = steps;
+
+            if (unknown === 'a') a = result;
+            if (unknown === 'd') d = result;
+            if (unknown === 'n') n = Math.round(result);
+            if (unknown === 'sn') sn = result;
+
+            drawAPGraph(a, d, n);
+        }
+
+        function calculateCommonDiff() {
+            const method = document.getElementById('diff-method').value;
+            let result, steps;
+
+            if (method === 'consecutive') {
+                const an = parseFloat(document.getElementById('diff-an').value);
+                const an1 = parseFloat(document.getElementById('diff-an1').value);
+
+                if (isNaN(an) || isNaN(an1)) {
+                    alert("Please enter valid values for both terms.");
+                    return;
+                }
+
+                result = an - an1;
+                steps = `
+                    <p>d = aₙ - aₙ₋₁</p>
+                    <p>d = ${an} - ${an1}</p>
+                    <p>d = ${result}</p>
+                `;
+            } else {
+                const a = parseFloat(document.getElementById('diff-first').value);
+                const an = parseFloat(document.getElementById('diff-nth').value);
+                const n = parseInt(document.getElementById('diff-pos').value);
+
+                if (isNaN(a) || isNaN(an) || isNaN(n) || n < 2) {
+                    alert("Please enter valid values for first term, nth term, and position (n ≥ 2).");
+                    return;
+                }
+
+                result = (an - a) / (n - 1);
+                steps = `
+                    <p>d = (aₙ - a) / (n - 1)</p>
+                    <p>d = (${an} - ${a}) / (${n} - 1)</p>
+                    <p>d = ${an - a} / ${n - 1}</p>
+                    <p>d = ${result}</p>
+                `;
+            }
+
+            document.getElementById('diff-value').textContent = `Common Difference (d) = ${result}`;
+            document.getElementById('diff-result').style.display = 'block';
+            document.getElementById('diff-steps').innerHTML = steps;
+
+            if (method === 'consecutive') {
+                const a = parseFloat(document.getElementById('diff-an1').value);
+                const n = 5;
+                drawAPGraph(a, result, n);
+            } else {
+                const a = parseFloat(document.getElementById('diff-first').value);
+                const n = parseInt(document.getElementById('diff-pos').value);
+                drawAPGraph(a, result, n);
+            }
+        }
+
+        function toggleSteps(id) {
+            const stepsDiv = document.getElementById(id);
+            stepsDiv.style.display = (stepsDiv.style.display === 'none' || stepsDiv.style.display === '') ? 'block' : 'none';
+        }
+
+        function drawAPGraph(a, d, n) {
+            const svg = document.getElementById('graph');
+            svg.innerHTML = '';
+
+            const width = svg.clientWidth;
+            const height = svg.clientHeight;
+            const padding = 40;
+
+            // Adjust yScale to handle negative values
+            const terms = Array.from({ length: n }, (_, i) => a + i * d);
+            const minTerm = Math.min(...terms, 0);
+            const maxTerm = Math.max(...terms, 0);
+            const yRange = Math.max(Math.abs(minTerm), Math.abs(maxTerm)) || 1;
+            const xScale = (width - 2 * padding) / (n - 1);
+            const yScale = (height - 2 * padding) / (2 * yRange);
+            const yZero = height / 2;
+
+            // Draw grid lines
+            for (let i = 0; i < n; i++) {
+                const x = padding + i * xScale;
+                svg.innerHTML += `<line x1="${x}" y1="${padding}" x2="${x}" y2="${height - padding}" class="grid-line" />`;
+            }
+            for (let i = -yRange; i <= yRange; i += yRange / 5) {
+                const y = yZero - i * yScale;
+                svg.innerHTML += `<line x1="${padding}" y1="${y}" x2="${width - padding}" y2="${y}" class="grid-line" />`;
+            }
+
+            // Draw axes
+            svg.innerHTML += `
+                <line x1="${padding}" y1="${yZero}" x2="${width - padding}" y2="${yZero}" class="axis-line" />
+                <line x1="${padding}" y1="${padding}" x2="${padding}" y2="${height - padding}" class="axis-line" />
+            `;
+
+            // Draw points and lines
+            let prevX, prevY;
+            for (let i = 0; i < n; i++) {
+                const term = a + i * d;
+                const x = padding + i * xScale;
+                const y = yZero - term * yScale;
+
+                svg.innerHTML += `
+                    <circle cx="${x}" cy="${y}" r="5" class="point" />
+                    <text x="${x + 5}" y="${y - 5}" class="term-label">a${i + 1} = ${term}</text>
+                `;
+
+                if (i > 0) {
+                    svg.innerHTML += `<line x1="${prevX}" y1="${prevY}" x2="${x}" y2="${y}" class="ap-line" />`;
+                }
+
+                prevX = x;
+                prevY = y;
+            }
+        }
+    </script>
+</body>
+</html>

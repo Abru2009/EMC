@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Combined Probability Calculators</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f9fbfc;
+            margin: 0;
+            padding: 2vw;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #2d2d2d;
+        }
+        .section {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            width: 90%;
+            max-width: 800px;
+            margin-bottom: 2rem;
+            box-sizing: border-box;
+        }
+        h1 {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #0f5ab5;
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        h2 {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #123d82;
+            font-size: clamp(1.25rem, 4vw, 1.75rem);
+            text-align: center;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #0f5ab5;
+            padding-bottom: 0.5rem;
+            font-weight: 600;
+            letter-spacing: 0.8px;
+        }
+        p {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: clamp(0.875rem, 3vw, 1rem);
+            margin-bottom: 1rem;
+            text-align: center;
+            color: #4a4a4a;
+        }
+        select, input, textarea {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            padding: 0.75rem;
+            font-size: clamp(0.875rem, 3vw, 1rem);
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin: 0.5rem 0;
+            width: 100%;
+            max-width: 300px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        select:focus, input:focus, textarea:focus {
+            border-color: #0f5ab5;
+        }
+        textarea {
+            resize: vertical;
+            height: 100px;
+        }
+        button {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            padding: 0.75rem 1.5rem;
+            font-size: clamp(0.875rem, 3vw, 1rem);
+            background: linear-gradient(45deg, #1a73e8, #2a85ff);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            width: 100%;
+            max-width: 300px;
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(26, 115, 232, 0.4);
+            font-weight: 500;
+        }
+        button:hover {
+            background: linear-gradient(45deg, #185abc, #1a73e8);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(26, 115, 232, 0.5);
+        }
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        .result {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin-top: 1.5rem;
+            font-size: clamp(0.875rem, 3vw, 1.125rem);
+            color: #2d2d2d;
+            word-wrap: break-word;
+            text-align: left;
+        }
+        .sample-space {
+            display: grid;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .sample-item {
+            font-family: 'Courier New', Courier, monospace;
+            padding: clamp(0.5rem, 2vw, 0.75rem);
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            text-align: center;
+            font-size: clamp(0.625rem, 2vw, 0.875rem);
+            min-width: 50px;
+            box-sizing: border-box;
+        }
+        .red-suit { color: #ff0000; }
+        .black-suit { color: #000000; }
+        .highlight {
+            background-color: #28a745;
+            color: white;
+            font-weight: bold;
+        }
+        .removed {
+            background-color: #ff4444;
+            color: white;
+            text-decoration: line-through;
+        }
+        .extra-input, .remove-cards-input {
+            display: none;
+            margin-top: 1rem;
+        }
+        .steps {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            display: none;
+            text-align: left;
+        }
+        .steps-btn {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: none;
+            color: #0f5ab5;
+            border: none;
+            padding: 5px 0;
+            font-size: clamp(0.75rem, 2vw, 0.875rem);
+            cursor: pointer;
+            text-decoration: underline;
+            width: auto;
+            text-align: left;
+        }
+        @media (max-width: 600px) {
+            body { padding: 1rem; }
+            .section { padding: 1rem; width: 95%; }
+            .sample-space { grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); }
+        }
+        @media (min-width: 601px) {
+            .sample-space { grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Probability Calculator -->
+    <div class="section">
+        <h2>Probability Calculator</h2>
+        <p>Calculate probability using P(E) = Number of favorable outcomes / Total number of possible outcomes</p>
+        <div class="input-group">
+            <div>
+                <p>Favorable Outcomes:</p>
+                <input type="number" id="favorable" min="0" step="any">
+            </div>
+            <div>
+                <p>Total Outcomes:</p>
+                <input type="number" id="total" min="0" step="any">
+            </div>
+            <div>
+                <p>Probability P(E) (decimal or fraction):</p>
+                <input type="text" id="probability" placeholder="e.g., 0.5 or 1/2">
+            </div>
+        </div>
+        <button id="calculatePE">Calculate</button>
+        <div id="resultPE" class="result" style="display: none;">
+            <h3>Result:</h3>
+            <p id="outputPE"></p>
+            <button class="steps-btn" id="toggleStepsPE">Show Steps</button>
+            <div class="steps" id="stepsPE"></div>
+        </div>
+    </div>
+
+    <!-- Probability Complement Calculator -->
+    <div class="section">
+        <h2>Probability Complement Calculator</h2>
+        <p>Calculate using the complement rule: P(E) + P(not E) = 1</p>
+        <div class="input-group">
+            <div>
+                <p>Probability of Event P(E):</p>
+                <input type="text" id="pEvent" placeholder="e.g., 0.5 or 1/2">
+            </div>
+            <div>
+                <p>Probability of Complement P(not E):</p>
+                <input type="text" id="pNotEvent" placeholder="e.g., 0.5 or 1/2">
+            </div>
+        </div>
+        <button id="calculateComplement">Calculate</button>
+        <div id="resultComplement" class="result" style="display: none;">
+            <h3>Result:</h3>
+            <p id="outputComplement"></p>
+            <button class="steps-btn" id="toggleStepsComplement">Show Steps</button>
+            <div class="steps" id="stepsComplement"></div>
+        </div>
+    </div>
+
+    <!-- Coin Toss Probability Calculator -->
+    <div class="section">
+        <h2>Coin Toss Probability Calculator</h2>
+        <p>Select number of coins and calculation type:</p>
+        <select id="coinCount" onchange="updateCoinCalcOptions()">
+            <option value="1">1 Coin</option>
+            <option value="2">2 Coins</option>
+            <option value="3">3 Coins</option>
+        </select>
+        <select id="coinCalcType" onchange="toggleCoinExtraInput()"></select>
+        <div id="coinExtraInput" class="extra-input">
+            <input type="number" id="coinExtraValue" placeholder="Enter number">
+        </div>
+        <button onclick="calculateCoinProbability()">Calculate</button>
+        <div id="resultCoin" class="result"></div>
+        <div id="sampleSpaceCoin" class="sample-space"></div>
+    </div>
+
+    <!-- Dice Probability Calculator -->
+    <div class="section">
+        <h2>Dice Probability Calculator</h2>
+        <p>Select number of dice and calculation type:</p>
+        <select id="diceCount" onchange="updateDiceCalcOptions()">
+            <option value="1">1 Die</option>
+            <option value="2">2 Dice</option>
+        </select>
+        <select id="diceCalcType" onchange="toggleDiceExtraInput()"></select>
+        <div id="diceExtraInput" class="extra-input">
+            <input type="number" id="diceExtraValue" placeholder="Enter value">
+        </div>
+        <button onclick="calculateDiceProbability()">Calculate</button>
+        <div id="resultDice" class="result"></div>
+        <div id="sampleSpaceDice" class="sample-space"></div>
+    </div>
+
+    <!-- Card Probability Calculator -->
+    <div class="section">
+        <h2>Card Probability Calculator</h2>
+        <p>Remove cards (optional):</p>
+        <select id="removeCardsToggle" onchange="toggleRemoveCardsInput()">
+            <option value="no">No</option>
+            <option value="yes">Yes</option>
+        </select>
+        <div id="removeCardsInput" class="remove-cards-input">
+            <textarea id="cardsToRemove" placeholder="Enter cards to remove, one per line (e.g., A (heart)\n5 (club)\nK (spade))."></textarea>
+        </div>
+        <p>Define event E (select type):</p>
+        <select id="cardCalcType" onchange="toggleCardExtraInput()">
+            <option value="suit">Specific Suit</option>
+            <option value="face">Face Card (Jack, Queen, King)</option>
+            <option value="number">Specific Number</option>
+            <option value="red">Red Card</option>
+            <option value="black">Black Card</option>
+            <option value="prime">Prime Number Card</option>
+            <option value="greater">Number Greater Than</option>
+            <option value="less">Number Less Than</option>
+        </select>
+        <div id="cardExtraInput" class="extra-input">
+            <input type="text" id="cardExtraValue" placeholder="Enter value (e.g., Hearts, 5)">
+        </div>
+        <button onclick="calculateCardProbability()">Calculate P(E)</button>
+        <div id="resultCard" class="result"></div>
+        <div id="sampleSpaceCard" class="sample-space"></div>
+    </div>
+
+    <!-- Days in a Year Probability Calculator -->
+    <div class="section">
+        <h2>Days in a Year Probability Calculator</h2>
+        <p>Select year type:</p>
+        <select id="yearType">
+            <option value="normal">Normal Year (365 days)</option>
+            <option value="leap">Leap Year (366 days)</option>
+        </select>
+        <p>Select day of the week to count:</p>
+        <select id="dayOfWeek">
+            <option value="0">Sunday</option>
+            <option value="1">Monday</option>
+            <option value="2">Tuesday</option>
+            <option value="3">Wednesday</option>
+            <option value="4">Thursday</option>
+            <option value="5">Friday</option>
+            <option value="6">Saturday</option>
+        </select>
+        <button onclick="calculateDays()">Calculate</button>
+        <div id="resultDays" class="result"></div>
+        <div id="sampleSpaceDays" class="sample-space"></div>
+    </div>
+
+    <script>
+        // Probability Calculator (P(E))
+        document.getElementById('calculatePE').addEventListener('click', calculateMissing);
+        
+        function parseProbability(input) {
+            if (!input || input.trim() === '') return NaN;
+            input = input.trim();
+            if (input.includes('/')) {
+                const [numerator, denominator] = input.split('/').map(num => parseFloat(num.trim()));
+                if (isNaN(numerator) || isNaN(denominator) || denominator === 0) return NaN;
+                return numerator / denominator;
+            }
+            return parseFloat(input);
+        }
+
+        function calculateMissing() {
+            const favorableInput = document.getElementById('favorable');
+            const totalInput = document.getElementById('total');
+            const probInput = document.getElementById('probability');
+            const resultDiv = document.getElementById('resultPE');
+            const output = document.getElementById('outputPE');
+            const steps = document.getElementById('stepsPE');
+            
+            let favorable = parseFloat(favorableInput.value);
+            let total = parseFloat(totalInput.value);
+            let probability = parseProbability(probInput.value);
+            
+            const filledCount = [
+                favorableInput.value.trim() !== '',
+                totalInput.value.trim() !== '',
+                !isNaN(probability)
+            ].filter(Boolean).length;
+            
+            if (filledCount !== 2) {
+                output.textContent = "Please fill exactly 2 fields with valid values";
+                resultDiv.style.display = 'block';
+                steps.style.display = 'none';
+                document.getElementById('toggleStepsPE').textContent = 'Show Steps';
+                return;
+            }
+            
+            let calcSteps = [];
+            if (isNaN(probability)) {
+                if (total <= 0) {
+                    output.textContent = "Total outcomes must be greater than 0";
+                    resultDiv.style.display = 'block';
+                    return;
+                }
+                if (favorable < 0) {
+                    output.textContent = "Favorable outcomes cannot be negative";
+                    resultDiv.style.display = 'block';
+                    return;
+                }
+                if (favorable > total) {
+                    output.textContent = "Favorable outcomes cannot exceed total outcomes";
+                    resultDiv.style.display = 'block';
+                    return;
+                }
+                probability = favorable / total;
+                output.textContent = `P(E) = ${probability.toFixed(4)} or ${(probability * 100).toFixed(2)}%`;
+                calcSteps = [
+                    `P(E) = Favorable / Total`,
+                    `P(E) = ${favorable} / ${total}`,
+                    `P(E) = ${probability.toFixed(4)}`
+                ];
+                probInput.value = probability.toFixed(4);
+            } else if (isNaN(favorable)) {
+                if (probability < 0 || probability > 1) {
+                    output.textContent = "Probability must be between 0 and 1";
+                    resultDiv.style.display = 'block';
+                    return;
+                }
+                if (total <= 0) {
+                    output.textContent = "Total outcomes must be greater than 0";
+                    resultDiv.style.display = 'block';
+                    return;
+                }
+                favorable = probability * total;
+                output.textContent = `Favorable = ${favorable.toFixed(2)}`;
+                calcSteps = [
+                    `P(E) = Favorable / Total`,
+                    `${probability.toFixed(4)} = Favorable / ${total}`,
+                    `Favorable = ${probability.toFixed(4)} × ${total}`,
+                    `Favorable = ${favorable.toFixed(2)}`
+                ];
+                favorableInput.value = favorable.toFixed(2);
+            } else if (isNaN(total)) {
+                if (probability <= 0 || probability > 1) {
+                    output.textContent = "Probability must be between 0 and 1";
+                    resultDiv.style.display = 'block';
+                    return;
+                }
+                if (favorable < 0) {
+                    output.textContent = "Favorable outcomes cannot be negative";
+                    resultDiv.style.display = 'block';
+                    return;
+                }
+                total = favorable / probability;
+                output.textContent = `Total = ${total.toFixed(2)}`;
+                calcSteps = [
+                    `P(E) = Favorable / Total`,
+                    `${probability.toFixed(4)} = ${favorable} / Total`,
+                    `Total = ${favorable} / ${probability.toFixed(4)}`,
+                    `Total = ${total.toFixed(2)}`
+                ];
+                totalInput.value = total.toFixed(2);
+            }
+            
+            resultDiv.style.display = 'block';
+            steps.innerHTML = calcSteps.map(step => `<p>${step}</p>`).join('');
+            document.getElementById('toggleStepsPE').style.display = 'block';
+        }
+
+        document.getElementById('toggleStepsPE').addEventListener('click', function() {
+            const steps = document.getElementById('stepsPE');
+            if (steps.style.display === 'block') {
+                steps.style.display = 'none';
+                this.textContent = 'Show Steps';
+            } else {
+                steps.style.display = 'block';
+                this.textContent = 'Hide Steps';
+            }
+        });
+
+        // Probability Complement Calculator
+        document.getElementById('calculateComplement').addEventListener('click', calculateComplement);
+        
+        function calculateComplement() {
+            const pEventInput = document.getElementById('pEvent');
+            const pNotEventInput = document.getElementById('pNotEvent');
+            const resultDiv = document.getElementById('resultComplement');
+            const output = document.getElementById('outputComplement');
+            const steps = document.getElementById('stepsComplement');
+            
+            let pEvent = parseProbability(pEventInput.value);
+            let pNotEvent = parseProbability(pNotEventInput.value);
+            
+            const filledCount = [
+                pEventInput.value.trim() !== '',
+                pNotEventInput.value.trim() !== ''
+            ].filter(Boolean).length;
+            
+            if (filledCount !== 1) {
+                output.textContent = "Please fill exactly 1 field with a valid value";
+                resultDiv.style.display = 'block';
+                steps.style.display = 'none';
+                document.getElementById('toggleStepsComplement').textContent = 'Show Steps';
+                return;
+            }
+            
+            let calcSteps = [];
+            if (!isNaN(pEvent)) {
+                if (pEvent < 0 || pEvent > 1) {
+                    output.textContent = "P(E) must be between 0 and 1";
+                    resultDiv.style.display = 'block';
+                    return;
+                }
+                pNotEvent = 1 - pEvent;
+                output.textContent = `P(not E) = ${pNotEvent.toFixed(4)} or ${(pNotEvent * 100).toFixed(2)}%`;
+                calcSteps = [
+                    `P(E) + P(not E) = 1`,
+                    `${pEvent.toFixed(4)} + P(not E) = 1`,
+                    `P(not E) = 1 - ${pEvent.toFixed(4)}`,
+                    `P(not E) = ${pNotEvent.toFixed(4)}`
+                ];
+                pNotEventInput.value = pNotEvent.toFixed(4);
+            } else if (!isNaN(pNotEvent)) {
+                if (pNotEvent < 0 || pNotEvent > 1) {
+                    output.textContent = "P(not E) must be between 0 and 1";
+                    resultDiv.style.display = 'block';
+                    return;
+                }
+                pEvent = 1 - pNotEvent;
+                output.textContent = `P(E) = ${pEvent.toFixed(4)} or ${(pEvent * 100).toFixed(2)}%`;
+                calcSteps = [
+                    `P(E) + P(not E) = 1`,
+                    `P(E) + ${pNotEvent.toFixed(4)} = 1`,
+                    `P(E) = 1 - ${pNotEvent.toFixed(4)}`,
+                    `P(E) = ${pEvent.toFixed(4)}`
+                ];
+                pEventInput.value = pEvent.toFixed(4);
+            }
+            
+            resultDiv.style.display = 'block';
+            steps.innerHTML = calcSteps.map(step => `<p>${step}</p>`).join('');
+            document.getElementById('toggleStepsComplement').style.display = 'block';
+        }
+
+        document.getElementById('toggleStepsComplement').addEventListener('click', function() {
+            const steps = document.getElementById('stepsComplement');
+            if (steps.style.display === 'block') {
+                steps.style.display = 'none';
+                this.textContent = 'Show Steps';
+            } else {
+                steps.style.display = 'block';
+                this.textContent = 'Hide Steps';
+            }
+        });
+
+        // Coin Toss Probability Calculator
+        const coinCalcOptions = {
+            1: [
+                { value: "heads", text: "Heads" },
+                { value: "tails", text: "Tails" }
+            ],
+            2: [
+                { value: "allHeads", text: "All Heads" },
+                { value: "allTails", text: "All Tails" },
+                { value: "exactlyHeads", text: "Exactly X Heads" },
+                { value: "atLeastHeads", text: "At Least X Heads" },
+                { value: "atMostHeads", text: "At Most X Heads" },
+                { value: "exactlyTails", text: "Exactly X Tails" },
+                { value: "atLeastTails", text: "At Least X Tails" },
+                { value: "atMostTails", text: "At Most X Tails" }
+            ],
+            3: [
+                { value: "allHeads", text: "All Heads" },
+                { value: "allTails", text: "All Tails" },
+                { value: "exactlyHeads", text: "Exactly X Heads" },
+                { value: "atLeastHeads", text: "At Least X Heads" },
+                { value: "atMostHeads", text: "At Most X Heads" },
+                { value: "exactlyTails", text: "Exactly X Tails" },
+                { value: "atLeastTails", text: "At Least X Tails" },
+                { value: "atMostTails", text: "At Most X Tails" }
+            ]
+        };
+
+        function updateCoinCalcOptions() {
+            const coinCount = document.getElementById("coinCount").value;
+            const calcTypeSelect = document.getElementById("coinCalcType");
+            calcTypeSelect.innerHTML = "";
+            coinCalcOptions[coinCount].forEach(option => {
+                const opt = document.createElement("option");
+                opt.value = option.value;
+                opt.text = option.text;
+                calcTypeSelect.appendChild(opt);
+            });
+            toggleCoinExtraInput();
+        }
+
+        function toggleCoinExtraInput() {
+            const calcType = document.getElementById("coinCalcType").value;
+            const extraInput = document.getElementById("coinExtraInput");
+            const needsInput = ["exactlyHeads", "atLeastHeads", "atMostHeads", "exactlyTails", "atLeastTails", "atMostTails"];
+            extraInput.style.display = needsInput.includes(calcType) ? "block" : "none";
+            document.getElementById("coinExtraValue").value = "";
+        }
+
+        function generateCoinSampleSpace(coinCount, condition) {
+            const sampleSpaceDiv = document.getElementById("sampleSpaceCoin");
+            sampleSpaceDiv.innerHTML = "";
+            const favorableOutcomes = [];
+            const totalOutcomes = Math.pow(2, coinCount);
+
+            const outcomes = [];
+            for (let i = 0; i < totalOutcomes; i++) {
+                const binary = i.toString(2).padStart(coinCount, "0");
+                const toss = binary.split("").map(digit => digit === "1" ? "H" : "T").join(",");
+                outcomes.push(toss);
+            }
+
+            outcomes.forEach(toss => {
+                const headsCount = (toss.match(/H/g) || []).length;
+                const tailsCount = coinCount - headsCount;
+                const div = document.createElement("div");
+                div.className = "sample-item";
+                div.textContent = `(${toss})`;
+                if (condition(headsCount, tailsCount)) {
+                    div.classList.add("highlight");
+                    favorableOutcomes.push(toss);
+                }
+                sampleSpaceDiv.appendChild(div);
+            });
+
+            return favorableOutcomes;
+        }
+
+        function calculateCoinProbability() {
+            const coinCount = parseInt(document.getElementById("coinCount").value);
+            const calcType = document.getElementById("coinCalcType").value;
+            const extraValue = parseInt(document.getElementById("coinExtraValue").value) || 0;
+            const totalOutcomes = Math.pow(2, coinCount);
+
+            const needsExtra = ["exactlyHeads", "atLeastHeads", "atMostHeads", "exactlyTails", "atLeastTails", "atMostTails"];
+            if (needsExtra.includes(calcType) && (extraValue < 0 || extraValue > coinCount)) {
+                document.getElementById("resultCoin").innerHTML = `Please enter a number between 0 and ${coinCount}.`;
+                document.getElementById("sampleSpaceCoin").innerHTML = "";
+                return;
+            }
+
+            let condition;
+            let resultTextPrefix;
+            switch (calcType) {
+                case "heads":
+                    condition = (headsCount) => headsCount === 1;
+                    resultTextPrefix = "heads";
+                    break;
+                case "tails":
+                    condition = (headsCount) => headsCount === 0;
+                    resultTextPrefix = "tails";
+                    break;
+                case "allHeads":
+                    condition = (headsCount) => headsCount === coinCount;
+                    resultTextPrefix = "all heads";
+                    break;
+                case "allTails":
+                    condition = (headsCount) => headsCount === 0;
+                    resultTextPrefix = "all tails";
+                    break;
+                case "exactlyHeads":
+                    condition = (headsCount) => headsCount === extraValue;
+                    resultTextPrefix = `exactly ${extraValue} heads`;
+                    break;
+                case "atLeastHeads":
+                    condition = (headsCount) => headsCount >= extraValue;
+                    resultTextPrefix = `at least ${extraValue} heads`;
+                    break;
+                case "atMostHeads":
+                    condition = (headsCount) => headsCount <= extraValue;
+                    resultTextPrefix = `at most ${extraValue} heads`;
+                    break;
+                case "exactlyTails":
+                    condition = (headsCount, tailsCount) => tailsCount === extraValue;
+                    resultTextPrefix = `exactly ${extraValue} tails`;
+                    break;
+                case "atLeastTails":
+                    condition = (headsCount, tailsCount) => tailsCount >= extraValue;
+                    resultTextPrefix = `at least ${extraValue} tails`;
+                    break;
+                case "atMostTails":
+                    condition = (headsCount, tailsCount) => tailsCount <= extraValue;
+                    resultTextPrefix = `at most ${extraValue} tails`;
+                    break;
+            }
+
+            const favorableOutcomes = generateCoinSampleSpace(coinCount, condition);
+            const count = favorableOutcomes.length;
+            const probability = count / totalOutcomes;
+
+            const resultText = `Probability of ${resultTextPrefix} is ${count}/${totalOutcomes} or approximately ${(probability).toFixed(4)}.`;
+            document.getElementById("resultCoin").innerHTML = resultText;
+        }
+
+        updateCoinCalcOptions();
+
+        // Dice Probability Calculator
+        const diceCalcOptions = {
+            1: [
+                { value: "prime", text: "Prime Number" },
+                { value: "square", text: "Square Number" },
+                { value: "doublet", text: "Specific Number" },
+                { value: "above", text: "Sum of Digits Above" },
+                { value: "below", text: "Sum of Digits Below" },
+                { value: "multiple", text: "Sum of Digits Multiple of" },
+                { value: "equals", text: "Sum of Digits Equals" }
+            ],
+            2: [
+                { value: "prime", text: "Prime Number Sum" },
+                { value: "square", text: "Square Number Sum" },
+                { value: "doublet", text: "Doublet" },
+                { value: "above", text: "Sum of Digits Above" },
+                { value: "below", text: "Sum of Digits Below" },
+                { value: "multiple", text: "Sum of Digits Multiple of" },
+                { value: "equals", text: "Sum of Digits Equals" }
+            ]
+        };
+
+        function updateDiceCalcOptions() {
+            const diceCount = document.getElementById("diceCount").value;
+            const calcTypeSelect = document.getElementById("diceCalcType");
+            calcTypeSelect.innerHTML = "";
+            diceCalcOptions[diceCount].forEach(option => {
+                const opt = document.createElement("option");
+                opt.value = option.value;
+                opt.text = option.text;
+                calcTypeSelect.appendChild(opt);
+            });
+            toggleDiceExtraInput();
+        }
+
+        function toggleDiceExtraInput() {
+            const diceCount = document.getElementById("diceCount").value;
+            const calcType = document.getElementById("diceCalcType").value;
+            const extraInput = document.getElementById("diceExtraInput");
+            const needsInput = diceCount === "1" 
+                ? ["doublet", "above", "below", "multiple", "equals"] 
+                : ["above", "below", "multiple", "equals"];
+            extraInput.style.display = needsInput.includes(calcType) ? "block" : "none";
+            document.getElementById("diceExtraValue").value = "";
+        }
+
+        function generateDiceSampleSpace(diceCount, condition) {
+            const sampleSpaceDiv = document.getElementById("sampleSpaceDice");
+            sampleSpaceDiv.innerHTML = "";
+            const favorableOutcomes = [];
+            const totalOutcomes = diceCount === "1" ? 6 : 36;
+
+            if (diceCount === "1") {
+                for (let i = 1; i <= 6; i++) {
+                    const digitSum = i;
+                    const div = document.createElement("div");
+                    div.className = "sample-item";
+                    div.textContent = `(${i})`;
+                    if (condition(i, null, i, digitSum)) {
+                        div.classList.add("highlight");
+                        favorableOutcomes.push(i);
+                    }
+                    sampleSpaceDiv.appendChild(div);
+                }
+            } else {
+                for (let i = 1; i <= 6; i++) {
+                    for (let j = 1; j <= 6; j++) {
+                        const pairSum = i + j;
+                        const digitSum = i + j > 9 ? Math.floor((i + j) / 10) + ((i + j) % 10) : i + j;
+                        const div = document.createElement("div");
+                        div.className = "sample-item";
+                        div.textContent = `(${i},${j})`;
+                        if (condition(i, j, pairSum, digitSum)) {
+                            div.classList.add("highlight");
+                            favorableOutcomes.push([i, j]);
+                        }
+                        sampleSpaceDiv.appendChild(div);
+                    }
+                }
+            }
+            return favorableOutcomes;
+        }
+
+        function calculateDiceProbability() {
+            const diceCount = document.getElementById("diceCount").value;
+            const calcType = document.getElementById("diceCalcType").value;
+            const extraValue = parseInt(document.getElementById("diceExtraValue").value) || 0;
+            const totalOutcomes = diceCount === "1" ? 6 : 36;
+            let condition;
+
+            switch (calcType) {
+                case "prime":
+                    condition = diceCount === "1" 
+                        ? (i) => [2, 3, 5].includes(i) 
+                        : (i, j, pairSum) => [2, 3, 5, 7, 11].includes(pairSum);
+                    break;
+                case "square":
+                    condition = diceCount === "1" 
+                        ? (i) => [1, 4].includes(i) 
+                        : (i, j, pairSum) => [4, 9].includes(pairSum);
+                    break;
+                case "doublet":
+                    if (diceCount === "1") {
+                        if (isNaN(extraValue) || extraValue < 1 || extraValue > 6) {
+                            document.getElementById("resultDice").innerHTML = "Please enter a number between 1 and 6.";
+                            document.getElementById("sampleSpaceDice").innerHTML = "";
+                            return;
+                        }
+                        condition = (i) => i === extraValue;
+                    } else {
+                        condition = (i, j) => i === j;
+                    }
+                    break;
+                case "above":
+                    condition = (i, j, pairSum, digitSum) => digitSum > extraValue;
+                    break;
+                case "below":
+                    condition = (i, j, pairSum, digitSum) => digitSum < extraValue;
+                    break;
+                case "multiple":
+                    if (extraValue === 0) {
+                        document.getElementById("resultDice").innerHTML = "Please enter a non-zero value.";
+                        document.getElementById("sampleSpaceDice").innerHTML = "";
+                        return;
+                    }
+                    condition = (i, j, pairSum, digitSum) => digitSum % extraValue === 0;
+                    break;
+                case "equals":
+                    if (diceCount === "1") {
+                        condition = (i, j, pairSum, digitSum) => digitSum === extraValue;
+                    } else {
+                        condition = (i, j, pairSum) => pairSum === extraValue;
+                    }
+                    break;
+            }
+
+            const favorableOutcomes = generateDiceSampleSpace(diceCount, condition);
+            const count = favorableOutcomes.length;
+            const probability = count / totalOutcomes;
+
+            let resultText = `Probability of ${calcType === "doublet" && diceCount === "1" ? "number " + extraValue : calcType.replace(/([A-Z])/g, ' $1').toLowerCase()}${calcType.match(/above|below|multiple|equals/) || (calcType === "doublet" && diceCount === "1") ? " " + extraValue : ""} is ${count}/${totalOutcomes} or approximately ${(probability).toFixed(4)}.`;
+            document.getElementById("resultDice").innerHTML = resultText;
+        }
+
+        updateDiceCalcOptions();
+
+        // Card Probability Calculator
+        const suits = ["Hearts", "Diamonds", "Clubs", "Spades"];
+        const suitSymbols = { "Hearts": "♥", "Diamonds": "♦", "Clubs": "♣", "Spades": "♠" };
+        const suitTextToName = { "heart": "Hearts", "diamond": "Diamonds", "club": "Clubs", "spade": "Spades" };
+        const ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+        const totalCards = 52;
+
+        function toggleRemoveCardsInput() {
+            const removeCardsToggle = document.getElementById("removeCardsToggle").value;
+            const removeCardsInput = document.getElementById("removeCardsInput");
+            removeCardsInput.style.display = removeCardsToggle === "yes" ? "block" : "none";
+            document.getElementById("cardsToRemove").value = "";
+        }
+
+        function toggleCardExtraInput() {
+            const calcType = document.getElementById("cardCalcType").value;
+            const extraInput = document.getElementById("cardExtraInput");
+            const needsInput = ["suit", "number", "greater", "less"];
+            extraInput.style.display = needsInput.includes(calcType) ? "block" : "none";
+            document.getElementById("cardExtraValue").value = "";
+            extraInput.querySelector("input").placeholder = calcType === "suit" ? "Enter suit (e.g., Hearts)" : "Enter number (1-13)";
+        }
+
+        function parseCardsToRemove() {
+            const cardsToRemoveText = document.getElementById("cardsToRemove").value.trim();
+            if (!cardsToRemoveText) return { removedCards: [], duplicates: [], invalid: [] };
+
+            const cards = cardsToRemoveText.split("\n").map(card => card.trim()).filter(card => card);
+            const removedCardsSet = new Set();
+            const duplicates = [];
+            const invalid = [];
+            const validRanks = ranks;
+            const validSuits = Object.keys(suitTextToName);
+
+            for (let card of cards) {
+                const match = card.match(/^([A2-9JQK10]+)\s*\((heart|diamond|club|spade)\)$/i);
+                if (match) {
+                    const rank = match[1].toUpperCase();
+                    const suitText = match[2].toLowerCase();
+                    if (validRanks.includes(rank) && validSuits.includes(suitText)) {
+                        const suit = suitTextToName[suitText];
+                        const cardStr = `${rank}${suitSymbols[suit]}`;
+                        if (removedCardsSet.has(cardStr)) {
+                            duplicates.push(cardStr);
+                        } else {
+                            removedCardsSet.add(cardStr);
+                        }
+                    } else {
+                        invalid.push(card);
+                    }
+                } else {
+                    invalid.push(card);
+                }
+            }
+
+            return { 
+                removedCards: Array.from(removedCardsSet), 
+                duplicates: duplicates, 
+                invalid: invalid 
+            };
+        }
+
+        function generateCardSampleSpace(condition) {
+            const sampleSpaceDiv = document.getElementById("sampleSpaceCard");
+            sampleSpaceDiv.innerHTML = "";
+            const { removedCards } = parseCardsToRemove();
+            const favorableOutcomes = [];
+            let totalRemainingCards = totalCards;
+
+            for (let suit of suits) {
+                for (let rank of ranks) {
+                    const cardValue = rank === "A" ? 1 : 
+                                     rank === "J" ? 11 : 
+                                     rank === "Q" ? 12 : 
+                                     rank === "K" ? 13 : 
+                                     parseInt(rank);
+                    const cardStr = `${rank}${suitSymbols[suit]}`;
+                    const div = document.createElement("div");
+                    div.className = "sample-item";
+                    if (suit === "Hearts" || suit === "Diamonds") {
+                        div.classList.add("red-suit");
+                    } else {
+                        div.classList.add("black-suit");
+                    }
+                    div.textContent = cardStr;
+
+                    if (removedCards.includes(cardStr)) {
+                        div.classList.add("removed");
+                        totalRemainingCards--;
+                        continue;
+                    }
+
+                    if (condition(suit, rank, cardValue)) {
+                        div.classList.add("highlight");
+                        favorableOutcomes.push(`${rank} of ${suit}`);
+                    }
+                    sampleSpaceDiv.appendChild(div);
+                }
+            }
+            return { favorableOutcomes, totalRemainingCards };
+        }
+
+        function calculateCardProbability() {
+            const calcType = document.getElementById("cardCalcType").value;
+            const extraValue = document.getElementById("cardExtraValue").value.trim();
+            const removeCardsToggle = document.getElementById("removeCardsToggle").value;
+            let condition;
+
+            switch (calcType) {
+                case "suit":
+                    if (!suits.includes(extraValue)) {
+                        document.getElementById("resultCard").innerHTML = "Please enter a valid suit (Hearts, Diamonds, Clubs, Spades).";
+                        document.getElementById("sampleSpaceCard").innerHTML = "";
+                        return;
+                    }
+                    condition = (suit) => suit === extraValue;
+                    break;
+                case "face":
+                    condition = (suit, rank) => ["J", "Q", "K"].includes(rank);
+                    break;
+                case "number":
+                    const num = parseInt(extraValue);
+                    if (isNaN(num) || num < 1 || num > 13) {
+                        document.getElementById("resultCard").innerHTML = "Please enter a number between 1 and 13.";
+                        document.getElementById("sampleSpaceCard").innerHTML = "";
+                        return;
+                    }
+                    condition = (suit, rank, cardValue) => cardValue === num;
+                    break;
+                case "red":
+                    condition = (suit) => ["Hearts", "Diamonds"].includes(suit);
+                    break;
+                case "black":
+                    condition = (suit) => ["Clubs", "Spades"].includes(suit);
+                    break;
+                case "prime":
+                    condition = (suit, rank, cardValue) => [2, 3, 5, 7, 11, 13].includes(cardValue);
+                    break;
+                case "greater":
+                    const greaterThan = parseInt(extraValue);
+                    if (isNaN(greaterThan) || greaterThan < 1 || greaterThan >= 13) {
+                        document.getElementById("resultCard").innerHTML = "Please enter a number between 1 and 12.";
+                        document.getElementById("sampleSpaceCard").innerHTML = "";
+                        return;
+                    }
+                    condition = (suit, rank, cardValue) => cardValue > greaterThan;
+                    break;
+                case "less":
+                    const lessThan = parseInt(extraValue);
+                    if (isNaN(lessThan) || lessThan <= 1 || lessThan > 13) {
+                        document.getElementById("resultCard").innerHTML = "Please enter a number between 2 and 13.";
+                        document.getElementById("sampleSpaceCard").innerHTML = "";
+                        return;
+                    }
+                    condition = (suit, rank, cardValue) => cardValue < lessThan;
+                    break;
+            }
+
+            const { removedCards, duplicates, invalid } = parseCardsToRemove();
+            const { favorableOutcomes, totalRemainingCards } = generateCardSampleSpace(condition);
+            const count = favorableOutcomes.length;
+            const probability = totalRemainingCards > 0 ? count / totalRemainingCards : 0;
+
+            let resultText = "";
+            if (totalRemainingCards <= 0) {
+                resultText = `Error: All ${totalCards} cards have been removed from the deck. No cards remain to calculate P(E).`;
+            } else {
+                resultText = `P(E) = Number of favorable outcomes / Total outcomes<br>`;
+                resultText += `Event E: ${calcType === "suit" || calcType === "number" || calcType === "greater" || calcType === "less" ? `${calcType} ${extraValue}` : calcType}<br>`;
+                resultText += `Number of favorable outcomes: ${count}<br>`;
+                resultText += `Total number of possible outcomes: ${totalRemainingCards}<br>`;
+                resultText += `P(E) = ${count}/${totalRemainingCards} = ${(probability).toFixed(4)}`;
+            }
+
+            if (removeCardsToggle === "yes" && removedCards.length > 0) {
+                resultText += `<br><br>Removed ${removedCards.length} card(s): ${removedCards.join(", ")}`;
+            }
+            if (duplicates.length > 0) {
+                resultText += `<br><br>Warning: The following cards were listed multiple times and counted only once: ${duplicates.join(", ")}`;
+            }
+            if (invalid.length > 0) {
+                resultText += `<br><br>Error: The following entries were invalid and ignored: ${invalid.join(", ")}`;
+            }
+
+            document.getElementById("resultCard").innerHTML = resultText;
+        }
+
+        toggleRemoveCardsInput();
+        toggleCardExtraInput();
+
+        // Days in a Year Probability Calculator
+        function generateDaysSampleSpace(yearType, targetDay) {
+            const sampleSpaceDiv = document.getElementById("sampleSpaceDays");
+            sampleSpaceDiv.innerHTML = "";
+            const daysInYear = yearType === "normal" ? 365 : 366;
+            const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+            const favorableOutcomes = [];
+
+            if (yearType === "normal") {
+                for (let i = 0; i < 7; i++) {
+                    const count = calculateDayCount(daysInYear, targetDay, i);
+                    const div = document.createElement("div");
+                    div.className = "sample-item";
+                    div.textContent = `${daysOfWeek[i]}: ${count} ${daysOfWeek[targetDay]}s`;
+                    if (count === 53) {
+                        div.classList.add("highlight");
+                        favorableOutcomes.push({ start: daysOfWeek[i], count });
+                    }
+                    sampleSpaceDiv.appendChild(div);
+                }
+            } else {
+                const prevDay = (targetDay - 1 + 7) % 7;
+                const nextDay = (targetDay + 1) % 7;
+                const pairs = [
+                    { start: prevDay, end: targetDay },
+                    { start: targetDay, end: nextDay }
+                ];
+
+                pairs.forEach(pair => {
+                    const count1 = calculateDayCount(daysInYear, targetDay, pair.start);
+                    const count2 = calculateDayCount(daysInYear, targetDay, pair.end);
+                    const div = document.createElement("div");
+                    div.className = "sample-item";
+                    div.textContent = `${daysOfWeek[pair.start]}-${daysOfWeek[pair.end]}: ${count1}-${count2} ${daysOfWeek[targetDay]}s`;
+                    if (count1 === 53 || count2 === 53) {
+                        div.classList.add("highlight");
+                        favorableOutcomes.push({ startPair: `${daysOfWeek[pair.start]}-${daysOfWeek[pair.end]}`, count: Math.max(count1, count2) });
+                    }
+                    sampleSpaceDiv.appendChild(div);
+                });
+            }
+
+            return favorableOutcomes;
+        }
+
+        function calculateDayCount(daysInYear, targetDay, startDay) {
+            const weeks = Math.floor(daysInYear / 7);
+            const extraDays = daysInYear % 7;
+            let extraOccurrences = 0;
+
+            for (let i = 0; i < extraDays; i++) {
+                if ((startDay + i) % 7 === targetDay) {
+                    extraOccurrences = 1;
+                    break;
+                }
+            }
+
+            return weeks + extraOccurrences;
+        }
+
+        function calculateDays() {
+            const yearType = document.getElementById("yearType").value;
+            const targetDay = parseInt(document.getElementById("dayOfWeek").value);
+            const daysInYear = yearType === "normal" ? 365 : 366;
+            const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const weeks = Math.floor(daysInYear / 7);
+            const extraDays = daysInYear % 7;
+
+            const counts = [];
+            for (let i = 0; i < 7; i++) {
+                counts.push(calculateDayCount(daysInYear, targetDay, i));
+            }
+            const minCount = Math.min(...counts);
+            const maxCount = Math.max(...counts);
+            const favorable52 = counts.filter(c => c === 52).length;
+            const favorable53 = counts.filter(c => c === 53).length;
+            const totalOutcomes = 7;
+
+            const prob52 = favorable52 / totalOutcomes;
+            const prob53 = favorable53 / totalOutcomes;
+
+            let explanation = `
+                <strong>Result:</strong> In a ${yearType} year (${daysInYear} days), there are ${minCount} or ${maxCount} ${daysOfWeek[targetDay]}s depending on the starting day.<br><br>
+                <strong>Formula:</strong> P(E) = Number of favorable outcomes / Total number of outcomes<br>
+                - P(${daysOfWeek[targetDay]} occurs ${minCount} times) = ${favorable52}/${totalOutcomes} ≈ ${(prob52).toFixed(4)}<br>
+                - P(${daysOfWeek[targetDay]} occurs ${maxCount} times) = ${favorable53}/${totalOutcomes} ≈ ${(prob53).toFixed(4)}<br><br>
+                <strong>Step-by-Step Explanation:</strong><br>
+                1. Total days in the year = ${daysInYear}.<br>
+                2. Number of complete weeks = ${daysInYear} ÷ 7 = ${weeks} weeks (since ${weeks} × 7 = ${weeks * 7}).<br>
+                3. Each week has 1 ${daysOfWeek[targetDay]}, so ${weeks} ${daysOfWeek[targetDay]}s are guaranteed.<br>
+                4. Extra days = ${daysInYear} - (${weeks} × 7) = ${extraDays} days.<br>
+                5. Total possible starting days (outcomes) = 7 (Sun, Mon, ..., Sat).<br>
+                6. Calculate occurrences for each starting day:<br>`;
+
+            for (let i = 0; i < 7; i++) {
+                const count = calculateDayCount(daysInYear, targetDay, i);
+                explanation += `   - If Jan 1 is ${daysOfWeek[i]}: ${count} ${daysOfWeek[targetDay]}s<br>`;
+            }
+            explanation += `7. Favorable outcomes:<br>
+                - ${favorable52} starting days result in ${minCount} ${daysOfWeek[targetDay]}s (P = ${favorable52}/7).<br>
+                - ${favorable53} starting days result in ${maxCount} ${daysOfWeek[targetDay]}s (P = ${favorable53}/7).<br>`;
+
+            const favorableOutcomes = generateDaysSampleSpace(yearType, targetDay);
+            document.getElementById("resultDays").innerHTML = explanation;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quadratic Equation Solver and Root Analyzer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        body {
+            background: #f9fbfc;
+            line-height: 1.6;
+            color: #2d2d2d;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1300px;
+            margin: 70px auto;
+            padding: 40px;
+            background: #ffffff;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+        h1 {
+            text-align: center;
+            color: #0f5ab5;
+            font-size: 3.8em;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #123d82;
+            font-size: 2.4em;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #123d82;
+            font-size: 1.6em;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+        .formula {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #e8eefc;
+            border-radius: 10px;
+            color: #4a4a4a;
+        }
+        .input-section {
+            background: #f9fbfc;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(15, 90, 181, 0.1);
+        }
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+        .form-group label {
+            width: 30px;
+            font-weight: 500;
+            color: #4a4a4a;
+        }
+        .form-group input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        .form-group input:focus {
+            border-color: #0f5ab5;
+        }
+        button {
+            background: linear-gradient(45deg, #1a73e8, #2a85ff);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(26, 115, 232, 0.4);
+            width: 100%;
+        }
+        button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(26, 115, 232, 0.5);
+            background: linear-gradient(45deg, #185abc, #1a73e8);
+        }
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        button:hover::before {
+            width: 100%;
+            height: 100%;
+            max-width: 200px;
+            max-height: 200px;
+        }
+        .error {
+            color: #d93025;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8d7da;
+            border-radius: 8px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8eefc;
+            border-radius: 10px;
+        }
+        .tab-container {
+            margin-top: 20px;
+        }
+        .tab-buttons {
+            display: flex;
+            gap: 5px;
+            background: #f9fbfc;
+            padding: 5px;
+            border-radius: 10px 10px 0 0;
+        }
+        .tab-button {
+            padding: 10px 20px;
+            background: #e8eefc;
+            border-radius: 8px;
+            color: #4a4a4a;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .tab-button:hover {
+            background: #d1e0ff;
+        }
+        .tab-button.active {
+            background: linear-gradient(45deg, #1a73e8, #2a85ff);
+            color: white;
+            box-shadow: 0 5px 15px rgba(26, 115, 232, 0.4);
+        }
+        .tab-content {
+            padding: 20px;
+            border-radius: 0 0 10px 10px;
+            background: #f9fbfc;
+            box-shadow: 0 4px 15px rgba(15, 90, 181, 0.1);
+        }
+        .tab-panel {
+            display: none;
+        }
+        .tab-panel.active {
+            display: block;
+        }
+        .solution-step {
+            margin-bottom: 5px;
+            position: relative;
+            padding-left: 20px;
+        }
+        .solution-step:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #1a73e8;
+        }
+        .separator {
+            margin: 15px 0;
+            border-top: 1px dashed #ccc;
+            text-align: center;
+        }
+        .separator span {
+            position: relative;
+            top: -10px;
+            background: #f9fbfc;
+            padding: 0 10px;
+            color: #666;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin: 20px auto;
+            }
+            h1 {
+                font-size: 2.5em;
+            }
+            h2 {
+                font-size: 1.8em;
+            }
+            h3 {
+                font-size: 1.4em;
+            }
+            .form-group {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .form-group input {
+                width: 100%;
+            }
+            .tab-buttons {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .tab-button {
+                padding: 8px 15px;
+            }
+            .tab-content {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Quadratic Equation Solver and Root Analyzer</h1>
+        <div class="formula">
+            <p>Solves ax² + bx + c = 0</p>
+        </div>
+
+        <div class="input-section">
+            <h2>Enter Coefficients</h2>
+            <div class="form-group">
+                <label for="a-input">a:</label>
+                <input id="a-input" type="number" value="1" step="any">
+            </div>
+            <div class="form-group">
+                <label for="b-input">b:</label>
+                <input id="b-input" type="number" value="0" step="any">
+            </div>
+            <div class="form-group">
+                <label for="c-input">c:</label>
+                <input id="c-input" type="number" value="0" step="any">
+            </div>
+            <button id="solve-button">Solve and Analyze Roots</button>
+            <div id="error-message" class="error" style="display: none;"></div>
+        </div>
+
+        <div id="solution-container" style="display: none;">
+            <div id="solution-summary" class="result">
+                <h3>Solution Summary</h3>
+            </div>
+
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <button id="quick-tab" class="tab-button active">Quick Solution</button>
+                    <button id="quadratic-tab" class="tab-button">Quadratic Formula</button>
+                    <button id="factorization-tab" class="tab-button">Factorization</button>
+                    <button id="analyze-tab" class="tab-button">Root Analysis</button>
+                </div>
+
+                <div class="tab-content">
+                    <div id="quick-solution" class="tab-panel active">
+                        <h3>Quick Solution Summary</h3>
+                        <div id="quick-content"></div>
+                    </div>
+
+                    <div id="quadratic-solution" class="tab-panel">
+                        <h3>Solution by Quadratic Formula</h3>
+                        <div id="quadratic-steps"></div>
+                    </div>
+
+                    <div id="factorization-solution" class="tab-panel">
+                        <h3>Solution by Factorization</h3>
+                        <div id="factorization-steps"></div>
+                    </div>
+
+                    <div id="analyze-solution" class="tab-panel">
+                        <h3>Root Analysis</h3>
+                        <div id="analyze-content"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const aInput = document.getElementById('a-input');
+            const bInput = document.getElementById('b-input');
+            const cInput = document.getElementById('c-input');
+            const solveButton = document.getElementById('solve-button');
+            const errorMessage = document.getElementById('error-message');
+            const solutionContainer = document.getElementById('solution-container');
+            const solutionSummary = document.getElementById('solution-summary');
+            const quickContent = document.getElementById('quick-content');
+            const quadraticSteps = document.getElementById('quadratic-steps');
+            const factorizationSteps = document.getElementById('factorization-steps');
+            const analyzeContent = document.getElementById('analyze-content');
+
+            const quickTab = document.getElementById('quick-tab');
+            const quadraticTab = document.getElementById('quadratic-tab');
+            const factorizationTab = document.getElementById('factorization-tab');
+            const analyzeTab = document.getElementById('analyze-tab');
+            const quickSolution = document.getElementById('quick-solution');
+            const quadraticSolution = document.getElementById('quadratic-solution');
+            const factorizationSolution = document.getElementById('factorization-solution');
+            const analyzeSolution = document.getElementById('analyze-solution');
+
+            quickTab.addEventListener('click', function() {
+                activateTab('quick');
+            });
+            quadraticTab.addEventListener('click', function() {
+                activateTab('quadratic');
+            });
+            factorizationTab.addEventListener('click', function() {
+                activateTab('factorization');
+            });
+            analyzeTab.addEventListener('click', function() {
+                activateTab('analyze');
+            });
+
+            function activateTab(tabName) {
+                [quickTab, quadraticTab, factorizationTab, analyzeTab].forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                [quickSolution, quadraticSolution, factorizationSolution, analyzeSolution].forEach(panel => {
+                    panel.classList.remove('active');
+                });
+
+                if (tabName === 'quick') {
+                    quickTab.classList.add('active');
+                    quickSolution.classList.add('active');
+                } else if (tabName === 'quadratic') {
+                    quadraticTab.classList.add('active');
+                    quadraticSolution.classList.add('active');
+                } else if (tabName === 'factorization') {
+                    factorizationTab.classList.add('active');
+                    factorizationSolution.classList.add('active');
+                } else if (tabName === 'analyze') {
+                    analyzeTab.classList.add('active');
+                    analyzeSolution.classList.add('active');
+                }
+            }
+
+            solveButton.addEventListener('click', function() {
+                solveQuadratic();
+            });
+
+            function solveQuadratic() {
+                errorMessage.style.display = 'none';
+                solutionContainer.style.display = 'none';
+
+                const a = parseFloat(aInput.value) || 0;
+                const b = parseFloat(bInput.value) || 0;
+                const c = parseFloat(cInput.value) || 0;
+
+                if (a === 0) {
+                    errorMessage.textContent = 'Coefficient a cannot be zero (would not be a quadratic equation)';
+                    errorMessage.style.display = 'block';
+                    return;
+                }
+
+                const discriminant = b * b - 4 * a * c;
+                const solution = {
+                    a: a,
+                    b: b,
+                    c: c,
+                    discriminant: discriminant
+                };
+
+                if (discriminant > 0) {
+                    solution.nature = 'Two distinct real roots';
+                    solution.x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+                    solution.x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+                    solution.factorizable = isFactorizableQuadratic(a, b, c, solution.x1, solution.x2);
+                } else if (discriminant === 0) {
+                    solution.nature = 'One real root (repeated)';
+                    solution.x1 = solution.x2 = -b / (2 * a);
+                    solution.factorizable = true;
+                } else {
+                    solution.nature = 'Two complex roots';
+                    solution.realPart = -b / (2 * a);
+                    solution.imaginaryPart = Math.sqrt(Math.abs(discriminant)) / (2 * a);
+                    solution.factorizable = false;
+                }
+
+                displaySolution(solution);
+            }
+
+            function displaySolution(solution) {
+                let summaryHTML = `
+                    <p><strong>Equation:</strong> ${solution.a}x² + ${solution.b}x + ${solution.c} = 0</p>
+                    <p><strong>Discriminant:</strong> ${solution.discriminant.toFixed(2)}</p>
+                    <p><strong>Nature of Roots:</strong> ${solution.nature}</p>
+                `;
+                if (solution.nature === 'Two distinct real roots') {
+                    summaryHTML += `
+                        <p><strong>x₁:</strong> ${solution.x1.toFixed(4)}</p>
+                        <p><strong>x₂:</strong> ${solution.x2.toFixed(4)}</p>
+                    `;
+                } else if (solution.nature === 'One real root (repeated)') {
+                    summaryHTML += `
+                        <p><strong>x:</strong> ${solution.x1.toFixed(4)}</p>
+                    `;
+                } else {
+                    summaryHTML += `
+                        <p><strong>x₁:</strong> ${solution.realPart.toFixed(4)} + ${solution.imaginaryPart.toFixed(4)}i</p>
+                        <p><strong>x₂:</strong> ${solution.realPart.toFixed(4)} - ${solution.imaginaryPart.toFixed(4)}i</p>
+                    `;
+                }
+                solutionSummary.innerHTML = summaryHTML;
+
+                let quickHTML = '';
+                if (solution.nature === 'Two distinct real roots') {
+                    quickHTML = `
+                        <p>The quadratic equation ${solution.a}x² + ${solution.b}x + ${solution.c} = 0 has been solved.</p>
+                        <p>The roots are x₁ = ${solution.x1.toFixed(4)} and x₂ = ${solution.x2.toFixed(4)}.</p>
+                    `;
+                } else if (solution.nature === 'One real root (repeated)') {
+                    quickHTML = `
+                        <p>The quadratic equation ${solution.a}x² + ${solution.b}x + ${solution.c} = 0 has been solved.</p>
+                        <p>The equation has one repeated root: x = ${solution.x1.toFixed(4)}.</p>
+                    `;
+                } else {
+                    quickHTML = `
+                        <p>The quadratic equation ${solution.a}x² + ${solution.b}x + ${solution.c} = 0 has been solved.</p>
+                        <p>The equation has complex roots: x₁ = ${solution.realPart.toFixed(4)} + ${solution.imaginaryPart.toFixed(4)}i and x₂ = ${solution.realPart.toFixed(4)} - ${solution.imaginaryPart.toFixed(4)}i.</p>
+                    `;
+                }
+                quickContent.innerHTML = quickHTML;
+
+                const quadraticFormulaSteps = getQuadraticFormulaSteps(solution);
+                let quadraticHTML = '';
+                quadraticFormulaSteps.forEach(step => {
+                    quadraticHTML += `<div class="solution-step">${step}</div>`;
+                });
+                quadraticSteps.innerHTML = quadraticHTML;
+
+                const factorizationMethodSteps = getFactorizationSteps(solution);
+                let factorizationHTML = '';
+                factorizationMethodSteps.forEach(step => {
+                    factorizationHTML += `<div class="solution-step">${step}</div>`;
+                });
+                factorizationSteps.innerHTML = factorizationHTML;
+
+                let analyzeHTML = `
+                    <p><strong>Nature of Roots:</strong> ${solution.nature}</p>
+                `;
+                if (solution.nature === 'Two distinct real roots') {
+                    analyzeHTML += `
+                        <p>The discriminant is positive (Δ > 0), so the equation has two distinct real roots.</p>
+                        <p><strong>Root 1:</strong> x₁ = ${solution.x1.toFixed(4)}</p>
+                        <p><strong>Root 2:</strong> x₂ = ${solution.x2.toFixed(4)}</p>
+                    `;
+                } else if (solution.nature === 'One real root (repeated)') {
+                    analyzeHTML += `
+                        <p>The discriminant is zero (Δ = 0), so the equation has one repeated real root.</p>
+                        <p><strong>Root:</strong> x = ${solution.x1.toFixed(4)}</p>
+                    `;
+                } else {
+                    analyzeHTML += `
+                        <p>The discriminant is negative (Δ < 0), so the equation has two complex conjugate roots.</p>
+                        <p><strong>Root 1:</strong> x₁ = ${solution.realPart.toFixed(4)} + ${solution.imaginaryPart.toFixed(4)}i</p>
+                        <p><strong>Root 2:</strong> x₂ = ${solution.realPart.toFixed(4)} - ${solution.imaginaryPart.toFixed(4)}i</p>
+                    `;
+                }
+                analyzeContent.innerHTML = analyzeHTML;
+
+                solutionContainer.style.display = 'block';
+                activateTab('quick');
+            }
+
+            function getQuadraticFormulaSteps(solution) {
+                const { a, b, c, discriminant, realPart, imaginaryPart, x1, x2 } = solution;
+                const steps = [];
+                steps.push(`For the equation: ${a}x² + ${b}x + ${c} = 0`);
+                steps.push(`Using the quadratic formula: x = (-b ± √(b² - 4ac))/2a`);
+                steps.push(`Substituting the values: a = ${a}, b = ${b}, c = ${c}`);
+                steps.push(`Calculate b²: ${b} × ${b} = ${b*b}`);
+                steps.push(`Calculate 4ac: 4 × ${a} × ${c} = ${4*a*c}`);
+                steps.push(`Calculate the discriminant (b² - 4ac): ${b*b} - ${4*a*c} = ${discriminant}`);
+                if (discriminant >= 0) {
+                    steps.push(`Calculate √(discriminant): √(${discriminant}) = ${Math.sqrt(discriminant)}`);
+                    steps.push(`Calculate -b: -(${b}) = ${-b}`);
+                    steps.push(`Calculate 2a: 2 × ${a} = ${2*a}`);
+                    if (discriminant > 0) {
+                        steps.push(`x₁ = (${-b} + ${Math.sqrt(discriminant)})/${2*a} = ${x1.toFixed(4)}`);
+                        steps.push(`x₂ = (${-b} - ${Math.sqrt(discriminant)})/${2*a} = ${x2.toFixed(4)}`);
+                    } else {
+                        steps.push(`x = ${-b}/${2*a} = ${x1.toFixed(4)}`);
+                    }
+                } else {
+                    steps.push(`Since the discriminant is negative, the roots are complex.`);
+                    steps.push(`Calculate √|discriminant|: √|${discriminant}| = ${Math.sqrt(Math.abs(discriminant))}`);
+                    steps.push(`Real part = ${-b}/${2*a} = ${realPart.toFixed(4)}`);
+                    steps.push(`Imaginary part = ${Math.sqrt(Math.abs(discriminant))}/${2*a} = ${imaginaryPart.toFixed(4)}`);
+                    steps.push(`x₁ = ${realPart.toFixed(4)} + ${imaginaryPart.toFixed(4)}i`);
+                    steps.push(`x₂ = ${realPart.toFixed(4)} - ${imaginaryPart.toFixed(4)}i`);
+                }
+                return steps;
+            }
+
+            function getFactorizationSteps(solution) {
+                const { a, b, c, factorizable, x1, x2 } = solution;
+                if (!factorizable) {
+                    return ["This quadratic equation is difficult to factorize directly.", "Use the quadratic formula instead."];
+                }
+                const steps = [];
+                steps.push(`Start with the equation: ${a}x² + ${b}x + ${c} = 0`);
+                if (a !== 1) {
+                    steps.push(`First, divide all terms by ${a} to make the coefficient of x² equal to 1:`);
+                    steps.push(`x² + ${b/a}x + ${c/a} = 0`);
+                }
+                const p = x1 * x2;
+                const s = -x1 - x2;
+                steps.push(`We need to find two numbers that multiply to give ${p.toFixed(2)} and add to give ${s.toFixed(2)}`);
+                const formatRoot = (root) => {
+                    if (Math.abs(root) < 1e-10) return 0;
+                    if (isNearInteger(root)) return Math.round(root);
+                    return root.toFixed(2);
+                };
+                const r1 = formatRoot(x1);
+                const r2 = formatRoot(x2);
+                steps.push(`The two numbers are ${-r1} and ${-r2}`);
+                steps.push(`Rewriting the middle term: ${a}x² + ${a}x(${-r1}) + ${a}x(${-r2}) + ${c} = 0`);
+                if (a === 1) {
+                    steps.push(`Factorized form: (x - (${r1}))(x - (${r2})) = 0`);
+                    steps.push(`Simplified: (x - ${r1})(x - ${r2}) = 0`);
+                } else {
+                    steps.push(`Factorized form: ${a}(x - (${r1}))(x - (${r2})) = 0`);
+                    steps.push(`Simplified: ${a}(x - ${r1})(x - ${r2}) = 0`);
+                }
+                steps.push(`Therefore, x = ${r1} or x = ${r2}`);
+                return steps;
+            }
+
+            function isFactorizableQuadratic(a, b, c, x1, x2) {
+                const tolerance = 1e-10;
+                const isAlmostInteger = (num) => Math.abs(Math.round(num) - num) < tolerance;
+                if (Number.isInteger(a) && Number.isInteger(b) && Number.isInteger(c)) {
+                    if (isAlmostInteger(x1) && isAlmostInteger(x2)) {
+                        return true;
+                    }
+                    for (let denom = 2; denom <= 10; denom++) {
+                        if (isAlmostInteger(x1 * denom) && isAlmostInteger(x2 * denom)) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+
+            function isNearInteger(num) {
+                return Math.abs(Math.round(num) - num) < 1e-10;
+            }
+        });
+    </script>
+</body>
+</html>
