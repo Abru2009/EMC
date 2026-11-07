@@ -226,6 +226,8 @@
         }
     </style>
     <link rel="stylesheet" href="../calculator-ui.css">
+    <link rel="stylesheet" href="../theme.css">
+    <script src="../theme.js" defer></script>
 </head>
 <body>
     <a class="back-home" href="../main.html"><span aria-hidden="true">←</span> Back to home</a>
@@ -516,9 +518,11 @@
         function drawGraphDistance(x1, y1, x2, y2) {
             const svg = document.getElementById('graphDistance');
             svg.innerHTML = '';
+            if (![x1, y1, x2, y2].every(Number.isFinite)) return;
             
-            const width = svg.clientWidth;
-            const height = svg.clientHeight;
+            const width = svg.clientWidth || 400;
+            const height = svg.clientHeight || 300;
+            svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
             
             let minX = Math.min(x1, x2) - 2;
             let maxX = Math.max(x1, x2) + 2;
@@ -535,6 +539,8 @@
                 minY = mid - 2.5;
                 maxY = mid + 2.5;
             }
+            if (![minX, maxX, minY, maxY].every(Number.isFinite) ||
+                !Number.isFinite(maxX - minX) || !Number.isFinite(maxY - minY)) return;
             
             const scaleX = width / (maxX - minX);
             const scaleY = height / (maxY - minY);
@@ -547,7 +553,7 @@
                 return height - (y - minY) * scaleY;
             }
             
-            const gridStep = 1;
+            const gridStep = Math.max(1, Math.ceil(Math.max(maxX - minX, maxY - minY) / 30));
             
             for (let x = Math.ceil(minX); x <= Math.floor(maxX); x += gridStep) {
                 const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
@@ -734,12 +740,14 @@
         function drawGraphMidpoint(x1, y1, x2, y2) {
             const svg = document.getElementById('graphMidpoint');
             svg.innerHTML = '';
+            if (![x1, y1, x2, y2].every(Number.isFinite)) return;
             
             const midX = (x1 + x2) / 2;
             const midY = (y1 + y2) / 2;
             
-            const width = svg.clientWidth;
-            const height = svg.clientHeight;
+            const width = svg.clientWidth || 400;
+            const height = svg.clientHeight || 300;
+            svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
             
             let minX = Math.min(x1, x2, midX) - 2;
             let maxX = Math.max(x1, x2, midX) + 2;
@@ -756,6 +764,8 @@
                 minY = mid - 2.5;
                 maxY = mid + 2.5;
             }
+            if (![minX, maxX, minY, maxY].every(Number.isFinite) ||
+                !Number.isFinite(maxX - minX) || !Number.isFinite(maxY - minY)) return;
             
             const scaleX = width / (maxX - minX);
             const scaleY = height / (maxY - minY);
@@ -768,7 +778,7 @@
                 return height - (y - minY) * scaleY;
             }
             
-            const gridStep = 1;
+            const gridStep = Math.max(1, Math.ceil(Math.max(maxX - minX, maxY - minY) / 30));
             
             for (let x = Math.ceil(minX); x <= Math.floor(maxX); x += gridStep) {
                 const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
@@ -1203,9 +1213,11 @@
             const divPoint = calculateDividingPoint(x1, y1, x2, y2, m, n);
             const xp = parseFloat(document.getElementById('xp').value) || divPoint.x;
             const yp = parseFloat(document.getElementById('yp').value) || divPoint.y;
+            if (![x1, y1, x2, y2, m, n, xp, yp].every(Number.isFinite)) return;
             
-            const width = svg.clientWidth;
-            const height = svg.clientHeight;
+            const width = svg.clientWidth || 400;
+            const height = svg.clientHeight || 300;
+            svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
             
             let allPoints = [
                 {x: x1, y: y1},
@@ -1228,6 +1240,8 @@
                 minY = mid - 2.5;
                 maxY = mid + 2.5;
             }
+            if (![minX, maxX, minY, maxY].every(Number.isFinite) ||
+                !Number.isFinite(maxX - minX) || !Number.isFinite(maxY - minY)) return;
             
             const scaleX = width / (maxX - minX);
             const scaleY = height / (maxY - minY);
@@ -1304,7 +1318,7 @@
         }
         
         function drawGridAndAxes(svg, minX, maxX, minY, maxY, width, height, transformX, transformY) {
-            const gridStep = 1;
+            const gridStep = Math.max(1, Math.ceil(Math.max(maxX - minX, maxY - minY) / 30));
             
             for (let x = Math.ceil(minX); x <= Math.floor(maxX); x += gridStep) {
                 const line = document.createElementNS("http://www.w3.org/2000/svg", "line");

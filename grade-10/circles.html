@@ -61,10 +61,14 @@
             margin-bottom: 2rem;
         }
         canvas {
+            display: block;
+            width: min(100%, 500px);
+            height: auto;
             border: 1px solid #e0e0e0; /* Light gray border */
             border-radius: 10px;
             background-color: #ffffff; /* White canvas background */
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            touch-action: none; /* Subtle shadow */
         }
         .legend {
             margin-top: 1.5rem;
@@ -136,6 +140,8 @@
         }
     </style>
     <link rel="stylesheet" href="../calculator-ui.css">
+    <link rel="stylesheet" href="../theme.css">
+    <script src="../theme.js" defer></script>
 </head>
 <body>
     <a class="back-home" href="../main.html"><span aria-hidden="true">←</span> Back to home</a>
@@ -364,40 +370,48 @@ PT₁ = PT₂.
             perpendicularCtx.arc(pointT.x, pointT.y, 6, 0, Math.PI * 2);
             perpendicularCtx.fillStyle = "#ff6b6b"; /* Red point */
             perpendicularCtx.fill();
-            perpendicularCtx.fillStyle = "#4a4a4a"; /* Grayish text */
+            perpendicularCtx.fillStyle = canvasTextColor();
             perpendicularCtx.font = "14px 'Segoe UI'"; /* Consistent font size */
             perpendicularCtx.fillText("T", pointT.x + 8, pointT.y + 8);
             perpendicularCtx.fillText("90°", squareCenter.x + 15, squareCenter.y + 15);
         }
 
-        // Mouse events for perpendicular demo
-        perpendicularCanvas.addEventListener('mousedown', (e) => {
-            const rect = perpendicularCanvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+        function canvasPoint(canvas, event) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: (event.clientX - rect.left) * canvas.width / rect.width,
+                y: (event.clientY - rect.top) * canvas.height / rect.height
+            };
+        }
+
+        function canvasTextColor() {
+            return '#39291f';
+        }
+
+        perpendicularCanvas.addEventListener('pointerdown', (e) => {
+            const { x, y } = canvasPoint(perpendicularCanvas, e);
             const dx = x - pointT.x;
             const dy = y - pointT.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
             if (distance < 20) {
                 isDraggingT = true;
+                perpendicularCanvas.setPointerCapture(e.pointerId);
             }
         });
 
-        perpendicularCanvas.addEventListener('mousemove', (e) => {
+        perpendicularCanvas.addEventListener('pointermove', (e) => {
             if (!isDraggingT) return;
-            const rect = perpendicularCanvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+            const { x, y } = canvasPoint(perpendicularCanvas, e);
             pointT = snapToCircle(x, y);
             drawPerpendicular();
         });
 
-        perpendicularCanvas.addEventListener('mouseup', () => {
+        perpendicularCanvas.addEventListener('pointerup', () => {
             isDraggingT = false;
         });
 
-        perpendicularCanvas.addEventListener('mouseleave', () => {
+        perpendicularCanvas.addEventListener('pointercancel', () => {
             isDraggingT = false;
         });
 
@@ -486,7 +500,7 @@ PT₁ = PT₂.
                 const distT2 = (calculateDistance(pointP, t2) / PIXELS_PER_CM).toFixed(2);
                 
                 externalCtx.font = "14px 'Segoe UI'"; /* Consistent font size */
-                externalCtx.fillStyle = "#4a4a4a"; /* Grayish text */
+                externalCtx.fillStyle = canvasTextColor();
                 externalCtx.fillText("T1", t1.x + 8, t1.y + 8);
                 externalCtx.fillText("T2", t2.x + 8, t2.y + 8);
 
@@ -511,38 +525,36 @@ PT₁ = PT₂.
             externalCtx.arc(pointP.x, pointP.y, 8, 0, Math.PI * 2);
             externalCtx.fillStyle = "#0f5ab5"; /* Blue point */
             externalCtx.fill();
-            externalCtx.fillStyle = "#4a4a4a"; /* Grayish text */
+            externalCtx.fillStyle = canvasTextColor();
             externalCtx.font = "14px 'Segoe UI'"; /* Consistent font size */
             externalCtx.fillText("P", pointP.x + 8, pointP.y + 8);
         }
 
-        // Mouse events for external demo
-        externalCanvas.addEventListener('mousedown', (e) => {
-            const rect = externalCanvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+        externalCanvas.addEventListener('pointerdown', (e) => {
+            const { x, y } = canvasPoint(externalCanvas, e);
             const dx = x - pointP.x;
             const dy = y - pointP.y;
             if (Math.sqrt(dx * dx + dy * dy) < 20) {
                 isDraggingP = true;
+                externalCanvas.setPointerCapture(e.pointerId);
             }
         });
 
-        externalCanvas.addEventListener('mousemove', (e) => {
+        externalCanvas.addEventListener('pointermove', (e) => {
             if (!isDraggingP) return;
-            const rect = externalCanvas.getBoundingClientRect();
+            const { x, y } = canvasPoint(externalCanvas, e);
             pointP = {
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top
+                x: Math.max(0, Math.min(externalCanvas.width, x)),
+                y: Math.max(0, Math.min(externalCanvas.height, y))
             };
             drawExternal();
         });
 
-        externalCanvas.addEventListener('mouseup', () => {
+        externalCanvas.addEventListener('pointerup', () => {
             isDraggingP = false;
         });
 
-        externalCanvas.addEventListener('mouseleave', () => {
+        externalCanvas.addEventListener('pointercancel', () => {
             isDraggingP = false;
         });
 
@@ -582,6 +594,10 @@ PT₁ = PT₂.
         // Initial draws
         drawPerpendicular();
         drawExternal();
+        window.addEventListener('emc-theme-change', () => {
+            drawPerpendicular();
+            drawExternal();
+        });
     </script>
 </body>
 </html>

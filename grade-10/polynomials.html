@@ -363,6 +363,8 @@
         }
     </style>
     <link rel="stylesheet" href="../calculator-ui.css">
+    <link rel="stylesheet" href="../theme.css">
+    <script src="../theme.js" defer></script>
 </head>
 <body>
     <a class="back-home" href="../main.html"><span aria-hidden="true">←</span> Back to home</a>
@@ -650,16 +652,27 @@
             const canvas = document.getElementById("quadratic-curve");
             const ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            delete graph.dataset.a;
+            delete graph.dataset.b;
+            delete graph.dataset.c;
+            delete graph.dataset.zeroes;
         }
         
         function plotGraph(a, b, c, zeroes) {
             const graph = document.getElementById("zeroes-graph");
             const canvas = document.getElementById("quadratic-curve");
             const ctx = canvas.getContext("2d");
-            const width = graph.offsetWidth;
-            const height = graph.offsetHeight;
-            canvas.width = width;
-            canvas.height = height;
+            graph.querySelectorAll(".grid-line, .label, .point, .point-label").forEach(el => el.remove());
+            const width = graph.clientWidth;
+            const height = graph.clientHeight;
+            const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+            canvas.width = Math.round(width * pixelRatio);
+            canvas.height = Math.round(height * pixelRatio);
+            ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+            graph.dataset.a = a;
+            graph.dataset.b = b;
+            graph.dataset.c = c;
+            graph.dataset.zeroes = JSON.stringify(zeroes);
             const centerX = width / 2;
             const centerY = height / 2;
             
@@ -667,10 +680,13 @@
             const vertexY = a * vertexX * vertexX + b * vertexX + c;
             const maxX = Math.max(Math.abs(vertexX) + 2, ...zeroes.map(Math.abs)) + 1;
             const maxY = Math.max(Math.abs(vertexY), Math.abs(a * maxX * maxX + b * maxX + c)) + 1;
+            if (![width, height, maxX, maxY].every(Number.isFinite) || width <= 0 || height <= 0) return;
             const scaleX = width / (2 * maxX);
             const scaleY = height / (2 * maxY);
+            const gridStepX = Math.max(1, Math.ceil(2 * maxX / 30));
+            const gridStepY = Math.max(1, Math.ceil(2 * maxY / 20));
             
-            for (let i = -Math.ceil(maxX); i <= Math.ceil(maxX); i++) {
+            for (let i = -Math.ceil(maxX / gridStepX) * gridStepX; i <= maxX; i += gridStepX) {
                 const xPos = centerX + i * scaleX;
                 const grid = document.createElement("div");
                 grid.className = "grid-line vertical";
@@ -685,7 +701,7 @@
                     graph.appendChild(label);
                 }
             }
-            for (let i = -Math.ceil(maxY); i <= Math.ceil(maxY); i++) {
+            for (let i = -Math.ceil(maxY / gridStepY) * gridStepY; i <= maxY; i += gridStepY) {
                 const yPos = centerY - i * scaleY;
                 const grid = document.createElement("div");
                 grid.className = "grid-line horizontal";
@@ -699,6 +715,20 @@
                     label.style.top = `${yPos}px`;
                     graph.appendChild(label);
                 }
+            }
+
+            const zeroesGraph = document.getElementById("zeroes-graph");
+            if ('ResizeObserver' in window) {
+                new ResizeObserver(() => {
+                    if (zeroesGraph.dataset.zeroes) {
+                        plotGraph(
+                            Number(zeroesGraph.dataset.a),
+                            Number(zeroesGraph.dataset.b),
+                            Number(zeroesGraph.dataset.c),
+                            JSON.parse(zeroesGraph.dataset.zeroes)
+                        );
+                    }
+                }).observe(zeroesGraph);
             }
             
             ctx.beginPath();
@@ -803,12 +833,12 @@
             }
             
             const ac = a * c;
-            for (let p = -Math.abs(ac); p <= Math.abs(ac); p++) {
-                for (let q = -Math.abs(ac); q <= Math.abs(ac); q++) {
-                    if (p + q === b && p * q === ac) {
-                        resultDiv.innerHTML += `<br><strong>Splitting Middle Term:</strong><br>p(x) = ${a}x² + ${p}x + ${q}x + ${c}<br>= (${a}x + ${p})(x + ${q / a})`;
-                        return;
-                    }
+            if (Number.isInteger(b) && Number.isInteger(ac) && discriminant >= 0) {
+                const rootDifference = Math.sqrt(discriminant);
+                const p = (b + rootDifference) / 2;
+                const q = (b - rootDifference) / 2;
+                if (Number.isInteger(p) && Number.isInteger(q) && p * q === ac) {
+                    resultDiv.innerHTML += `<br><strong>Splitting Middle Term:</strong><br>p(x) = ${a}x² + ${p}x + ${q}x + ${c}<br>= (${a}x + ${p})(x + ${q / a})`;
                 }
             }
         }

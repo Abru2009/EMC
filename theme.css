@@ -1,0 +1,1398 @@
+:root {
+    color-scheme: light;
+}
+
+html[data-theme="dark"] {
+    color-scheme: dark;
+    background: #101722;
+}
+
+html[data-theme="dark"] body {
+    background-color: #101722 !important;
+    color: #e4ecf5 !important;
+}
+
+html[data-theme="dark"] body :is(
+    .container, .calculator, .section, .demo-section, .theorem, .proof,
+    .formula, .result, .steps, .input-section, .tab-content, .tabcontent,
+    .info-box, .legend, .graph-container, .canvas-container, .about,
+    .hero, .highlight, .auth-form, .account-dropdown, .frequency-table,
+    .table-container
+) {
+    background-color: #182334 !important;
+    color: #e4ecf5 !important;
+    border-color: #34445a !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+html[data-theme="dark"] body .hero {
+    background-image: none !important;
+}
+
+html[data-theme="dark"] .logo {
+    filter: brightness(0) invert(1);
+}
+
+html[data-theme="dark"] body :is(h1, h2, h3, h4, p, label, li, th, td, .eyebrow, .about-text p) {
+    color: #e4ecf5 !important;
+}
+
+html[data-theme="dark"] body :is(.formula, .result, .steps, .proof, .info-box, .legend, .tab, .tab-button, .method-tab) {
+    background-color: #202e41 !important;
+}
+
+html[data-theme="dark"] body :is(input, select, textarea) {
+    background-color: #111b29 !important;
+    color: #f1f5fa !important;
+    border-color: #465a72 !important;
+}
+
+html[data-theme="dark"] body :is(input, select, textarea)::placeholder {
+    color: #9babbe !important;
+}
+
+html[data-theme="dark"] body :is(button, .calc-button, .primary-link) {
+    border-color: #45688d !important;
+}
+
+html[data-theme="dark"] body :is(a, .steps-btn, .text-link, .toggle-link) {
+    color: #91c5ff !important;
+}
+
+html[data-theme="dark"] body .primary-link {
+    color: #fff !important;
+}
+
+html[data-theme="dark"] body :is(.navbar, .nav-links.is-open) {
+    background: #111d2b !important;
+}
+
+html[data-theme="dark"] body :is(table, thead, tbody, tr, th, td) {
+    background-color: #182334 !important;
+    color: #e4ecf5 !important;
+    border-color: #34445a !important;
+}
+
+html[data-theme="dark"] body :is(svg, canvas) {
+    background-color: #111b29 !important;
+}
+
+html[data-theme="dark"] body :is(.grid-line) {
+    stroke: #42536a !important;
+    background-color: #42536a !important;
+}
+
+html[data-theme="dark"] body :is(.axis-line) {
+    stroke: #a6b8cd !important;
+}
+
+html[data-theme="dark"] body :is(.x-axis, .y-axis) {
+    background-color: #a6b8cd !important;
+}
+
+html[data-theme="dark"] body :is(.axis-label, .point-label, .term-label, .label) {
+    fill: #d7e3f0 !important;
+    color: #d7e3f0 !important;
+}
+
+.calculator-toolbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 16px auto;
+}
+
+.calculator-toolbar .back-home {
+    margin: 0;
+}
+
+.theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 8px 13px;
+    border: 1px solid rgba(255, 255, 255, 0.34);
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.13);
+    color: #fff;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 650;
+    cursor: pointer;
+    transition: background-color 140ms ease, border-color 140ms ease;
+}
+
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.24);
+}
+
+.theme-toggle:focus-visible {
+    outline: 3px solid #f2b84b;
+    outline-offset: 3px;
+}
+
+.calculator-toolbar .theme-toggle {
+    border-color: #d5e2ef;
+    background: #fff;
+    color: #185b9d;
+    box-shadow: 0 3px 9px rgba(27, 67, 117, 0.06);
+}
+
+.calculator-toolbar .theme-toggle:hover {
+    background: #f7fbff;
+}
+
+html[data-theme="dark"] .calculator-toolbar .theme-toggle {
+    border-color: #465a72;
+    background: #202e41;
+    color: #91c5ff;
+    box-shadow: none;
+}
+
+@media (max-width: 760px) {
+    .theme-toggle {
+        min-height: 38px;
+        padding: 7px 10px;
+        font-size: 0.82rem;
+    }
+
+    .navbar .theme-toggle {
+        margin-left: auto;
+    }
+
+    .calculator-toolbar {
+        flex-wrap: wrap;
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .hero,
+    .learning-highlights .highlight,
+    .about,
+    body.calculators-page .calc-button {
+        animation: soft-arrive 260ms ease-out both;
+    }
+
+    .learning-highlights .highlight:nth-child(2) {
+        animation-delay: 35ms;
+    }
+
+    .learning-highlights .highlight:nth-child(3) {
+        animation-delay: 70ms;
+    }
+}
+
+@keyframes soft-arrive {
+    from { transform: translateY(4px); }
+    to { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+:root {
+    --page: #fff8f1;
+    --surface: #fffdfa;
+    --surface-raised: #f9eee4;
+    --text: #39291f;
+    --muted: #756156;
+    --border: #ead8c9;
+    --accent: #ad482f;
+    --accent-hover: #913922;
+    --accent-soft: #f5e1d3;
+    --highlight: #e7a443;
+}
+
+html[data-theme="light"] {
+    color-scheme: light;
+    background: var(--page);
+}
+
+html[data-theme="light"] body {
+    background-color: var(--page);
+    color: var(--text);
+    font-family: "Avenir Next", Avenir, ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+html[data-theme="light"] body * {
+    font-family: "Avenir Next", Avenir, ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+html[data-theme="light"] body :is(h1, h2, h3, h4) {
+    color: var(--accent);
+    font-family: Georgia, "Times New Roman", serif;
+    letter-spacing: -0.025em;
+}
+
+html[data-theme="light"] body :is(
+    .container, .calculator, .section, .demo-section, .theorem, .proof,
+    .formula, .result, .steps, .input-section, .tab-content, .tabcontent,
+    .info-box, .legend, .graph-container, .canvas-container, .about,
+    .hero, .highlight, .auth-form, .account-dropdown, .frequency-table,
+    .table-container
+) {
+    border-color: var(--border);
+    box-shadow: 0 12px 32px rgba(111, 63, 37, 0.08);
+}
+
+html[data-theme="light"] body :is(.container, .calculator, .section, .demo-section, .about, .hero, .highlight) {
+    background-color: var(--surface);
+}
+
+html[data-theme="light"] body :is(.formula, .result, .steps, .proof, .info-box, .legend, .tab, .tab-button, .method-tab) {
+    background-color: var(--surface-raised);
+    color: var(--text);
+}
+
+html[data-theme="light"] body :is(input, select, textarea) {
+    min-height: 44px;
+    border-color: var(--border);
+    border-radius: 12px;
+    background-color: var(--surface);
+    color: var(--text);
+    font-size: 1rem;
+}
+
+html[data-theme="light"] body :is(button:not(.steps-btn):not(.method-tab), .calc-button, .primary-link) {
+    border-color: var(--accent);
+    border-radius: 12px;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    box-shadow: 0 5px 14px rgba(173, 72, 47, 0.16);
+}
+
+html[data-theme="light"] body :is(button:not(.steps-btn):not(.method-tab), .calc-button, .primary-link):hover {
+    background: var(--accent-hover);
+}
+
+html[data-theme="light"] body :is(a, .steps-btn, .text-link, .toggle-link) {
+    color: var(--accent);
+}
+
+html[data-theme="light"] body :is(.navbar, .nav-links.is-open) {
+    background: linear-gradient(110deg, #963c29, #bd6540);
+}
+
+html[data-theme="light"] body .hero {
+    background: linear-gradient(135deg, #fff2e4 0%, #fffdfa 58%, #f9e9d8 100%);
+}
+
+html[data-theme="light"] body .primary-link {
+    color: #fff;
+}
+
+html[data-theme="light"] body :is(.graph-container, .canvas-container, .diagram-container) {
+    border-radius: 18px;
+    background-color: #fffaf5;
+}
+
+html[data-theme="light"] body .graph-container svg,
+html[data-theme="light"] body .graph-container canvas,
+html[data-theme="light"] body .canvas-container canvas,
+html[data-theme="light"] body #diagramCanvas {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background-color: #fffaf5;
+}
+
+html[data-theme="light"] body :is(.distance-line, .segment-line, .line1) {
+    stroke: #b64e32;
+}
+
+html[data-theme="light"] body :is(.line2, .dividing-line) {
+    stroke: #d89531;
+}
+
+html[data-theme="light"] body :is(.midpoint, .intersection) {
+    fill: #e2a247;
+    stroke: #9a422e;
+}
+
+html[data-theme="light"] body :is(.point-label, .midpoint-label) {
+    fill: #ad482f;
+}
+
+html[data-theme="light"] body :is(.back-home, .calculator-toolbar .theme-toggle) {
+    border-color: var(--border);
+    background: var(--surface);
+    color: var(--accent);
+}
+
+html[data-theme="dark"] {
+    --page: #191411;
+    --surface: #261e19;
+    --surface-raised: #30241e;
+    --text: #f5e8dc;
+    --muted: #c6b2a3;
+    --border: #4a382d;
+    --accent: #ffb18e;
+    --accent-hover: #e68e68;
+    --accent-soft: #493126;
+    --highlight: #f3bd6e;
+    color-scheme: dark;
+    background: var(--page);
+}
+
+html[data-theme="dark"] body {
+    background-color: var(--page) !important;
+    color: var(--text) !important;
+    font-family: "Avenir Next", Avenir, ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+html[data-theme="dark"] body :is(h1, h2, h3, h4) {
+    font-family: Georgia, "Times New Roman", serif;
+    letter-spacing: -0.025em;
+}
+
+html[data-theme="dark"] body * {
+    font-family: "Avenir Next", Avenir, ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+html[data-theme="dark"] body :is(
+    h1, h2, h3, h4, h5, h6, p, span, div, section, article, aside, main,
+    header, footer, label, li, dt, dd, th, td, caption, small, strong, em,
+    b, i, output, summary, blockquote, code, pre, legend, .polynomial-display,
+    .point-label, .label, .tab, .tab-button, .method-tab, .status-icon, .about-text p
+) {
+    color: var(--text) !important;
+}
+
+html[data-theme="dark"] body :is(
+    .container, .calculator, .section, .demo-section, .theorem, .proof,
+    .formula, .result, .steps, .input-section, .tab-content, .tabcontent,
+    .info-box, .legend, .graph-container, .canvas-container, .diagram-container,
+    .about, .hero, .highlight, .auth-form, .account-dropdown, .frequency-table,
+    .table-container, .method-box, .method-content, .special-case, .sample-item
+) {
+    background-color: var(--surface) !important;
+    color: var(--text) !important;
+    border-color: var(--border) !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
+}
+
+html[data-theme="dark"] body :is(.formula, .result, .steps, .proof, .info-box, .legend, .tab, .tab-button, .method-tab, .method-box, .method-content, .special-case) {
+    background-color: var(--surface-raised) !important;
+}
+
+html[data-theme="dark"] body :is(input, select, textarea) {
+    min-height: 44px;
+    border-color: var(--border) !important;
+    border-radius: 12px;
+    background-color: #1d1713 !important;
+    color: var(--text) !important;
+    font-size: 1rem;
+}
+
+html[data-theme="dark"] body :is(input, select, textarea)::placeholder {
+    color: #c6b2a3 !important;
+}
+
+html[data-theme="dark"] body :is(button:not(.steps-btn):not(.method-tab), .calc-button, .primary-link) {
+    border-color: #a55038 !important;
+    border-radius: 12px;
+    background: #a8432c !important;
+    color: #fff !important;
+    font-weight: 700;
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.2);
+}
+
+html[data-theme="dark"] body :is(button:not(.steps-btn):not(.method-tab), .calc-button, .primary-link):hover {
+    background: #c15437 !important;
+}
+
+html[data-theme="dark"] body :is(a, .steps-btn, .text-link, .toggle-link, a *) {
+    color: #ffc09d !important;
+}
+
+html[data-theme="dark"] body :is(.primary-link, .primary-link *, .theme-toggle, .theme-toggle *, .calc-button, .calc-button *) {
+    color: #fff !important;
+}
+
+html[data-theme="dark"] body :is(.navbar, .nav-links.is-open) {
+    background: linear-gradient(110deg, #241813, #3b251c) !important;
+}
+
+html[data-theme="dark"] body .hero {
+    background: linear-gradient(135deg, #302119 0%, #261e19 58%, #38251b 100%) !important;
+}
+
+html[data-theme="dark"] body :is(.alert-success, .alert-warning, .alert-info, .consistent, .inconsistent, .dependent, .highlight, .removed) {
+    background-color: #382a20 !important;
+    color: var(--text) !important;
+}
+
+html[data-theme="dark"] body :is(.graph-container, .canvas-container, .diagram-container) {
+    border: 1px solid var(--border) !important;
+    border-radius: 18px;
+    background-color: #1d1713 !important;
+}
+
+html[data-theme="dark"] body .graph-container svg,
+html[data-theme="dark"] body .graph-container canvas,
+html[data-theme="dark"] body .canvas-container canvas,
+html[data-theme="dark"] body #diagramCanvas {
+    border: 1px solid var(--border) !important;
+    border-radius: 16px;
+    background-color: #201914 !important;
+}
+
+html[data-theme="dark"] body :is(table, thead, tbody, tr, th, td) {
+    background-color: var(--surface) !important;
+    color: var(--text) !important;
+    border-color: var(--border) !important;
+}
+
+html[data-theme="dark"] body :is(.grid-line) {
+    stroke: #59473a !important;
+    background-color: #59473a !important;
+}
+
+html[data-theme="dark"] body :is(.axis-line) {
+    stroke: #d7c3b4 !important;
+}
+
+html[data-theme="dark"] body :is(.axis-label, .point-label, .term-label, .label) {
+    fill: #f0dfd1 !important;
+}
+
+html[data-theme="dark"] body :is(.distance-line, .segment-line, .line1) {
+    stroke: #ff9a76 !important;
+}
+
+html[data-theme="dark"] body :is(.line2, .dividing-line) {
+    stroke: #f3bd6e !important;
+}
+
+html[data-theme="dark"] body :is(.midpoint, .intersection) {
+    fill: #f3bd6e !important;
+    stroke: #ffb18e !important;
+}
+
+html[data-theme="dark"] body :is(.point-label, .midpoint-label) {
+    fill: #ffc09d !important;
+}
+
+html[data-theme="dark"] body .logo {
+    filter: brightness(0) invert(1);
+}
+
+html[data-theme="dark"] body :is(.back-home, .calculator-toolbar .theme-toggle) {
+    border-color: var(--border) !important;
+    background: var(--surface-raised) !important;
+    color: #ffc09d !important;
+}
+
+.calculator-toolbar .theme-toggle {
+    min-height: 44px;
+    border-radius: 12px;
+    font-family: "Avenir Next", Avenir, ui-rounded, system-ui, sans-serif;
+}
+
+.chapter-tools {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.chapter-tools input {
+    flex: 1;
+    width: 100%;
+    max-width: 560px;
+    min-height: 52px;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    font-size: 1rem;
+}
+
+.chapter-tools input:focus-visible {
+    outline: 3px solid var(--highlight);
+    outline-offset: 2px;
+}
+
+.chapter-tools p {
+    flex: 0 0 auto;
+    color: var(--muted);
+    font-size: 0.92rem;
+}
+
+.no-chapters {
+    margin: 18px 0 0;
+    color: var(--muted);
+    text-align: center;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.calc-button[hidden] {
+    display: none !important;
+}
+
+.graph-container {
+    min-height: 400px;
+    padding: 10px;
+    border-radius: 18px;
+}
+
+.graph-container svg,
+.graph-container canvas {
+    height: 380px !important;
+}
+
+#zeroes-graph {
+    min-height: 460px;
+}
+
+#zeroes-graph canvas {
+    height: 440px !important;
+}
+
+.canvas-container canvas {
+    width: min(100%, 580px) !important;
+}
+
+#diagramCanvas {
+    height: 380px !important;
+}
+
+.calculator,
+.section,
+.input-section,
+.theorem,
+.info-box {
+    border-radius: 18px;
+}
+
+@media (max-width: 760px) {
+    .chapter-tools {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .chapter-tools p {
+        text-align: center;
+    }
+
+    .graph-container {
+        min-height: 330px;
+        padding: 6px;
+    }
+
+    .graph-container svg,
+    .graph-container canvas {
+        height: 310px !important;
+    }
+
+    #zeroes-graph {
+        min-height: 360px;
+    }
+
+    #zeroes-graph canvas {
+        height: 340px !important;
+    }
+
+    #diagramCanvas {
+        height: 320px !important;
+    }
+}
+
+html[data-theme="light"] body *,
+html[data-theme="dark"] body * {
+    color: var(--text) !important;
+}
+
+html[data-theme="light"] body :is(h1, h2, h3, h4),
+html[data-theme="light"] body :is(.steps-btn, .text-link, .toggle-link, a) {
+    color: var(--accent) !important;
+}
+
+html[data-theme="dark"] body :is(a, .steps-btn, .text-link, .toggle-link) {
+    color: var(--accent) !important;
+}
+
+html[data-theme="light"] body :is(.navbar a, .nav-links a, #menuButton, .primary-link, .calc-button),
+html[data-theme="dark"] body :is(.navbar a, .nav-links a, #menuButton, .primary-link, .calc-button) {
+    color: #fff !important;
+}
+
+html[data-theme="light"] body :is(.highlight-icon, .eyebrow) {
+    color: var(--accent) !important;
+}
+
+html[data-theme="dark"] body :is(.highlight-icon, .eyebrow) {
+    color: var(--accent) !important;
+}
+
+html[data-theme="light"] body svg :is(text, tspan) {
+    fill: var(--text) !important;
+}
+
+html[data-theme="dark"] body svg :is(text, tspan) {
+    fill: var(--text) !important;
+}
+
+.theme-select {
+    min-height: 42px;
+    width: 178px;
+    max-width: none;
+    flex-shrink: 0;
+    padding: 8px 30px 8px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.14);
+    color: #fff !important;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.theme-select:focus-visible {
+    outline: 3px solid var(--highlight);
+    outline-offset: 3px;
+}
+
+.theme-select option {
+    background: var(--surface);
+    color: var(--text) !important;
+}
+
+html[data-theme="light"] body .theme-select,
+html[data-theme="dark"] body .theme-select {
+    color: #fff !important;
+}
+
+html[data-theme="light"] body .navbar .theme-select {
+    border-color: rgba(255, 255, 255, 0.48);
+    background-color: #963c29 !important;
+}
+
+html[data-theme="dark"] body .navbar .theme-select {
+    border-color: rgba(255, 255, 255, 0.3);
+    background-color: #241813 !important;
+}
+
+html[data-theme="light"] body .calculator-toolbar .theme-select,
+html[data-theme="dark"] body .calculator-toolbar .theme-select {
+    border-color: var(--border);
+    background-color: var(--surface);
+    color: var(--text) !important;
+}
+
+.calculator-toolbar {
+    flex-wrap: wrap;
+}
+
+html[data-theme="light"] .hero-text h1 {
+    max-width: 760px;
+    color: #703b2d !important;
+    font-family: "Avenir Next", Avenir, system-ui, sans-serif;
+    font-size: clamp(2.35rem, 5vw, 3.65rem);
+    font-weight: 500;
+    letter-spacing: -0.055em;
+    line-height: 1.08;
+    text-wrap: balance;
+}
+
+html[data-theme="dark"] .hero-text h1 {
+    max-width: 760px;
+    color: #f5e8dc !important;
+    font-family: "Avenir Next", Avenir, system-ui, sans-serif;
+    font-size: clamp(2.35rem, 5vw, 3.65rem);
+    font-weight: 500;
+    letter-spacing: -0.055em;
+    line-height: 1.08;
+    text-wrap: balance;
+}
+
+@media (max-width: 760px) {
+    .theme-select {
+        min-height: 40px;
+        width: 166px;
+        max-width: none;
+        padding: 7px 25px 7px 9px;
+        font-size: 0.82rem;
+    }
+
+    .navbar .theme-select {
+        margin-left: auto;
+    }
+}
+
+html[data-theme="light"][data-palette="warm"] {
+    --page: #fff8f1;
+    --surface: #fffdfa;
+    --surface-raised: #f9eee4;
+    --text: #39291f;
+    --muted: #756156;
+    --border: #ead8c9;
+    --accent: #913922;
+    --accent-hover: #78301f;
+    --accent-strong: #963c29;
+    --accent-soft: #f5e1d3;
+    --highlight: #b57023;
+    --graph-paper: #fffaf5;
+    --grid: #ead8c9;
+}
+
+html[data-theme="dark"][data-palette="warm"] {
+    --page: #191411;
+    --surface: #261e19;
+    --surface-raised: #30241e;
+    --text: #f5e8dc;
+    --muted: #c6b2a3;
+    --border: #4a382d;
+    --accent: #ffb18e;
+    --accent-hover: #ffc09d;
+    --accent-strong: #a8432c;
+    --accent-soft: #493126;
+    --highlight: #f3bd6e;
+    --graph-paper: #211a15;
+    --grid: #59473a;
+}
+
+html[data-theme="light"][data-palette="cool"] {
+    --page: #f3f7fc;
+    --surface: #ffffff;
+    --surface-raised: #e8f0fa;
+    --text: #1d2c3d;
+    --muted: #52677e;
+    --border: #cbd9e9;
+    --accent: #245c9e;
+    --accent-hover: #174879;
+    --accent-strong: #245c9e;
+    --accent-soft: #dceafb;
+    --highlight: #bd7d1b;
+    --graph-paper: #fbfdff;
+    --grid: #d5e0ed;
+}
+
+html[data-theme="dark"][data-palette="cool"] {
+    --page: #101722;
+    --surface: #182334;
+    --surface-raised: #202e41;
+    --text: #e4ecf5;
+    --muted: #b2c2d4;
+    --border: #34445a;
+    --accent: #a9d2ff;
+    --accent-hover: #c2e0ff;
+    --accent-strong: #315d91;
+    --accent-soft: #243b55;
+    --highlight: #f0bf68;
+    --graph-paper: #151f2d;
+    --grid: #42536a;
+}
+
+html[data-theme="light"][data-palette="abstract"] {
+    --page: #f8f5ff;
+    --surface: #fffefe;
+    --surface-raised: #f0eafe;
+    --text: #302642;
+    --muted: #675a7b;
+    --border: #d9cdec;
+    --accent: #6441a5;
+    --accent-hover: #4e3089;
+    --accent-strong: #6441a5;
+    --accent-soft: #e8def8;
+    --highlight: #a34a62;
+    --graph-paper: #fdfaff;
+    --grid: #dfd4ef;
+}
+
+html[data-theme="dark"][data-palette="abstract"] {
+    --page: #171324;
+    --surface: #211b32;
+    --surface-raised: #2b2340;
+    --text: #f0e9fb;
+    --muted: #c5b8dc;
+    --border: #44375c;
+    --accent: #c4a8ff;
+    --accent-hover: #d8c6ff;
+    --accent-strong: #6345a3;
+    --accent-soft: #382b50;
+    --highlight: #f2a6bd;
+    --graph-paper: #1c172b;
+    --grid: #493b60;
+}
+
+html[data-theme] body {
+    background: var(--page) !important;
+    color: var(--text) !important;
+    font-family: "Avenir Next", Avenir, ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+html[data-theme] body * {
+    color: var(--text) !important;
+}
+
+html[data-theme] body :is(h1, h2, h3, h4, h5, h6, .eyebrow, .highlight-icon) {
+    color: var(--accent) !important;
+}
+
+html[data-theme] body :is(
+    .container, .calculator, .section, .demo-section, .theorem, .proof,
+    .formula, .result, .steps, .input-section, .tab-content, .tabcontent,
+    .info-box, .legend, .graph-container, .canvas-container, .diagram-container,
+    .about, .hero, .highlight, .auth-form, .account-dropdown, .frequency-table,
+    .table-container, .method-box, .method-content, .special-case, .sample-item
+) {
+    background-color: var(--surface) !important;
+    color: var(--text) !important;
+    border-color: var(--border) !important;
+}
+
+html[data-theme] body :is(.formula, .result, .steps, .proof, .info-box, .legend, .tab, .tab-button, .method-tab, .method-box, .method-content, .special-case, .sample-item) {
+    background-color: var(--surface-raised) !important;
+    color: var(--text) !important;
+}
+
+html[data-theme] body :is(input, select, textarea) {
+    border-color: var(--border) !important;
+    background-color: var(--surface) !important;
+    color: var(--text) !important;
+}
+
+html[data-theme] body :is(input, select, textarea)::placeholder {
+    color: var(--muted) !important;
+    opacity: 1;
+}
+
+html[data-theme] body :is(a, .steps-btn, .text-link, .toggle-link) {
+    color: var(--accent) !important;
+}
+
+html[data-theme] body :is(.navbar, .nav-links.is-open) {
+    background: var(--accent-strong) !important;
+}
+
+html[data-theme] body .hero {
+    background: linear-gradient(135deg, var(--accent-soft), var(--surface) 70%) !important;
+}
+
+html[data-theme][data-palette] body :is(h1, h2, h3, h4, h5, h6, .eyebrow, .highlight-icon) {
+    color: var(--accent) !important;
+}
+
+html[data-theme][data-palette] body :is(a, .steps-btn, .text-link, .toggle-link) {
+    color: var(--accent) !important;
+}
+
+html[data-theme][data-palette] body :is(.navbar a, .nav-links a, #menuButton, .primary-link, .calc-button, .theme-controls button[aria-pressed="true"]),
+html[data-theme][data-palette] body :is(.navbar a, .nav-links a, #menuButton, .primary-link, .calc-button, .theme-controls button[aria-pressed="true"]) * {
+    color: #fff !important;
+}
+
+html[data-theme] body :is(.primary-link, .calc-button, .navbar .nav-links a, #menuButton, .theme-controls button[aria-pressed="true"]) {
+    background: var(--accent-strong) !important;
+    color: #fff !important;
+}
+
+html[data-theme] body :is(.primary-link, .calc-button, .navbar .nav-links a, #menuButton, .theme-controls button[aria-pressed="true"]) * {
+    color: #fff !important;
+}
+
+html[data-theme] body :is(button, .calc-button, .primary-link) {
+    border-color: var(--accent-strong) !important;
+}
+
+html[data-theme] body :is(.theme-controls button[aria-pressed="false"], .back-home, .calculator-toolbar .back-home) {
+    border-color: var(--border) !important;
+    background: var(--surface) !important;
+    color: var(--text) !important;
+}
+
+html[data-theme] body :is(.graph-container, .graph-container svg) {
+    background-color: var(--graph-paper) !important;
+}
+
+html[data-theme] body .graph-container svg :is(text, tspan) {
+    fill: var(--text) !important;
+    color: var(--text) !important;
+}
+
+html[data-theme] body .graph-container :is(.grid-line, line.grid-line) {
+    stroke: var(--grid) !important;
+    background-color: var(--grid) !important;
+}
+
+html[data-theme] body :is(svg, canvas) {
+    border-color: var(--border) !important;
+}
+
+html[data-theme] body .canvas-container canvas,
+html[data-theme] body #diagramCanvas,
+html[data-theme] body #quadratic-curve,
+html[data-theme] body .graph-container canvas {
+    background-color: var(--graph-paper) !important;
+}
+
+html[data-theme] body :is(table, thead, tbody, tr, th, td) {
+    background-color: var(--surface) !important;
+    color: var(--text) !important;
+    border-color: var(--border) !important;
+}
+
+html[data-theme] body :is(.alert-success, .alert-warning, .alert-info, .consistent, .inconsistent, .dependent, .removed) {
+    background-color: var(--surface-raised) !important;
+    color: var(--text) !important;
+    border-color: var(--border) !important;
+}
+
+.theme-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 8px 16px;
+}
+
+.theme-control-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+}
+
+.theme-control-group button {
+    min-height: 36px;
+    padding: 7px 12px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    font-size: 0.84rem;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.theme-control-group button[aria-pressed="true"] {
+    background: var(--accent-strong);
+    color: #fff;
+}
+
+.theme-control-group button:focus-visible {
+    outline: 3px solid var(--highlight);
+    outline-offset: 2px;
+}
+
+.calculator-toolbar .theme-controls {
+    padding: 0;
+    flex-wrap: wrap;
+}
+
+html[data-theme="dark"] body .canvas-container canvas,
+html[data-theme="dark"] body #diagramCanvas,
+html[data-theme="dark"] body #quadratic-curve,
+html[data-theme="dark"] body .graph-container canvas {
+    background-color: #fffaf5 !important;
+}
+
+html[data-theme="light"] body :is(.distance-line, .segment-line, .line1) {
+    stroke: var(--accent-strong);
+}
+
+html[data-theme="dark"] body :is(.distance-line, .segment-line, .line1) {
+    stroke: var(--accent) !important;
+}
+
+html[data-theme="light"] body :is(.line2, .dividing-line) {
+    stroke: #b87916;
+}
+
+html[data-theme="dark"] body :is(.line2, .dividing-line) {
+    stroke: var(--highlight) !important;
+}
+
+html[data-theme="light"] body :is(.midpoint, .intersection) {
+    fill: #e0a13c;
+    stroke: var(--accent-strong);
+}
+
+html[data-theme="dark"] body :is(.midpoint, .intersection) {
+    fill: var(--highlight) !important;
+    stroke: var(--accent) !important;
+}
+
+.hero-text h1 {
+    max-width: 760px;
+    font-family: "Avenir Next", Avenir, system-ui, sans-serif !important;
+    font-size: clamp(2.35rem, 5vw, 3.65rem) !important;
+    font-weight: 450 !important;
+    letter-spacing: -0.055em !important;
+    line-height: 1.08 !important;
+    text-wrap: balance;
+}
+
+@media (max-width: 760px) {
+    .theme-controls {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 8px;
+    }
+
+    .theme-control-group button {
+        min-height: 34px;
+        padding: 6px 9px;
+        font-size: 0.78rem;
+    }
+
+    .calculator-toolbar {
+        justify-content: center;
+    }
+}
+
+html[data-theme][data-palette] body .calculator-toolbar .back-home,
+html[data-theme][data-palette] body .calculator-toolbar .back-home * {
+    color: var(--accent) !important;
+}
+
+html[data-theme][data-palette] body .theme-control-group button[aria-pressed="false"] {
+    border-color: var(--border) !important;
+    background: var(--surface) !important;
+    color: var(--text) !important;
+}
+
+html[data-theme][data-palette] body .theme-control-group button[aria-pressed="true"] {
+    border-color: var(--accent-strong) !important;
+    background: var(--accent-strong) !important;
+    color: #fff !important;
+}
+
+html[data-theme][data-palette] body button:not(.steps-btn):not(.method-tab):not(.tablinks):not(.theme-control-group button):not(.tab button) {
+    border-color: var(--accent-strong) !important;
+    background: var(--accent-strong) !important;
+    color: #fff !important;
+}
+
+html[data-theme][data-palette] body #zeroes-graph canvas {
+    background: transparent !important;
+}
+
+html[data-theme] body :is(a, button, input, select, textarea) {
+    transition: none !important;
+}
+
+.navbar {
+    position: sticky;
+    display: flex;
+    justify-content: flex-start;
+    gap: 12px;
+}
+
+.navbar .nav-links {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.navbar .theme-controls {
+    padding: 0;
+    flex: 0 0 auto;
+}
+
+.theme-select {
+    width: 178px;
+    max-width: min(42vw, 178px);
+    min-height: 42px;
+    padding: 7px 28px 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background: var(--surface);
+    color: var(--text) !important;
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.navbar .theme-select {
+    border-color: rgba(255, 255, 255, 0.4) !important;
+    background: var(--accent-strong) !important;
+    color: #fff !important;
+}
+
+.theme-select option {
+    background: var(--surface);
+    color: var(--text) !important;
+}
+
+.calculator-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: min(100% - 32px, 1180px);
+    min-height: 54px;
+    margin: 12px auto;
+}
+
+.calculator-toolbar .back-home {
+    margin: 0;
+}
+
+@media (max-width: 760px) {
+    .navbar {
+        gap: 8px;
+        padding: 8px 12px;
+    }
+
+    .navbar .logo {
+        height: 44px;
+    }
+
+    .navbar .nav-links {
+        left: 0;
+        transform: none;
+    }
+
+    .navbar .nav-links.is-open {
+        top: 100%;
+        left: 0;
+    }
+
+    .navbar .theme-select {
+        width: 152px;
+        max-width: 42vw;
+        min-height: 38px;
+        font-size: 0.78rem;
+    }
+
+    .calculator-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+.settings-controls {
+    position: relative;
+    z-index: 120;
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    padding: 0;
+}
+
+.settings-button {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    border-radius: 12px;
+    background: var(--accent-strong) !important;
+    color: #fff !important;
+    font-size: 1.35rem;
+    cursor: pointer;
+}
+
+.settings-button span {
+    color: #fff !important;
+    line-height: 1;
+}
+
+.settings-button:focus-visible,
+.settings-close:focus-visible,
+.settings-mode-group button:focus-visible,
+.settings-panel select:focus-visible {
+    outline: 3px solid var(--highlight);
+    outline-offset: 2px;
+}
+
+.settings-panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    width: min(280px, calc(100vw - 24px));
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: 0 16px 38px rgba(0, 0, 0, 0.22);
+}
+
+.settings-panel[hidden] {
+    display: none !important;
+}
+
+.settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.settings-header h2 {
+    margin: 0;
+    color: var(--text) !important;
+    font-size: 1.1rem;
+}
+
+.settings-close {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid var(--border) !important;
+    border-radius: 9px;
+    background: var(--surface-raised) !important;
+    color: var(--text) !important;
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.settings-panel > label,
+.settings-label {
+    display: block;
+    margin: 12px 0 6px;
+    color: var(--muted) !important;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.settings-panel select {
+    width: 100%;
+    min-height: 40px;
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--surface);
+    color: var(--text) !important;
+    font: inherit;
+}
+
+.settings-mode-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+}
+
+.settings-mode-group button {
+    min-height: 40px;
+    padding: 8px 10px;
+    border: 1px solid var(--border) !important;
+    border-radius: 9px;
+    background: var(--surface-raised) !important;
+    color: var(--text) !important;
+    font: inherit;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+html[data-theme][data-palette] body .settings-mode-group button[aria-pressed="true"] {
+    border-color: var(--accent-strong) !important;
+    background: var(--accent-strong) !important;
+    color: #fff !important;
+}
+
+html[data-theme][data-palette] body .settings-mode-group button[aria-pressed="false"] {
+    border-color: var(--border) !important;
+    background: var(--surface-raised) !important;
+    color: var(--text) !important;
+}
+
+.grade-textbook {
+    display: flex;
+    align-items: center;
+    gap: clamp(24px, 6vw, 72px);
+    max-width: 1180px;
+    margin: 0 auto 64px;
+    padding: clamp(24px, 5vw, 52px);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    background: var(--surface);
+    box-shadow: 0 12px 32px rgba(111, 63, 37, 0.08);
+}
+
+.grade-textbook-copy {
+    flex: 1;
+}
+
+.grade-textbook-copy h2 {
+    margin: 8px 0 12px;
+    color: var(--accent) !important;
+    font-size: clamp(1.7rem, 3vw, 2.3rem);
+}
+
+.grade-textbook-copy > p:not(.eyebrow) {
+    max-width: 560px;
+    color: var(--muted) !important;
+}
+
+.grade-textbook-copy .text-link {
+    display: flex;
+    width: fit-content;
+    margin-top: 16px;
+    color: var(--accent) !important;
+}
+
+.grade-textbook-image {
+    flex: 0 1 270px;
+}
+
+.grade-textbook-image img {
+    display: block;
+    width: min(100%, 250px);
+    height: auto;
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.14);
+}
+
+.grade-textbook-image[hidden] {
+    display: none !important;
+}
+
+.grade-textbook-image:not([hidden]) + .grade-textbook-copy {
+    flex: 1;
+}
+
+@media (max-width: 760px) {
+    .settings-panel {
+        left: 0;
+        top: calc(100% + 8px);
+    }
+
+    .grade-textbook {
+        align-items: flex-start;
+        flex-direction: column;
+        margin: 0 16px 32px;
+    }
+
+    .grade-textbook-image img {
+        width: min(100%, 180px);
+    }
+}
