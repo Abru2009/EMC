@@ -1341,6 +1341,7 @@ html[data-theme][data-palette] body .settings-mode-group button[aria-pressed="fa
     max-width: 1180px;
     margin: 0 auto 64px;
     padding: clamp(24px, 5vw, 52px);
+    scroll-margin-top: 90px;
     border: 1px solid var(--border);
     border-radius: 24px;
     background: var(--surface);
@@ -1374,23 +1375,34 @@ html[data-theme][data-palette] body .settings-mode-group button[aria-pressed="fa
 }
 
 .grade-textbook-image[data-grade-view="12"] {
-    display: flex;
-    flex: 0 0 auto;
+    flex: 0 1 620px;
+    width: min(100%, 620px);
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
 }
 
 .grade-textbook-image[data-grade-view="12"] a {
-    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
 }
 
 .grade-textbook-image img {
     display: block;
-    width: min(100%, 250px);
-    aspect-ratio: 928 / 1304;
+    width: min(100%, 300px);
     height: auto;
-    object-fit: contain;
     border-radius: 14px;
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.14);
+}
+
+.grade-textbook-cover-label {
+    color: var(--accent) !important;
+    font-weight: 700;
+    text-align: center;
 }
 
 .grade-textbook-image[hidden] {
@@ -1414,13 +1426,22 @@ html[data-theme][data-palette] body .settings-mode-group button[aria-pressed="fa
         margin: 0 16px 32px;
     }
 
-    .grade-textbook-image img {
-        width: min(100%, 180px);
+    .grade-textbook-image {
+        width: min(100%, 250px);
     }
 
     .grade-textbook-image[data-grade-view="12"] {
-        align-items: flex-start;
-        flex-direction: column;
+        width: min(100%, 320px);
+        flex-basis: auto;
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .grade-textbook-image[data-grade-view="12"] {
+        width: 100%;
+        max-width: 320px;
+        flex-basis: auto;
         gap: 12px;
     }
 }
