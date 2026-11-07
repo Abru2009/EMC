@@ -1389,6 +1389,7 @@ html[data-theme][data-palette] body .settings-mode-group button[aria-pressed="fa
     align-items: center;
     width: 100%;
     gap: 10px;
+    text-decoration: none;
 }
 
 .grade-textbook-image img {
@@ -1431,17 +1432,21 @@ html[data-theme][data-palette] body .settings-mode-group button[aria-pressed="fa
     }
 
     .grade-textbook-image[data-grade-view="12"] {
-        width: min(100%, 320px);
+        align-self: stretch;
+        width: 100%;
+        max-width: 620px;
         flex-basis: auto;
-        grid-template-columns: minmax(0, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 360px) {
     .grade-textbook-image[data-grade-view="12"] {
-        width: 100%;
-        max-width: 320px;
+        align-self: center;
+        width: min(100%, 240px);
+        max-width: 240px;
         flex-basis: auto;
+        grid-template-columns: minmax(0, 1fr);
         gap: 12px;
     }
 }
