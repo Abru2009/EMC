@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Similar Triangles Calculator • Grade 10</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../theme.css">
+    <link rel="stylesheet" href="../grade-calculators.css">
+    <script src="../theme.js" defer></script>
+</head>
+<body class="grade-tools-page" data-grade-page="10">
+    <a class="back-home" href="../calculators.html#grade-10">← Grade 10 chapters</a>
+    <main class="grade-tools-shell">
+        <p class="eyebrow">CBSE • NCERT • GRADE 10</p>
+        <h1>Similar Triangles Calculator</h1>
+        <p class="grade-tools-intro">Scale a triangle and compare corresponding sides, perimeters, and areas.</p>
+        <p class="grade-tool-formula">For similar triangles, corresponding sides and perimeters have ratio k; their areas have ratio k².</p>
+        <form class="grade-tool-form" id="triangleForm">
+            <div class="grade-tool-field"><label for="sideA">First side a</label><input id="sideA" name="sideA" type="number" step="any" value="3"></div>
+            <div class="grade-tool-field"><label for="sideB">Second side b</label><input id="sideB" name="sideB" type="number" step="any" value="4"></div>
+            <div class="grade-tool-field"><label for="sideC">Third side c</label><input id="sideC" name="sideC" type="number" step="any" value="5"></div>
+            <div class="grade-tool-field"><label for="scale">Scale factor k</label><input id="scale" name="scale" type="number" step="any" value="2"></div>
+            <button class="grade-tool-submit" type="submit">Calculate</button>
+        </form>
+        <section class="grade-tool-output" id="triangleOutput" aria-live="polite">Enter the side lengths and scale factor, then choose Calculate.</section>
+    </main>
+    <script>
+        const form = document.getElementById('triangleForm');
+        const output = document.getElementById('triangleOutput');
+        class InputError extends Error {}
+        const format = value => {
+            if (!Number.isFinite(value)) throw new InputError('The result is too large to calculate safely.');
+            return Number(value.toPrecision(8)).toString();
+        };
+        form.addEventListener('submit', event => {
+            event.preventDefault();
+            const read = name => {
+                const raw = form.elements.namedItem(name).value.trim();
+                const value = Number(raw);
+                if (!raw || !Number.isFinite(value)) throw new InputError(`${name} must be a finite number.`);
+                if (value <= 0) throw new InputError(`${name} must be greater than zero.`);
+                return value;
+            };
+            try {
+                const a = read('sideA'), b = read('sideB'), c = read('sideC'), scale = read('scale');
+                if (a + b <= c || a + c <= b || b + c <= a) throw new InputError('The side lengths must satisfy the triangle inequality.');
+                const semi = (a + b + c) / 2;
+                const area = Math.sqrt(semi * (semi - a) * (semi - b) * (semi - c));
+                const answer = document.createElement('strong');
+                answer.textContent = `Scaled sides: ${format(a * scale)}, ${format(b * scale)}, ${format(c * scale)}. Perimeter: ${format((a + b + c) * scale)}. Area: ${format(area * scale * scale)} square units.`;
+                const steps = document.createElement('p');
+                steps.textContent = `Original perimeter = ${format(a + b + c)}; original area ≈ ${format(area)}. Side ratio = ${format(scale)} and area ratio = ${format(scale * scale)}.`;
+                output.dataset.state = 'success';
+                output.replaceChildren(answer, steps);
+            } catch (error) {
+                if (!(error instanceof InputError)) throw error;
+                output.dataset.state = 'error';
+                const message = document.createElement('strong');
+                message.textContent = error.message;
+                output.replaceChildren(message);
+            }
+        });
+    </script>
+</body>
+</html>

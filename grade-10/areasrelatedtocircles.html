@@ -163,6 +163,8 @@
         }
     </style>
     <link rel="stylesheet" href="../calculator-ui.css">
+    <link rel="stylesheet" href="../theme.css">
+    <script src="../theme.js" defer></script>
 </head>
 <body>
     <a class="back-home" href="../main.html"><span aria-hidden="true">←</span> Back to home</a>
@@ -234,11 +236,9 @@
             const canvas = document.getElementById("diagramCanvas");
             const ctx = canvas.getContext("2d");
 
-            // Set canvas dimensions to match CSS size
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
+            resizeDiagramCanvas(canvas);
 
-            if (isNaN(radius) || radius <= 0) {
+            if (!Number.isFinite(radius) || radius <= 0) {
                 outputP.textContent = "Please enter a valid radius (> 0).";
                 resultDiv.style.display = "block";
                 stepsDiv.style.display = "none";
@@ -247,7 +247,7 @@
             }
 
             if ((calcType === "arc" || calcType === "sector" || calcType === "segment" || calcType === "triangle") &&
-                (isNaN(angle) || angle < 0 || angle > 360)) {
+                (!Number.isFinite(angle) || angle < 0 || angle > 360)) {
                 outputP.textContent = "Please enter a valid angle (0-360°) for this calculation.";
                 resultDiv.style.display = "block";
                 stepsDiv.style.display = "none";
@@ -265,16 +265,17 @@
             const sectorArea = (angle / 360) * totalArea;
 
             // Triangle calculations
-            const triangleAreaMethod2 = 0.5 * radius * radius * Math.sin(thetaRad); // 1/2 r² sin(θ)
-            const chordAB = 2 * radius * Math.sin(thetaRad / 2); // Base b (chord length)
-            const heightOM = radius * Math.cos(thetaRad / 2); // Height h
-            const triangleAreaMethod1 = 0.5 * chordAB * heightOM; // 1/2 b h
+            const signedTriangleArea = 0.5 * radius * radius * Math.sin(thetaRad);
+            const triangleAreaMethod2 = Math.abs(signedTriangleArea);
+            const chordAB = 2 * radius * Math.sin(thetaRad / 2);
+            const heightOM = Math.abs(radius * Math.cos(thetaRad / 2));
+            const triangleAreaMethod1 = 0.5 * chordAB * heightOM;
             let triangleAreaMethod3 = null;
             if (Math.abs(angle - 60) < 0.01) { // Check if equilateral (θ ≈ 60°)
                 triangleAreaMethod3 = (Math.sqrt(3) / 4) * radius * radius; // √3/4 a² where a = r
             }
 
-            const segmentArea = sectorArea - triangleAreaMethod2;
+            const segmentArea = sectorArea - signedTriangleArea;
 
             let output, steps;
             drawDiagram(ctx, calcType, radius, angle, thetaRad, chordAB, heightOM);
@@ -303,8 +304,8 @@
                     steps = `
                         <p><strong>Formula:</strong> Segment Area = Sector Area - Triangle Area</p>
                         <p>Sector Area = (θ / 360) × πr² = ${sectorArea.toFixed(2)}</p>
-                        <p>Triangle Area = (1/2) × r² × sin(θ) = ${triangleAreaMethod2.toFixed(2)}</p>
-                        <p>Segment Area = ${sectorArea.toFixed(2)} - ${triangleAreaMethod2.toFixed(2)}</p>
+                        <p>Signed triangle contribution = (1/2) × r² × sin(θ) = ${signedTriangleArea.toFixed(2)}</p>
+                        <p>Segment Area = ${sectorArea.toFixed(2)} - (${signedTriangleArea.toFixed(2)})</p>
                         <p>= ${segmentArea.toFixed(2)} square units</p>
                     `;
                     break;
@@ -380,12 +381,17 @@
         });
 
         function drawDiagram(ctx, calcType, radius, angle, thetaRad, chordAB, heightOM) {
-            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-            const centerX = ctx.canvas.width / 2;
-            const centerY = ctx.canvas.height / 2;
-            const maxRadius = Math.min(ctx.canvas.width, ctx.canvas.height) / 2 - 20; // Leave padding
+            ctx.canvas.dataset.diagram = JSON.stringify([calcType, radius, angle, thetaRad, chordAB, heightOM]);
+            const width = ctx.canvas.clientWidth;
+            const height = ctx.canvas.clientHeight;
+            ctx.clearRect(0, 0, width, height);
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const maxRadius = Math.max(0, Math.min(width, height) / 2 - 28);
+            if (maxRadius === 0) return;
             const scale = maxRadius / radius;
             const scaledRadius = radius * scale;
+            const diagramText = '#39291f';
 
             // Draw full circle outline
             ctx.beginPath();
@@ -396,14 +402,14 @@
 
             ctx.lineWidth = 2;
             ctx.font = "14px 'Segoe UI'"; /* Consistent font */
-            ctx.fillStyle = "#4a4a4a"; /* Grayish text */
+            ctx.fillStyle = diagramText;
 
             // Draw radii OA and OB (if angle-dependent calculation)
             if (calcType !== "circumference" && calcType !== "area") {
                 ctx.beginPath();
                 ctx.moveTo(centerX, centerY);
                 ctx.lineTo(centerX + scaledRadius, centerY); // OA
-                ctx.strokeStyle = "#000";
+                ctx.strokeStyle = diagramText;
                 ctx.stroke();
                 ctx.fillText("O", centerX - 15, centerY - 5);
                 ctx.fillText("A", centerX + scaledRadius + 5, centerY + 5);
@@ -424,7 +430,7 @@
                 ctx.beginPath();
                 ctx.moveTo(centerX, centerY);
                 ctx.lineTo(centerX + scaledRadius, centerY); // Radius for reference
-                ctx.strokeStyle = "#000";
+                ctx.strokeStyle = diagramText;
                 ctx.stroke();
                 ctx.fillText("r", centerX + scaledRadius / 2, centerY + 20);
             }
@@ -530,6 +536,25 @@
                 ctx.fillText("Total Area", centerX - 40, centerY);
             }
         }
+
+        function resizeDiagramCanvas(canvas) {
+            const ratio = Math.min(window.devicePixelRatio || 1, 2);
+            canvas.width = Math.round(canvas.clientWidth * ratio);
+            canvas.height = Math.round(canvas.clientHeight * ratio);
+            canvas.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0);
+        }
+
+        const diagramCanvas = document.getElementById("diagramCanvas");
+        const redrawDiagram = () => {
+            const params = diagramCanvas.dataset.diagram;
+            if (!params) return;
+            resizeDiagramCanvas(diagramCanvas);
+            drawDiagram(diagramCanvas.getContext("2d"), ...JSON.parse(params));
+        };
+        if ('ResizeObserver' in window) {
+            new ResizeObserver(redrawDiagram).observe(diagramCanvas);
+        }
+        window.addEventListener('emc-theme-change', redrawDiagram);
     </script>
     <!-- Removed Cloudflare script as it’s not relevant to the core functionality -->
 </body>
