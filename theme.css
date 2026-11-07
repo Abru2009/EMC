@@ -1047,11 +1047,11 @@ html[data-theme="dark"] body :is(.midpoint, .intersection) {
 
 .hero-text h1 {
     max-width: 760px;
-    font-family: "Avenir Next", Avenir, system-ui, sans-serif !important;
-    font-size: clamp(2.35rem, 5vw, 3.65rem) !important;
-    font-weight: 450 !important;
-    letter-spacing: -0.055em !important;
-    line-height: 1.08 !important;
+    font-family: "Bodoni 72", Didot, "Times New Roman", Georgia, serif !important;
+    font-size: clamp(2.7rem, 6vw, 4.8rem) !important;
+    font-weight: 400 !important;
+    letter-spacing: -0.035em !important;
+    line-height: 1.03 !important;
     text-wrap: balance;
 }
 
@@ -1121,6 +1121,10 @@ html[data-theme] body :is(a, button, input, select, textarea) {
 .navbar .theme-controls {
     padding: 0;
     flex: 0 0 auto;
+}
+
+.navbar .settings-controls {
+    margin-left: auto;
 }
 
 .theme-select {
@@ -1235,7 +1239,7 @@ html[data-theme] body :is(a, button, input, select, textarea) {
 .settings-panel {
     position: absolute;
     top: calc(100% + 10px);
-    left: 0;
+    right: 0;
     width: min(280px, calc(100vw - 24px));
     padding: 16px;
     border: 1px solid var(--border);
@@ -1382,7 +1386,8 @@ html[data-theme][data-palette] body .settings-mode-group button[aria-pressed="fa
 
 @media (max-width: 760px) {
     .settings-panel {
-        left: 0;
+        right: 0;
+        left: auto;
         top: calc(100% + 8px);
     }
 
@@ -1395,4 +1400,12 @@ html[data-theme][data-palette] body .settings-mode-group button[aria-pressed="fa
     .grade-textbook-image img {
         width: min(100%, 180px);
     }
+}
+
+html[data-theme] body .hero-text h1 {
+    font-family: "Bodoni 72", Didot, "Times New Roman", Georgia, serif !important;
+    font-size: clamp(2.7rem, 6vw, 4.8rem) !important;
+    font-weight: 400 !important;
+    letter-spacing: -0.035em !important;
+    line-height: 1.03 !important;
 }

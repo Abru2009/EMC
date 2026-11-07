@@ -484,23 +484,82 @@
             if (!denominator) throw new InputError('At least one plane coefficient A, B, or C must be non-zero.');
             return { answer: `Perpendicular distance = ${format(Math.abs(a * x + b * y + c * z + d) / denominator)} units.`, steps: 'Substitute the point into the plane-distance formula and divide by the magnitude of the normal vector.' };
         }),
-        'linear-programming': config('Linear Programming Vertex Checker', 'Evaluate an objective function at the vertices of a feasible region and select its optimum.', 'A linear objective reaches its maximum or minimum at a vertex of a bounded feasible region.', [
+        'linear-programming': config('Linear Programming Solver', 'Build a two-variable linear program from constraints, choose variable sign conditions, and find its optimum.', 'For a bounded feasible region, a linear objective reaches its optimum at a corner point.', [
             field('objective', 'Objective', 'max', { type: 'select', options: [['max', 'Maximize'], ['min', 'Minimize']] }),
-            field('p', 'Coefficient p in Z = px + qy', 3), field('q', 'Coefficient q in Z = px + qy', 2),
-            field('vertices', 'Feasible vertices (x,y separated by semicolons)', '0,0; 4,0; 0,3', { type: 'text', placeholder: 'For example: 0,0; 4,0; 0,3' })
+            field('p', 'Coefficient of x in Z = px + qy', 3), field('q', 'Coefficient of y in Z = px + qy', 2),
+            field('xDomain', 'Condition for x', 'nonnegative', { type: 'select', options: [['nonnegative', 'x ≥ 0'], ['nonpositive', 'x ≤ 0'], ['free', 'x is unrestricted'], ['zero', 'x = 0']] }),
+            field('yDomain', 'Condition for y', 'nonnegative', { type: 'select', options: [['nonnegative', 'y ≥ 0'], ['nonpositive', 'y ≤ 0'], ['free', 'y is unrestricted'], ['zero', 'y = 0']] }),
+            field('constraintCount', 'Number of constraints', '3', { type: 'select', options: Array.from({ length: 8 }, (_, index) => [String(index + 1), `${index + 1} ${index ? 'constraints' : 'constraint'}`]) }),
+            ...Array.from({ length: 8 }, (_, index) => [
+                field(`a${index + 1}`, `Constraint ${index + 1}: coefficient of x`, index === 0 ? 1 : index === 1 ? 1 : index === 2 ? 3 : 1),
+                field(`b${index + 1}`, `Constraint ${index + 1}: coefficient of y`, index === 0 ? 1 : index === 1 ? 0 : index === 2 ? 2 : 1),
+                field(`relation${index + 1}`, `Constraint ${index + 1}: relation`, '<=', { type: 'select', options: [['<=', '≤'], ['>=', '≥'], ['=', '=']] }),
+                field(`c${index + 1}`, `Constraint ${index + 1}: right side`, index === 0 ? 4 : index === 1 ? 2 : index === 2 ? 12 : 4)
+            ]).flat()
         ], v => {
             const p = number(v.p, 'p'), q = number(v.q, 'q');
-            const pairs = v.vertices.split(';').map(pair => pair.trim()).filter(Boolean);
-            if (pairs.length < 1 || pairs.length > 100) throw new InputError('Enter between 1 and 100 feasible vertices.');
-            const points = pairs.map((pair, index) => {
-                const coordinates = pair.split(/[,\s]+/).filter(Boolean);
-                if (coordinates.length !== 2) throw new InputError(`Vertex ${index + 1} must be entered as x,y.`);
-                return coordinates.map((value, axis) => number(value, `Vertex ${index + 1} ${axis ? 'y' : 'x'}`));
+            const count = integer(v.constraintCount, 'Number of constraints', 1, 8);
+            const constraints = [];
+            for (let index = 1; index <= count; index++) {
+                const a = number(v[`a${index}`], `Constraint ${index}, x coefficient`);
+                const b = number(v[`b${index}`], `Constraint ${index}, y coefficient`);
+                const c = number(v[`c${index}`], `Constraint ${index}, right side`);
+                const relation = v[`relation${index}`];
+                if (!a && !b) {
+                    const valid = relation === '<=' ? 0 <= c : relation === '>=' ? 0 >= c : c === 0;
+                    if (!valid) return { answer: 'The constraints are infeasible.', steps: `Constraint ${index} has no variable terms and is false for every (x, y).` };
+                    continue;
+                }
+                if (relation === '<=' || relation === '=') constraints.push({ a, b, c });
+                if (relation === '>=' || relation === '=') constraints.push({ a: -a, b: -b, c: -c });
+            }
+            const addDomain = (variable, domain) => {
+                if (domain === 'nonnegative' || domain === 'zero') constraints.push({ a: variable === 'x' ? -1 : 0, b: variable === 'y' ? -1 : 0, c: 0 });
+                if (domain === 'nonpositive' || domain === 'zero') constraints.push({ a: variable === 'x' ? 1 : 0, b: variable === 'y' ? 1 : 0, c: 0 });
+            };
+            addDomain('x', v.xDomain);
+            addDomain('y', v.yDomain);
+            const satisfies = (x, y) => constraints.every(({ a, b, c }) => a * x + b * y <= c + 1e-8 * Math.max(1, Math.abs(c)));
+            const points = [];
+            const addPoint = (x, y) => {
+                if (Number.isFinite(x) && Number.isFinite(y) && satisfies(x, y)
+                    && !points.some(([px, py]) => Math.hypot(px - x, py - y) < 1e-8)) points.push([x, y]);
+            };
+            addPoint(0, 0);
+            constraints.forEach(({ a, b, c }) => {
+                const denominator = a * a + b * b;
+                addPoint(a * c / denominator, b * c / denominator);
             });
+            constraints.forEach((first, index) => constraints.slice(index + 1).forEach(second => {
+                const determinant = first.a * second.b - second.a * first.b;
+                if (Math.abs(determinant) < 1e-12) return;
+                addPoint((first.c * second.b - second.c * first.b) / determinant,
+                    (first.a * second.c - second.a * first.c) / determinant);
+            }));
+            if (!points.length) return { answer: 'The constraints have no feasible solution.', steps: 'No point satisfies all the selected inequalities, equalities, and variable conditions.' };
+
+            const directions = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+            constraints.forEach(({ a, b }) => directions.push([-b, a], [b, -a]));
+            const feasibleDirections = directions.filter(([dx, dy]) => Math.hypot(dx, dy) > 1e-12
+                && constraints.every(({ a, b }) => a * dx + b * dy <= 1e-10));
+            const objectiveDirection = v.objective === 'max' ? 1 : -1;
+            const unbounded = feasibleDirections.some(([dx, dy]) => objectiveDirection * (p * dx + q * dy) > 1e-10);
+            if (unbounded) {
+                return {
+                    answer: `The ${v.objective === 'max' ? 'maximum' : 'minimum'} is unbounded; there is no finite optimum.`,
+                    steps: 'A feasible direction allows the objective to keep improving without violating any constraint.',
+                    visual: { type: 'linear-programming', constraints, points, bounded: false }
+                };
+            }
             const values = points.map(([x, y]) => p * x + q * y);
             const optimum = v.objective === 'max' ? Math.max(...values) : Math.min(...values);
-            const best = points.filter((_, index) => values[index] === optimum);
-            return { answer: `Optimal ${v.objective === 'max' ? 'maximum' : 'minimum'} Z = ${format(optimum)} at ${best.map(([x, y]) => `(${format(x)}, ${format(y)})`).join(' and ')}.`, steps: `Z = ${format(p)}x + ${format(q)}y is evaluated at each supplied feasible vertex.` };
+            const best = points.filter((_, index) => Math.abs(values[index] - optimum) < 1e-8);
+            const objective = `${format(p)}x ${q < 0 ? '−' : '+'} ${format(Math.abs(q))}y`;
+            return {
+                answer: `Optimal ${v.objective === 'max' ? 'maximum' : 'minimum'} Z = ${format(optimum)} at ${best.map(([x, y]) => `(${format(x)}, ${format(y)})`).join(' and ')}.`,
+                steps: `Z = ${objective} is evaluated at the feasible corner points, including applicable axis/equality boundaries.`,
+                visual: { type: 'linear-programming', constraints, points, bounded: feasibleDirections.length === 0 }
+            };
         }),
         probability: config('Conditional Probability Checker', 'Find a conditional probability and check whether two events are independent.', 'P(A|B) = P(A∩B)/P(B); A and B are independent when P(A∩B)=P(A)P(B).', [
             field('pa', 'P(A)', 0.5), field('pb', 'P(B)', 0.4), field('pab', 'P(A ∩ B)', 0.2),
@@ -605,6 +664,69 @@
 
     function makeVisualization(topic, values, result) {
         if (result.visual?.type === 'matrix') return makeMatrixDiagram(result.visual.matrix);
+        if (result.visual?.type === 'linear-programming') {
+            const svg = makeSvg('Linear programming constraints and feasible region');
+            const { constraints, points, bounded } = result.visual;
+            const left = 54, right = 494, top = 22, bottom = 278;
+            const allX = [...points.map(point => point[0]), 0], allY = [...points.map(point => point[1]), 0];
+            const span = (values, floor) => {
+                let min = Math.min(...values), max = Math.max(...values);
+                if (max - min < floor) { min -= floor / 2; max += floor / 2; }
+                const padding = (max - min) * 0.18;
+                return [min - padding, max + padding];
+            };
+            const [minX, maxX] = span(allX, 8), [minY, maxY] = span(allY, 8);
+            const x = value => left + (value - minX) / (maxX - minX) * (right - left);
+            const y = value => bottom - (value - minY) / (maxY - minY) * (bottom - top);
+            for (let index = 0; index <= 8; index++) {
+                const gx = left + (right - left) * index / 8, gy = top + (bottom - top) * index / 8;
+                svg.append(
+                    svgElement('line', { class: 'grade-chart-grid', x1: gx, y1: top, x2: gx, y2: bottom }),
+                    svgElement('line', { class: 'grade-chart-grid', x1: left, y1: gy, x2: right, y2: gy })
+                );
+            }
+            if (minY <= 0 && maxY >= 0) svg.appendChild(svgElement('line', { class: 'grade-chart-axis', x1: left, y1: y(0), x2: right, y2: y(0) }));
+            if (minX <= 0 && maxX >= 0) svg.appendChild(svgElement('line', { class: 'grade-chart-axis', x1: x(0), y1: top, x2: x(0), y2: bottom }));
+            const hull = points.slice().sort((first, second) => first[0] - second[0] || first[1] - second[1]);
+            const cross = (origin, first, second) => (first[0] - origin[0]) * (second[1] - origin[1]) - (first[1] - origin[1]) * (second[0] - origin[0]);
+            if (bounded && hull.length >= 3) {
+                const lower = [], upper = [];
+                hull.forEach(point => {
+                    while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], point) <= 1e-10) lower.pop();
+                    lower.push(point);
+                });
+                hull.slice().reverse().forEach(point => {
+                    while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], point) <= 1e-10) upper.pop();
+                    upper.push(point);
+                });
+                const polygon = [...lower.slice(0, -1), ...upper.slice(0, -1)];
+                if (polygon.length >= 3) {
+                    const path = polygon.map(([px, py], index) => `${index ? 'L' : 'M'}${x(px)},${y(py)}`).join(' ') + ' Z';
+                    svg.appendChild(svgElement('path', { class: 'grade-chart-region', d: path }));
+                }
+            }
+            constraints.forEach(({ a, b, c }) => {
+                const intersections = [];
+                if (Math.abs(b) > 1e-12) {
+                    [minX, maxX].forEach(px => {
+                        const py = (c - a * px) / b;
+                        if (py >= minY && py <= maxY) intersections.push([px, py]);
+                    });
+                }
+                if (Math.abs(a) > 1e-12) {
+                    [minY, maxY].forEach(py => {
+                        const px = (c - b * py) / a;
+                        if (px >= minX && px <= maxX) intersections.push([px, py]);
+                    });
+                }
+                if (intersections.length >= 2) {
+                    const first = intersections[0], last = intersections[intersections.length - 1];
+                    svg.appendChild(svgElement('line', { class: 'grade-chart-curve-secondary', x1: x(first[0]), y1: y(first[1]), x2: x(last[0]), y2: y(last[1]) }));
+                }
+            });
+            points.forEach(([px, py]) => svg.appendChild(svgElement('circle', { class: 'grade-chart-point', cx: x(px), cy: y(py), r: 5 })));
+            return svg;
+        }
         if (result.visual?.type === 'sets') {
             const svg = makeSvg('Venn diagram for the selected sets');
             const { a, b, intersection } = result.visual;
@@ -660,17 +782,6 @@
             const matrix = result.visual?.matrix || readMatrix(values, 'a', Number(values.size));
             return makeMatrixDiagram(matrix);
         }
-        if (topic === 'linear-programming') {
-            const svg = makeSvg('Graph of feasible linear programming vertices');
-            const map = addAxes(svg);
-            const points = values.vertices.split(';').map(pair => pair.trim().split(/[,\s]+/).map(Number));
-            if (points.length > 1) {
-                const d = points.map(([x, y], index) => `${index ? 'L' : 'M'}${map.x(x)},${map.y(y)}`).join(' ') + ' Z';
-                svg.appendChild(svgElement('path', { class: 'grade-chart-region', d }));
-            }
-            points.forEach(([x, y]) => svg.appendChild(svgElement('circle', { class: 'grade-chart-point', cx: map.x(x), cy: map.y(y), r: 5 })));
-            return svg;
-        }
         if (topic === 'vector-algebra') {
             const svg = makeSvg('Two-dimensional projection of the vector inputs');
             const map = addAxes(svg);
@@ -683,9 +794,9 @@
             });
             return svg;
         }
-        if (topic === 'statistics' || topic === 'probability') {
-            const svg = makeSvg(topic === 'statistics' ? 'Observation frequency chart' : 'Probability comparison chart');
-            const data = topic === 'statistics' ? parseData(values.data) : [number(values.favorable, 'favorable') / number(values.total, 'total'), 1 - number(values.favorable, 'favorable') / number(values.total, 'total')];
+        if (topic === 'statistics') {
+            const svg = makeSvg('Observation frequency chart');
+            const data = parseData(values.data);
             const frequencies = new Map();
             data.forEach(value => frequencies.set(value, (frequencies.get(value) || 0) + 1));
             const entries = [...frequencies].slice(0, 12);
@@ -697,6 +808,29 @@
                     svgElement('rect', { class: 'grade-chart-bar', x: x + 3, y, width: Math.max(4, barWidth - 7), height, rx: 4 }),
                     svgElement('text', { class: 'grade-chart-label', x: x + barWidth / 2, y: 278, 'text-anchor': 'middle' }, format(value)),
                     svgElement('text', { class: 'grade-chart-label', x: x + barWidth / 2, y: y - 7, 'text-anchor': 'middle' }, String(count))
+                );
+            });
+            return svg;
+        }
+        if (topic === 'probability') {
+            const svg = makeSvg('Probability comparison chart');
+            const data = grade === '11'
+                ? [
+                    ['P(E)', number(values.favorable, 'Favorable outcomes') / number(values.total, 'Total outcomes')],
+                    ['P(E′)', 1 - number(values.favorable, 'Favorable outcomes') / number(values.total, 'Total outcomes')]
+                ]
+                : [
+                    ['P(A)', number(values.pa, 'P(A)')],
+                    ['P(B)', number(values.pb, 'P(B)')],
+                    ['P(A∩B)', number(values.pab, 'P(A ∩ B)')]
+                ];
+            const barWidth = 350 / data.length;
+            data.forEach(([label, probability], index) => {
+                const height = 190 * probability, x = 85 + index * barWidth, y = 257 - height;
+                svg.append(
+                    svgElement('rect', { class: 'grade-chart-bar', x: x + 24, y, width: barWidth - 48, height, rx: 5 }),
+                    svgElement('text', { class: 'grade-chart-label', x: x + barWidth / 2, y: 278, 'text-anchor': 'middle' }, label),
+                    svgElement('text', { class: 'grade-chart-label', x: x + barWidth / 2, y: y - 7, 'text-anchor': 'middle' }, format(probability))
                 );
             });
             return svg;
@@ -809,9 +943,36 @@
             functions.push(x => x);
         } else if (topic === 'three-dimensional-geometry') {
             const map = addAxes(svg);
-            const x = number(values.x, 'x'), y = number(values.y, 'y');
-            svg.appendChild(svgElement('circle', { class: 'grade-chart-point', cx: map.x(x), cy: map.y(y), r: 7 }));
-            svg.appendChild(svgElement('text', { class: 'grade-chart-label', x: map.x(x) + 10, y: map.y(y) - 10 }, `(${format(x)}, ${format(y)}, ${format(number(values.z, 'z'))})`));
+            if (grade === '11') {
+                const project = (x, y, z) => [x + 0.5 * z, y - 0.35 * z];
+                const first = project(number(values.x1, 'x₁'), number(values.y1, 'y₁'), number(values.z1, 'z₁'));
+                const second = project(number(values.x2, 'x₂'), number(values.y2, 'y₂'), number(values.z2, 'z₂'));
+                svg.append(
+                    svgElement('line', { class: 'grade-chart-curve', x1: map.x(first[0]), y1: map.y(first[1]), x2: map.x(second[0]), y2: map.y(second[1]) }),
+                    svgElement('circle', { class: 'grade-chart-point', cx: map.x(first[0]), cy: map.y(first[1]), r: 7 }),
+                    svgElement('circle', { class: 'grade-chart-point', cx: map.x(second[0]), cy: map.y(second[1]), r: 7 }),
+                    svgElement('text', { class: 'grade-chart-label', x: map.x(first[0]) + 8, y: map.y(first[1]) - 8 }, 'P₁'),
+                    svgElement('text', { class: 'grade-chart-label', x: map.x(second[0]) + 8, y: map.y(second[1]) - 8 }, 'P₂')
+                );
+            } else {
+                const a = number(values.a, 'A'), b = number(values.b, 'B'), c = number(values.c, 'C'), d = number(values.d, 'D');
+                const z = number(values.z, 'z'), x0 = number(values.x, 'x'), y0 = number(values.y, 'y');
+                if (Math.abs(a) + Math.abs(b) > 1e-12) {
+                    const intercept = -c * z - d;
+                    const line = pathFromFunction(map, x => Math.abs(b) > 1e-12 ? (intercept - a * x) / b : NaN);
+                    if (line) svg.appendChild(svgElement('path', { class: 'grade-chart-curve-secondary', d: line }));
+                    else {
+                        const xLine = -intercept / a;
+                        svg.appendChild(svgElement('line', { class: 'grade-chart-curve-secondary', x1: map.x(xLine), y1: 20, x2: map.x(xLine), y2: 282 }));
+                    }
+                } else {
+                    svg.appendChild(svgElement('text', { class: 'grade-chart-label', x: 270, y: 42, 'text-anchor': 'middle' }, 'Horizontal plane'));
+                }
+                svg.append(
+                    svgElement('circle', { class: 'grade-chart-point', cx: map.x(x0), cy: map.y(y0), r: 7 }),
+                    svgElement('text', { class: 'grade-chart-label', x: map.x(x0) + 10, y: map.y(y0) - 10 }, `(${format(x0)}, ${format(y0)}, ${format(z)})`)
+                );
+            }
             return svg;
         }
         if (functions.length) addPlot(svg, functions);
@@ -922,12 +1083,15 @@
         const size = Number(inputs.get('size')?.value || 3);
         const operation = inputs.get('operation')?.value;
         if (topic === 'sequences-series' && inputs.get('kind')?.value !== 'gp') inputs.get('sumType').value = 'finite';
+        const constraintCount = Number(inputs.get('constraintCount')?.value || 0);
         wrappers.forEach((wrapper, id) => {
             if (['setA', 'setB', 'setU'].includes(id)) wrapper.hidden = inputs.get('mode')?.value !== 'elements';
             if (['universe', 'a', 'b', 'intersection'].includes(id) && topic === 'sets') wrapper.hidden = inputs.get('mode')?.value !== 'cardinality';
             if (['br', 'bi'].includes(id) && topic === 'complex-numbers') wrapper.hidden = !['add', 'subtract', 'multiply', 'divide'].includes(operation);
             if (id === 'r' && topic === 'binomial-theorem') wrapper.hidden = inputs.get('mode')?.value !== 'term';
             if (id === 'sumType' && topic === 'sequences-series') wrapper.hidden = inputs.get('kind')?.value !== 'gp';
+            const constraint = topic === 'linear-programming' && id.match(/^(?:a|b|c|relation)(\d+)$/);
+            if (constraint) wrapper.hidden = Number(constraint[1]) > constraintCount;
             if (wrapper.dataset.matrix) {
                 const outsideSize = Number(wrapper.dataset.row) >= size || Number(wrapper.dataset.column) >= size;
                 const unusedMatrix = wrapper.dataset.matrix === 'b'
@@ -938,7 +1102,7 @@
         });
     }
 
-    ['size', 'operation', 'mode', 'kind'].forEach(id => inputs.get(id)?.addEventListener('change', updateFieldVisibility));
+    ['size', 'operation', 'mode', 'kind', 'constraintCount'].forEach(id => inputs.get(id)?.addEventListener('change', updateFieldVisibility));
     updateFieldVisibility();
 
     form.addEventListener('submit', event => {

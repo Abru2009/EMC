@@ -181,10 +181,8 @@
         });
 
         const navbar = document.querySelector('.navbar');
-        const logo = navbar?.querySelector('.logo-container');
         const backLink = document.querySelector('.back-home');
-        if (logo) logo.insertAdjacentElement('afterend', controls);
-        else if (navbar) navbar.prepend(controls);
+        if (navbar) navbar.append(controls);
         else if (backLink) {
             const toolbar = document.createElement('div');
             toolbar.className = 'calculator-toolbar';
