@@ -1374,21 +1374,23 @@ html[data-theme][data-palette] body .settings-mode-group button[aria-pressed="fa
 }
 
 .grade-textbook-image[data-grade-view="12"] {
-    display: flex;
-    flex: 0 0 auto;
+    flex: 0 1 520px;
+    width: min(100%, 520px);
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
 }
 
 .grade-textbook-image[data-grade-view="12"] a {
-    flex: 1 1 0;
+    display: block;
+    width: 100%;
 }
 
 .grade-textbook-image img {
     display: block;
     width: min(100%, 250px);
-    aspect-ratio: 928 / 1304;
     height: auto;
-    object-fit: contain;
     border-radius: 14px;
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.14);
 }
@@ -1414,13 +1416,23 @@ html[data-theme][data-palette] body .settings-mode-group button[aria-pressed="fa
         margin: 0 16px 32px;
     }
 
-    .grade-textbook-image img {
-        width: min(100%, 180px);
+    .grade-textbook-image {
+        width: min(100%, 250px);
     }
 
     .grade-textbook-image[data-grade-view="12"] {
-        align-items: flex-start;
-        flex-direction: column;
+        width: min(100%, 520px);
+        flex-basis: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .grade-textbook-image[data-grade-view="12"] {
+        width: 100%;
+        max-width: 230px;
+        flex-basis: auto;
+        grid-template-columns: minmax(0, 1fr);
+        justify-items: center;
         gap: 12px;
     }
 }
