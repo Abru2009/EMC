@@ -60,17 +60,29 @@
 
 .grade-tool-form {
     gap: 16px;
-    padding: 20px;
+    padding: clamp(16px, 3vw, 26px);
     border: 1px solid var(--border);
-    border-radius: 16px;
+    border-radius: 20px;
     background: var(--surface-raised);
     box-shadow: 0 4px 15px rgba(30, 30, 50, 0.08);
+}
+
+.grade-tool-form-hint {
+    grid-column: 1 / -1;
+    margin: 0;
+    color: var(--muted) !important;
+    font-size: 0.92rem;
+}
+
+.grade-tool-form.grade-lp-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .grade-tool-field {
     display: grid;
     align-content: start;
-    gap: 7px;
+    gap: 6px;
+    min-width: 0;
 }
 
 .grade-tool-field[hidden] {
@@ -83,15 +95,16 @@
 
 .grade-tool-field label {
     color: var(--text) !important;
-    font-size: 0.94rem;
-    font-weight: 700;
+    font-size: 0.88rem;
+    font-weight: 650;
+    line-height: 1.35;
 }
 
 .grade-tool-field input,
 .grade-tool-field select {
     width: 100%;
-    min-height: 48px;
-    padding: 10px 12px;
+    min-height: 44px;
+    padding: 9px 11px;
     border: 1px solid var(--border);
     border-radius: 11px;
     background: var(--surface);
@@ -107,7 +120,6 @@
 }
 
 .grade-tool-submit {
-    grid-column: 1 / -1;
     min-height: 48px;
     padding: 11px 16px;
     border: 1px solid var(--accent-strong);
@@ -121,6 +133,119 @@
 
 .grade-tool-submit:hover {
     filter: brightness(1.08);
+}
+
+.grade-tool-form-actions {
+    display: flex;
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 4px;
+}
+
+.grade-tool-reset,
+.grade-tool-secondary {
+    min-height: 44px;
+    padding: 9px 14px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background: var(--surface);
+    color: var(--text) !important;
+    font: inherit;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.grade-tool-reset:hover,
+.grade-tool-secondary:hover:not(:disabled) {
+    border-color: var(--accent-strong);
+    background: var(--accent-soft);
+}
+
+.grade-tool-reset:focus-visible,
+.grade-tool-secondary:focus-visible {
+    outline: 3px solid var(--highlight);
+    outline-offset: 2px;
+}
+
+.grade-tool-secondary:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+.grade-tool-formula-details {
+    margin: 0 0 18px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface-raised);
+    color: var(--text);
+}
+
+.grade-tool-formula-details summary {
+    padding: 12px 16px;
+    color: var(--accent) !important;
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.grade-tool-formula-details[open] .grade-tool-formula {
+    margin: 0 14px 14px;
+    border: 0;
+    background: transparent;
+}
+
+.grade-lp-constraints,
+.grade-lp-constraint-actions {
+    grid-column: 1 / -1;
+}
+
+.grade-lp-constraints {
+    display: grid;
+    gap: 10px;
+}
+
+.grade-lp-constraint {
+    min-width: 0;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+}
+
+.grade-lp-constraint[hidden] {
+    display: none !important;
+}
+
+.grade-lp-constraint h3 {
+    margin: 0 0 10px;
+    color: var(--accent) !important;
+    font-size: 0.9rem;
+}
+
+.grade-lp-constraint-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr minmax(90px, 0.7fr) 1fr;
+    align-items: end;
+    gap: 10px;
+}
+
+.grade-lp-constraint-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.grade-lp-constraint-count {
+    margin-right: auto;
+    color: var(--muted) !important;
+    font-size: 0.88rem;
+    font-weight: 650;
+}
+
+.grade-lp-constraint-count[hidden] {
+    display: none !important;
 }
 
 .grade-tool-formula,
@@ -308,5 +433,26 @@
     .grade-tool-links,
     .grade-tool-form {
         grid-template-columns: 1fr;
+    }
+
+    .grade-tool-form.grade-lp-form {
+        grid-template-columns: 1fr;
+    }
+
+    .grade-lp-constraint-fields {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .grade-tool-form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .grade-tool-form-actions button {
+        width: 100%;
+    }
+
+    .grade-lp-constraint-actions > button {
+        flex: 1;
     }
 }

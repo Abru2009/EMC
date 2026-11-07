@@ -1049,8 +1049,8 @@ html[data-theme="dark"] body :is(.midpoint, .intersection) {
     max-width: 760px;
     font-family: "Bodoni 72", Didot, "Times New Roman", Georgia, serif !important;
     font-size: clamp(2.7rem, 6vw, 4.8rem) !important;
-    font-weight: 400 !important;
-    letter-spacing: -0.035em !important;
+    font-weight: 300 !important;
+    letter-spacing: -0.025em !important;
     line-height: 1.03 !important;
     text-wrap: balance;
 }
@@ -1405,7 +1405,7 @@ html[data-theme][data-palette] body .settings-mode-group button[aria-pressed="fa
 html[data-theme] body .hero-text h1 {
     font-family: "Bodoni 72", Didot, "Times New Roman", Georgia, serif !important;
     font-size: clamp(2.7rem, 6vw, 4.8rem) !important;
-    font-weight: 400 !important;
-    letter-spacing: -0.035em !important;
+    font-weight: 300 !important;
+    letter-spacing: -0.025em !important;
     line-height: 1.03 !important;
 }

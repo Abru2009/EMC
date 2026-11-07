@@ -489,16 +489,15 @@
             field('p', 'Coefficient of x in Z = px + qy', 3), field('q', 'Coefficient of y in Z = px + qy', 2),
             field('xDomain', 'Condition for x', 'nonnegative', { type: 'select', options: [['nonnegative', 'x ≥ 0'], ['nonpositive', 'x ≤ 0'], ['free', 'x is unrestricted'], ['zero', 'x = 0']] }),
             field('yDomain', 'Condition for y', 'nonnegative', { type: 'select', options: [['nonnegative', 'y ≥ 0'], ['nonpositive', 'y ≤ 0'], ['free', 'y is unrestricted'], ['zero', 'y = 0']] }),
-            field('constraintCount', 'Number of constraints', '3', { type: 'select', options: Array.from({ length: 8 }, (_, index) => [String(index + 1), `${index + 1} ${index ? 'constraints' : 'constraint'}`]) }),
-            ...Array.from({ length: 8 }, (_, index) => [
-                field(`a${index + 1}`, `Constraint ${index + 1}: coefficient of x`, index === 0 ? 1 : index === 1 ? 1 : index === 2 ? 3 : 1),
-                field(`b${index + 1}`, `Constraint ${index + 1}: coefficient of y`, index === 0 ? 1 : index === 1 ? 0 : index === 2 ? 2 : 1),
-                field(`relation${index + 1}`, `Constraint ${index + 1}: relation`, '<=', { type: 'select', options: [['<=', '≤'], ['>=', '≥'], ['=', '=']] }),
-                field(`c${index + 1}`, `Constraint ${index + 1}: right side`, index === 0 ? 4 : index === 1 ? 2 : index === 2 ? 12 : 4)
+            ...Array.from({ length: 12 }, (_, index) => [
+                field(`a${index + 1}`, `x coefficient`, index === 0 ? 1 : index === 1 ? 1 : index === 2 ? 3 : 1),
+                field(`b${index + 1}`, `y coefficient`, index === 0 ? 1 : index === 1 ? 0 : index === 2 ? 2 : 1),
+                field(`relation${index + 1}`, `Relation`, '<=', { type: 'select', options: [['<=', '≤'], ['>=', '≥'], ['=', '=']] }),
+                field(`c${index + 1}`, `Right side`, index === 0 ? 4 : index === 1 ? 2 : index === 2 ? 12 : 4)
             ]).flat()
         ], v => {
             const p = number(v.p, 'p'), q = number(v.q, 'q');
-            const count = integer(v.constraintCount, 'Number of constraints', 1, 8);
+            const count = integer(v.constraintCount, 'Number of constraints', 0, 12);
             const constraints = [];
             for (let index = 1; index <= count; index++) {
                 const a = number(v[`a${index}`], `Constraint ${index}, x coefficient`);
@@ -1020,10 +1019,22 @@
     const formula = document.createElement('p');
     formula.className = 'grade-tool-formula';
     formula.textContent = selected.formula;
+    const formulaDetails = document.createElement('details');
+    formulaDetails.className = 'grade-tool-formula-details';
+    const formulaSummary = document.createElement('summary');
+    formulaSummary.textContent = 'Show formula';
+    formulaDetails.append(formulaSummary, formula);
     const form = document.createElement('form');
     form.className = 'calculator grade-tool-form';
+    if (topic === 'linear-programming') form.classList.add('grade-lp-form');
+    const formHint = document.createElement('p');
+    formHint.className = 'grade-tool-form-hint';
+    formHint.textContent = 'Start with the example values, edit what you need, then calculate.';
+    form.appendChild(formHint);
     const inputs = new Map();
     const wrappers = new Map();
+    const defaults = new Map();
+    let activeConstraintCount = 3;
 
     selected.fields.forEach(item => {
         const wrapper = document.createElement('div');
@@ -1058,13 +1069,64 @@
         form.appendChild(wrapper);
         inputs.set(item.id, input);
         wrappers.set(item.id, wrapper);
+        defaults.set(item.id, item.value);
     });
 
+    if (topic === 'linear-programming') {
+        const constraintRows = document.createElement('div');
+        constraintRows.className = 'grade-lp-constraints';
+        for (let index = 1; index <= 12; index++) {
+            const row = document.createElement('section');
+            row.className = 'grade-lp-constraint';
+            row.dataset.constraint = String(index);
+            const title = document.createElement('h3');
+            title.textContent = `Constraint ${index}`;
+            const fields = document.createElement('div');
+            fields.className = 'grade-lp-constraint-fields';
+            [`a${index}`, `b${index}`, `relation${index}`, `c${index}`].forEach(id => fields.append(wrappers.get(id)));
+            row.append(title, fields);
+            constraintRows.appendChild(row);
+        }
+        form.appendChild(constraintRows);
+
+        const actions = document.createElement('div');
+        actions.className = 'grade-lp-constraint-actions';
+        const countLabel = document.createElement('span');
+        countLabel.className = 'grade-lp-constraint-count';
+        countLabel.setAttribute('aria-live', 'polite');
+        const removeConstraint = document.createElement('button');
+        removeConstraint.className = 'grade-tool-secondary';
+        removeConstraint.type = 'button';
+        removeConstraint.textContent = '− Remove constraint';
+        removeConstraint.addEventListener('click', () => {
+            if (activeConstraintCount > 0) activeConstraintCount--;
+            updateFieldVisibility();
+        });
+        const addConstraint = document.createElement('button');
+        addConstraint.className = 'grade-tool-secondary';
+        addConstraint.type = 'button';
+        addConstraint.textContent = '+ Add constraint';
+        addConstraint.addEventListener('click', () => {
+            if (activeConstraintCount < 12) activeConstraintCount++;
+            updateFieldVisibility();
+            inputs.get(`a${activeConstraintCount}`)?.focus();
+        });
+        actions.append(countLabel, removeConstraint, addConstraint);
+        form.appendChild(actions);
+    }
+
+    const formActions = document.createElement('div');
+    formActions.className = 'grade-tool-form-actions';
+    const reset = document.createElement('button');
+    reset.className = 'grade-tool-reset';
+    reset.type = 'reset';
+    reset.textContent = 'Reset';
     const submit = document.createElement('button');
     submit.className = 'grade-tool-submit';
     submit.type = 'submit';
     submit.textContent = 'Calculate';
-    form.appendChild(submit);
+    formActions.append(reset, submit);
+    form.appendChild(formActions);
     const output = document.createElement('section');
     output.className = 'result grade-tool-output';
     output.setAttribute('aria-live', 'polite');
@@ -1077,21 +1139,27 @@
     const diagram = document.createElement('div');
     diagram.className = 'grade-tool-diagram';
     visualization.append(visualizationHeading, diagram);
-    app.replaceChildren(eyebrow, heading, intro, formula, form, output, visualization);
+    app.replaceChildren(eyebrow, heading, intro, formulaDetails, form, output, visualization);
 
     function updateFieldVisibility() {
         const size = Number(inputs.get('size')?.value || 3);
         const operation = inputs.get('operation')?.value;
         if (topic === 'sequences-series' && inputs.get('kind')?.value !== 'gp') inputs.get('sumType').value = 'finite';
-        const constraintCount = Number(inputs.get('constraintCount')?.value || 0);
+        if (topic === 'linear-programming') {
+            form.querySelectorAll('.grade-lp-constraint').forEach((row, index) => {
+                row.hidden = index >= activeConstraintCount;
+            });
+            form.querySelector('.grade-lp-constraint-count').textContent = `${activeConstraintCount} ${activeConstraintCount === 1 ? 'constraint' : 'constraints'}`;
+            form.querySelector('.grade-lp-constraint-count').hidden = false;
+            form.querySelector('.grade-lp-constraint-actions button[type="button"]:first-of-type').disabled = activeConstraintCount === 0;
+            form.querySelector('.grade-lp-constraint-actions button[type="button"]:last-of-type').disabled = activeConstraintCount >= 12;
+        }
         wrappers.forEach((wrapper, id) => {
             if (['setA', 'setB', 'setU'].includes(id)) wrapper.hidden = inputs.get('mode')?.value !== 'elements';
             if (['universe', 'a', 'b', 'intersection'].includes(id) && topic === 'sets') wrapper.hidden = inputs.get('mode')?.value !== 'cardinality';
             if (['br', 'bi'].includes(id) && topic === 'complex-numbers') wrapper.hidden = !['add', 'subtract', 'multiply', 'divide'].includes(operation);
             if (id === 'r' && topic === 'binomial-theorem') wrapper.hidden = inputs.get('mode')?.value !== 'term';
             if (id === 'sumType' && topic === 'sequences-series') wrapper.hidden = inputs.get('kind')?.value !== 'gp';
-            const constraint = topic === 'linear-programming' && id.match(/^(?:a|b|c|relation)(\d+)$/);
-            if (constraint) wrapper.hidden = Number(constraint[1]) > constraintCount;
             if (wrapper.dataset.matrix) {
                 const outsideSize = Number(wrapper.dataset.row) >= size || Number(wrapper.dataset.column) >= size;
                 const unusedMatrix = wrapper.dataset.matrix === 'b'
@@ -1102,12 +1170,26 @@
         });
     }
 
-    ['size', 'operation', 'mode', 'kind', 'constraintCount'].forEach(id => inputs.get(id)?.addEventListener('change', updateFieldVisibility));
+    ['size', 'operation', 'mode', 'kind'].forEach(id => inputs.get(id)?.addEventListener('change', updateFieldVisibility));
     updateFieldVisibility();
+
+    form.addEventListener('reset', event => {
+        event.preventDefault();
+        defaults.forEach((value, id) => {
+            inputs.get(id).value = value;
+        });
+        activeConstraintCount = 3;
+        updateFieldVisibility();
+        output.dataset.state = '';
+        output.textContent = 'Enter values above, then choose Calculate.';
+        visualization.hidden = true;
+        diagram.replaceChildren();
+    });
 
     form.addEventListener('submit', event => {
         event.preventDefault();
         const values = Object.fromEntries([...inputs].map(([key, input]) => [key, input.value]));
+        if (topic === 'linear-programming') values.constraintCount = String(activeConstraintCount);
         try {
             const result = selected.calculate(values);
             output.dataset.state = 'success';
@@ -1125,6 +1207,8 @@
             const message = document.createElement('strong');
             message.textContent = error.message;
             output.replaceChildren(message);
+            visualization.hidden = true;
+            diagram.replaceChildren();
         }
     });
 })();
