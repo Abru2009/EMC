@@ -72,7 +72,10 @@
                 </div>
                 <div class="grade-textbook-image" data-grade-view="12" hidden>
                     <a href="https://ncert.nic.in/textbook.php?lemh1=0-13" target="_blank" rel="noopener noreferrer">
-                        <img data-src="data/ncert-grade12-textbook.png" alt="NCERT Grade 12 Mathematics textbook cover">
+                        <img data-src="data/ncert-grade12-textbook-part1.png" alt="NCERT Grade 12 Mathematics textbook Part I cover">
+                    </a>
+                    <a href="https://ncert.nic.in/textbook.php?lemh1=0-13" target="_blank" rel="noopener noreferrer">
+                        <img data-src="data/ncert-grade12-textbook-part2.png" alt="NCERT Grade 12 Mathematics textbook Part II cover">
                     </a>
                 </div>
                 <div class="grade-textbook-copy">
@@ -97,8 +100,11 @@
         document.querySelectorAll('.grade-textbook-image img').forEach(image => {
             const wrapper = image.closest('.grade-textbook-image');
             const updateImage = loaded => {
-                wrapper.dataset.imageReady = String(loaded);
-                wrapper.hidden = !loaded || wrapper.dataset.gradeView !== document.documentElement.dataset.grade;
+                image.dataset.imageReady = String(loaded);
+                const images = [...wrapper.querySelectorAll('img')];
+                const allImagesReady = images.every(item => item.dataset.imageReady === 'true');
+                wrapper.dataset.imageReady = String(allImagesReady);
+                wrapper.hidden = !allImagesReady || wrapper.dataset.gradeView !== document.documentElement.dataset.grade;
                 wrapper.setAttribute('aria-hidden', String(wrapper.hidden));
             };
             image.addEventListener('load', () => updateImage(true));

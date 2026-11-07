@@ -248,9 +248,11 @@
             section.hidden = section.dataset.gradeSection !== grade;
         });
         document.querySelectorAll('[data-grade-view]').forEach(view => {
-            const image = view.querySelector('img[data-src]');
-            if (view.dataset.gradeView === grade && image && !image.getAttribute('src')) {
-                image.setAttribute('src', image.dataset.src);
+            const images = view.querySelectorAll('img[data-src]');
+            if (view.dataset.gradeView === grade) {
+                images.forEach(image => {
+                    if (!image.getAttribute('src')) image.setAttribute('src', image.dataset.src);
+                });
             }
             const imageReady = view.dataset.imageReady === 'true';
             view.hidden = view.dataset.gradeView !== grade || !imageReady;
