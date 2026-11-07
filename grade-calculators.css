@@ -1,0 +1,479 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+.grade-tools-page {
+    min-height: 100vh;
+    padding: 18px 16px 48px;
+}
+
+.grade-tools-page .back-home {
+    display: block;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.grade-tools-shell {
+    width: min(100%, 980px);
+    margin: 18px auto;
+    padding: clamp(22px, 5vw, 48px);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    background: var(--surface);
+    box-shadow: 0 16px 40px rgba(30, 30, 50, 0.1);
+}
+
+.grade-tools-shell h1 {
+    margin: 8px 0 12px;
+    color: var(--accent) !important;
+    font-size: clamp(2rem, 5vw, 3.1rem);
+    font-weight: 550;
+    letter-spacing: -0.045em;
+    line-height: 1.12;
+}
+
+.grade-tools-intro {
+    max-width: 700px;
+    margin: 0 0 24px;
+    color: var(--muted) !important;
+    font-size: 1.05rem;
+}
+
+.grade-tool-links,
+.grade-tool-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin: 22px 0;
+}
+
+.grade-tool-links .calc-button {
+    display: flex;
+    min-height: 64px;
+    align-items: center;
+    padding: 14px 18px;
+    text-align: left;
+    text-decoration: none;
+}
+
+.grade-tool-form {
+    gap: 16px;
+    padding: clamp(16px, 3vw, 26px);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--surface-raised);
+    box-shadow: 0 4px 15px rgba(30, 30, 50, 0.08);
+}
+
+.grade-tool-form-hint {
+    grid-column: 1 / -1;
+    margin: 0;
+    color: var(--muted) !important;
+    font-size: 0.92rem;
+}
+
+.grade-tool-form.grade-lp-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grade-tool-field {
+    display: grid;
+    align-content: start;
+    gap: 6px;
+    min-width: 0;
+}
+
+.grade-tool-field[hidden] {
+    display: none !important;
+}
+
+.grade-tool-field[data-matrix] {
+    min-width: 0;
+}
+
+.grade-tool-field label {
+    color: var(--text) !important;
+    font-size: 0.88rem;
+    font-weight: 650;
+    line-height: 1.35;
+}
+
+.grade-tool-field input,
+.grade-tool-field select {
+    width: 100%;
+    min-height: 44px;
+    padding: 9px 11px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background: var(--surface);
+    color: var(--text) !important;
+    font: inherit;
+}
+
+.grade-tool-field input:focus-visible,
+.grade-tool-field select:focus-visible,
+.grade-tool-submit:focus-visible {
+    outline: 3px solid var(--highlight);
+    outline-offset: 2px;
+}
+
+.grade-tool-submit {
+    min-height: 48px;
+    padding: 11px 16px;
+    border: 1px solid var(--accent-strong);
+    border-radius: 12px;
+    background: var(--accent-strong);
+    color: #fff !important;
+    font: inherit;
+    font-weight: 750;
+    cursor: pointer;
+}
+
+.grade-tool-submit:hover {
+    filter: brightness(1.08);
+}
+
+.grade-tool-form-actions {
+    display: flex;
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 4px;
+}
+
+.grade-tool-reset,
+.grade-tool-secondary {
+    min-height: 44px;
+    padding: 9px 14px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background: var(--surface);
+    color: var(--text) !important;
+    font: inherit;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.grade-tool-reset:hover,
+.grade-tool-secondary:hover:not(:disabled) {
+    border-color: var(--accent-strong);
+    background: var(--accent-soft);
+}
+
+.grade-tool-reset:focus-visible,
+.grade-tool-secondary:focus-visible {
+    outline: 3px solid var(--highlight);
+    outline-offset: 2px;
+}
+
+.grade-tool-secondary:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+.grade-tool-formula-details {
+    margin: 0 0 18px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface-raised);
+    color: var(--text);
+}
+
+.grade-tool-formula-details summary {
+    padding: 12px 16px;
+    color: var(--accent) !important;
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.grade-tool-formula-details[open] .grade-tool-formula {
+    margin: 0 14px 14px;
+    border: 0;
+    background: transparent;
+}
+
+.grade-lp-constraints,
+.grade-lp-constraint-actions {
+    grid-column: 1 / -1;
+}
+
+.grade-lp-constraints {
+    display: grid;
+    gap: 10px;
+}
+
+.grade-lp-constraint {
+    min-width: 0;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+}
+
+.grade-lp-constraint[hidden] {
+    display: none !important;
+}
+
+.grade-lp-constraint h3 {
+    margin: 0 0 10px;
+    color: var(--accent) !important;
+    font-size: 0.9rem;
+}
+
+.grade-lp-constraint-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr minmax(90px, 0.7fr) 1fr;
+    align-items: end;
+    gap: 10px;
+}
+
+.grade-lp-constraint-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.grade-lp-constraint-count {
+    margin-right: auto;
+    color: var(--muted) !important;
+    font-size: 0.88rem;
+    font-weight: 650;
+}
+
+.grade-lp-constraint-count[hidden] {
+    display: none !important;
+}
+
+.grade-tool-formula,
+.grade-tool-output {
+    margin: 0 0 22px;
+    padding: 16px 18px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface-raised);
+    color: var(--text) !important;
+    line-height: 1.6;
+}
+
+.grade-tool-output {
+    min-height: 64px;
+    margin: 22px 0;
+    background: var(--surface);
+}
+
+.grade-tool-output .steps {
+    margin: 8px 0 0;
+    padding: 12px 14px;
+    border-left: 3px solid var(--accent-strong);
+    border-radius: 0 9px 9px 0;
+    background: var(--surface-raised);
+    color: var(--muted) !important;
+}
+
+.grade-tool-output[data-state="error"] {
+    border-color: #b94a48;
+}
+
+.grade-textbook-link {
+    display: inline-flex;
+    margin-top: 12px;
+    color: var(--accent) !important;
+    font-weight: 700;
+}
+
+.grade-library-intro {
+    margin-bottom: 20px;
+    color: var(--muted) !important;
+}
+
+.grade-library-section {
+    margin-top: 26px;
+}
+
+.grade-library-section > h2 {
+    color: var(--accent) !important;
+}
+
+.grade-tool-visualization {
+    min-height: auto;
+    margin-top: 20px;
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--surface);
+}
+
+.grade-tool-visualization[hidden] {
+    display: none !important;
+}
+
+.grade-tool-visualization h2 {
+    margin: 0 0 12px;
+    color: var(--accent) !important;
+    font-size: 1.2rem;
+}
+
+.grade-tool-diagram {
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--graph-paper);
+}
+
+.grade-tool-chart {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 250px;
+    background: var(--graph-paper);
+}
+
+.grade-tool-chart text {
+    fill: var(--text);
+    font: 13px system-ui, sans-serif;
+}
+
+.grade-tool-chart .grade-chart-grid {
+    stroke: var(--grid);
+    stroke-width: 1;
+}
+
+.grade-tool-chart .grade-chart-axis {
+    stroke: var(--muted);
+    stroke-width: 1.8;
+}
+
+.grade-tool-chart .grade-chart-curve {
+    stroke: var(--accent-strong);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.grade-tool-chart .grade-chart-curve-secondary {
+    stroke: var(--highlight);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.grade-tool-chart .grade-chart-label,
+.grade-tool-chart .grade-matrix-value {
+    fill: var(--text);
+}
+
+.grade-tool-chart .grade-chart-point,
+.grade-tool-chart .grade-number-point-filled {
+    fill: var(--accent-strong);
+    stroke: var(--surface);
+    stroke-width: 2;
+}
+
+.grade-tool-chart .grade-number-point-open {
+    fill: var(--graph-paper);
+    stroke: var(--accent-strong);
+    stroke-width: 3;
+}
+
+.grade-tool-chart .grade-chart-bar {
+    fill: var(--accent-strong);
+}
+
+.grade-tool-chart .grade-chart-region {
+    fill: var(--accent-soft);
+    fill-opacity: 0.72;
+    stroke: var(--accent-strong);
+    stroke-width: 2;
+}
+
+.grade-tool-chart .grade-venn-circle {
+    fill: var(--accent-soft);
+    fill-opacity: 0.64;
+    stroke: var(--accent-strong);
+    stroke-width: 2;
+}
+
+.grade-tool-chart .grade-venn-secondary {
+    fill: var(--highlight);
+    fill-opacity: 0.24;
+    stroke: var(--highlight);
+}
+
+.grade-tool-chart .grade-matrix-cell {
+    fill: var(--accent-soft);
+    stroke: var(--accent-strong);
+    stroke-width: 1.5;
+}
+
+.grade-tool-chart .grade-matrix-value {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.grade-tool-chart .grade-logic-header {
+    fill: var(--accent-strong);
+}
+
+.grade-tool-chart .grade-logic-header + .grade-logic-text {
+    fill: #fff;
+    font-weight: 750;
+}
+
+.grade-tool-chart .grade-logic-cell {
+    fill: var(--surface-raised);
+    stroke: var(--border);
+    stroke-width: 1;
+}
+
+.grade-tool-chart .grade-logic-text {
+    fill: var(--text);
+    font-size: 14px;
+    font-weight: 650;
+}
+
+.grade-library-section[hidden],
+[data-grade-view][hidden] {
+    display: none !important;
+}
+
+@media (max-width: 620px) {
+    .grade-tools-page {
+        padding: 12px 10px 32px;
+    }
+
+    .grade-tools-shell {
+        margin-top: 14px;
+        padding: 22px 18px;
+    }
+
+    .grade-tool-links,
+    .grade-tool-form {
+        grid-template-columns: 1fr;
+    }
+
+    .grade-tool-form.grade-lp-form {
+        grid-template-columns: 1fr;
+    }
+
+    .grade-lp-constraint-fields {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .grade-tool-form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .grade-tool-form-actions button {
+        width: 100%;
+    }
+
+    .grade-lp-constraint-actions > button {
+        flex: 1;
+    }
+}

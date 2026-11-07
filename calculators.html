@@ -3,56 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Calculators - Calculators</title>
+    <title>Math Calculators</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="theme.css">
+    <script src="theme.js" defer></script>
 </head>
 <body class="calculators-page">
     <nav class="navbar">
-        <div class="logo-container">
-            <img src="data/logo.png" alt="EMC" class="logo">  
-        </div>
-        
+        <div class="logo-container"><img src="data/logo.png" alt="EMC" class="logo"></div>
         <div class="nav-links" id="primaryNavigation">
             <a href="main.html">Home</a>
-            <a href="calculators.html">Calculators</a>
+            <a href="calculators.html" aria-current="page">Calculators</a>
             <a href="credits.html">Credits</a>
         </div>
-        
-        <div class="nav-menu">
-            <button id="menuButton" type="button" aria-label="Toggle navigation" aria-controls="primaryNavigation" aria-expanded="false">☰</button>
-        </div>
+        <div class="nav-menu"><button id="menuButton" type="button" aria-label="Toggle navigation" aria-controls="primaryNavigation" aria-expanded="false">☰</button></div>
     </nav>
-    
-    <div class="container">
-        <h1>Math Calculators</h1>
-        <h2>Select a Chapter</h2>
-        <div class="chapters-grid">
-            <a class="calc-button" href="grade-10/realnumbers.html">Real Numbers</a>
-            <a class="calc-button" href="grade-10/polynomials.html">Polynomials</a>
-            <a class="calc-button" href="grade-10/linearequations.html">Linear Equations</a>
-            <a class="calc-button" href="grade-10/quadraticequations.html">Quadratic Equations</a>
-            <a class="calc-button" href="grade-10/arthimeticprogression.html">Arithmetic Progression</a>
-            <a class="calc-button" href="grade-10/chapter6.html">Triangles</a>
-            <a class="calc-button" href="grade-10/coordinategeometry.html">Coordinate Geometry</a>
-            <a class="calc-button" href="grade-10/applicationsoftrignometry.html">Trigonometry</a>
-            <a class="calc-button" href="grade-10/applicationsoftrignometry.html">Application of Trigonometry</a>
-            <a class="calc-button" href="grade-10/circles.html">Circles</a>
-            <a class="calc-button" href="grade-10/areasrelatedtocircles.html">Areas Related to Circles</a>
-            <a class="calc-button" href="grade-10/surfaceareaandvolume.html">Surface Area Volume</a>
-            <a class="calc-button" href="grade-10/statistics.html">Statistics</a>
-            <a class="calc-button" href="grade-10/probability.html">Probability</a>
-            <a class="calc-button" href="grade-10/algebraicformulae.html">Algebraic Formulae</a>
+
+    <main class="container calculator-library">
+        <p class="eyebrow">CBSE • NCERT • GRADES 10–12</p>
+        <h1 data-grade-headline>Grade 10 Mathematics</h1>
+        <p class="grade-library-intro" data-grade-description>Explore focused NCERT calculators, organized by chapter.</p>
+        <div class="chapter-tools">
+            <label class="visually-hidden" for="chapterSearch">Search chapters</label>
+            <input id="chapterSearch" type="search" placeholder="Search chapters..." autocomplete="off" aria-controls="chapterGrid">
+            <p id="chapterCount" aria-live="polite">Calculators available</p>
         </div>
-    </div>
+        <p id="noChapters" class="no-chapters" hidden>No chapters match your search. Try another topic.</p>
+
+        <section class="grade-library-section" data-grade-section="10" id="grade-10">
+            <h2>Grade 10 chapters</h2>
+            <div class="chapters-grid" id="chapterGrid">
+                <a class="calc-button" href="grade-10/realnumbers.html">Real Numbers</a>
+                <a class="calc-button" href="grade-10/polynomials.html">Polynomials</a>
+                <a class="calc-button" href="grade-10/linearequations.html">Pair of Linear Equations in Two Variables</a>
+                <a class="calc-button" href="grade-10/quadraticequations.html">Quadratic Equations</a>
+                <a class="calc-button" href="grade-10/arthimeticprogression.html">Arithmetic Progression</a>
+                <a class="calc-button" href="grade-10/chapter6.html">Triangles</a>
+                <a class="calc-button" href="grade-10/coordinategeometry.html">Coordinate Geometry</a>
+                <a class="calc-button" href="grade-10/applicationsoftrignometry.html">Trigonometry</a>
+                <a class="calc-button" href="grade-10/applicationsoftrignometry.html">Applications of Trigonometry</a>
+                <a class="calc-button" href="grade-10/circles.html">Circles</a>
+                <a class="calc-button" href="grade-10/areasrelatedtocircles.html">Areas Related to Circles</a>
+                <a class="calc-button" href="grade-10/surfaceareaandvolume.html">Surface Area and Volume</a>
+                <a class="calc-button" href="grade-10/statistics.html">Statistics</a>
+                <a class="calc-button" href="grade-10/probability.html">Probability</a>
+                <a class="calc-button" href="grade-10/algebraicformulae.html">Algebraic Formulae</a>
+            </div>
+            <a class="grade-textbook-link" href="https://ncert.nic.in/textbook.php?jemh1=1-15" target="_blank" rel="noopener noreferrer">Open the NCERT Grade 10 textbook ↗</a>
+        </section>
+
+        <section class="grade-library-section" data-grade-section="11" id="grade-11">
+            <h2>Grade 11 chapters</h2>
+            <div class="chapters-grid">
+                <a class="calc-button" href="grade-11/calculator.html?topic=sets">Sets</a>
+                <a class="calc-button" href="grade-11/calculator.html?topic=relations-functions">Relations and Functions</a>
+                <a class="calc-button" href="grade-11/calculator.html?topic=trigonometric-functions">Trigonometric Functions</a>
+                <a class="calc-button" href="grade-11/calculator.html?topic=mathematical-induction">Principle of Mathematical Induction</a>
+                <a class="calc-button" href="grade-11/calculator.html?topic=complex-numbers">Complex Numbers and Quadratic Equations</a>
+                <a class="calc-button" href="grade-11/calculator.html?topic=linear-inequalities">Linear Inequalities</a>
+                <a class="calc-button" href="grade-11/calculator.html?topic=permutations-combinations">Permutations and Combinations</a>
+                <a class="calc-button" href="grade-11/calculator.html?topic=binomial-theorem">Binomial Theorem</a>
+                <a class="calc-button" href="grade-11/calculator.html?topic=sequences-series">Sequences and Series</a>
+                <a class="calc-button" href="grade-11/calculator.html?topic=straight-lines">Straight Lines</a>
+                <a class="calc-button" href="grade-11/calculator.html?topic=conic-sections">Conic Sections</a>
+                <a class="calc-button" href="grade-11/calculator.html?topic=three-dimensional-geometry">Introduction to 3D Geometry</a>
+                <a class="calc-button" href="grade-11/calculator.html?topic=limits-derivatives">Limits and Derivatives</a>
+                <a class="calc-button" href="grade-11/calculator.html?topic=mathematical-reasoning">Mathematical Reasoning</a>
+                <a class="calc-button" href="grade-11/calculator.html?topic=statistics">Statistics</a>
+                <a class="calc-button" href="grade-11/calculator.html?topic=probability">Probability</a>
+            </div>
+            <a class="grade-textbook-link" href="https://ncert.nic.in/textbook.php?kemh1=0-16" target="_blank" rel="noopener noreferrer">Open the NCERT Grade 11 textbook ↗</a>
+        </section>
+
+        <section class="grade-library-section" data-grade-section="12" id="grade-12">
+            <h2>Grade 12 chapters</h2>
+            <div class="chapters-grid">
+                <a class="calc-button" href="grade-12/calculator.html?topic=relations-functions">Relations and Functions</a>
+                <a class="calc-button" href="grade-12/calculator.html?topic=inverse-trigonometric-functions">Inverse Trigonometric Functions</a>
+                <a class="calc-button" href="grade-12/calculator.html?topic=matrices">Matrices</a>
+                <a class="calc-button" href="grade-12/calculator.html?topic=determinants">Determinants</a>
+                <a class="calc-button" href="grade-12/calculator.html?topic=continuity-differentiability">Continuity and Differentiability</a>
+                <a class="calc-button" href="grade-12/calculator.html?topic=applications-derivatives">Applications of Derivatives</a>
+                <a class="calc-button" href="grade-12/calculator.html?topic=integrals">Integrals</a>
+                <a class="calc-button" href="grade-12/calculator.html?topic=applications-integrals">Applications of Integrals</a>
+                <a class="calc-button" href="grade-12/calculator.html?topic=differential-equations">Differential Equations</a>
+                <a class="calc-button" href="grade-12/calculator.html?topic=vector-algebra">Vector Algebra</a>
+                <a class="calc-button" href="grade-12/calculator.html?topic=three-dimensional-geometry">Three-Dimensional Geometry</a>
+                <a class="calc-button" href="grade-12/calculator.html?topic=linear-programming">Linear Programming</a>
+                <a class="calc-button" href="grade-12/calculator.html?topic=probability">Probability</a>
+            </div>
+            <a class="grade-textbook-link" href="https://ncert.nic.in/textbook.php?lemh1=0-13" target="_blank" rel="noopener noreferrer">Open the NCERT Grade 12 textbook ↗</a>
+        </section>
+    </main>
 
     <script>
-        document.getElementById('menuButton').addEventListener('click', function() {
-            const navLinks = document.querySelector('.nav-links');
-            const isOpen = navLinks.classList.toggle('is-open');
+        document.getElementById('menuButton').addEventListener('click', function () {
+            const links = document.getElementById('primaryNavigation');
+            const isOpen = links.classList.toggle('is-open');
             this.setAttribute('aria-expanded', String(isOpen));
         });
     </script>
-    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'92716a509d00bcf6',t:'MTc0MzEwNTAxMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'928e8422cfeebcf8',t:'MTc0MzQxMDE1Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9299028e3cab6ffb',t:'MTc0MzUyMDE5MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
