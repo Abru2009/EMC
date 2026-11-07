@@ -36,6 +36,41 @@
     if (!valid.palette.includes(palette)) palette = 'warm';
     let grade = read(keys.grade);
     if (!valid.grade.includes(grade)) grade = '10';
+    const challengeSets = {
+        '10': [
+            ['A triangle has sides in ratio 3:4:5 and perimeter 36 cm. What is its longest side?', 'The scale factor is 3, so the sides are 9, 12, and 15 cm.'],
+            ['A quadratic has roots 2 and 5. What is the sum of its roots?', '7. The sum of roots is −b/a.'],
+            ['An AP starts 4, 7, 10, … What is its 10th term?', '31. Use aₙ = a + (n−1)d = 4 + 9×3.'],
+            ['A fair die is rolled. What is the probability of getting a prime number?', '1/2. The prime faces are 2, 3, and 5.']
+        ],
+        '11': [
+            ['If sin θ = 3/5 and θ is acute, what is cos θ?', '4/5, from sin²θ + cos²θ = 1.'],
+            ['How many ways can you choose 2 students from a group of 5?', '10 ways: ⁵C₂ = 5×4/(2×1).'],
+            ['What is the sum 1 + 2 + … + 20?', '210, using n(n+1)/2.'],
+            ['If P is true and Q is false, is P ⇒ Q true or false?', 'False. An implication fails only for a true premise and a false conclusion.']
+        ],
+        '12': [
+            ['What is the determinant of [[2, 1], [3, 4]]?', '5. For a 2×2 matrix, det = ad − bc = 8 − 3.'],
+            ['What is the derivative of x³ at x = 2?', '12. The derivative is 3x².'],
+            ['If a geometric series starts at 8 with ratio 1/2, what is its infinite sum?', '16, using a/(1−r) = 8/(1−1/2).'],
+            ['What is the dot product of (1, 2, 3) and (2, 0, 1)?', '5: 1×2 + 2×0 + 3×1.']
+        ]
+    };
+    let challengeIndex = Math.floor(Date.now() / 86400000) % 4;
+
+    function updateChallenge() {
+        const question = document.getElementById('dailyChallengeQuestion');
+        const answer = document.getElementById('dailyChallengeAnswer');
+        const reveal = document.getElementById('revealChallenge');
+        if (!question || !answer || !reveal) return;
+        const challenge = challengeSets[grade][challengeIndex % challengeSets[grade].length];
+        question.textContent = challenge[0];
+        answer.textContent = challenge[1];
+        answer.hidden = true;
+        reveal.textContent = 'Reveal answer';
+        reveal.setAttribute('aria-expanded', 'false');
+    }
+
     const routeGrade = document.body.dataset.gradePage
         || (location.pathname.includes('/grade-10/') ? '10' : '');
     if (valid.grade.includes(routeGrade)) {
@@ -64,6 +99,19 @@
     }
 
     function addSettings() {
+        const revealChallenge = document.getElementById('revealChallenge');
+        const challengeAnswer = document.getElementById('dailyChallengeAnswer');
+        revealChallenge?.addEventListener('click', () => {
+            const shouldReveal = challengeAnswer.hidden;
+            challengeAnswer.hidden = !shouldReveal;
+            revealChallenge.textContent = shouldReveal ? 'Hide answer' : 'Reveal answer';
+            revealChallenge.setAttribute('aria-expanded', String(shouldReveal));
+        });
+        document.getElementById('nextChallenge')?.addEventListener('click', () => {
+            challengeIndex++;
+            updateChallenge();
+        });
+
         const controls = document.createElement('div');
         controls.className = 'settings-controls';
 
@@ -173,6 +221,7 @@
                 openButton.focus();
             }
         });
+        updateChallenge();
         document.addEventListener('pointerdown', event => {
             if (!panel.hidden && !controls.contains(event.target)) {
                 panel.hidden = true;
@@ -199,7 +248,13 @@
             section.hidden = section.dataset.gradeSection !== grade;
         });
         document.querySelectorAll('[data-grade-view]').forEach(view => {
-            view.hidden = view.dataset.gradeView !== grade;
+            const image = view.querySelector('img[data-src]');
+            if (view.dataset.gradeView === grade && image && !image.getAttribute('src')) {
+                image.setAttribute('src', image.dataset.src);
+            }
+            const imageReady = view.dataset.imageReady === 'true';
+            view.hidden = view.dataset.gradeView !== grade || !imageReady;
+            view.setAttribute('aria-hidden', String(view.hidden));
         });
 
         const headline = document.querySelector('[data-grade-headline]');
@@ -213,8 +268,6 @@
 
         const search = document.getElementById('chapterSearch');
         if (search) updateChapterSearch();
-        const image = document.querySelector('[data-grade-textbook-image]');
-        if (image) image.hidden = grade !== '10';
         const textbook = document.querySelector('[data-grade-textbook-link]');
         if (textbook) {
             const links = {
@@ -236,6 +289,7 @@
                 count.textContent = `${total} chapters available`;
             }
         });
+        updateChallenge();
     }
 
     function updateChapterSearch() {

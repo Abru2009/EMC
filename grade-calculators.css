@@ -415,6 +415,27 @@
     font-weight: 700;
 }
 
+.grade-tool-chart .grade-logic-header {
+    fill: var(--accent-strong);
+}
+
+.grade-tool-chart .grade-logic-header + .grade-logic-text {
+    fill: #fff;
+    font-weight: 750;
+}
+
+.grade-tool-chart .grade-logic-cell {
+    fill: var(--surface-raised);
+    stroke: var(--border);
+    stroke-width: 1;
+}
+
+.grade-tool-chart .grade-logic-text {
+    fill: var(--text);
+    font-size: 14px;
+    font-weight: 650;
+}
+
 .grade-library-section[hidden],
 [data-grade-view][hidden] {
     display: none !important;

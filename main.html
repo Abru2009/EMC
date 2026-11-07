@@ -45,10 +45,34 @@
                 </div>
             </section>
 
+            <section class="daily-challenge" aria-labelledby="dailyChallengeTitle">
+                <div class="daily-challenge-mark" aria-hidden="true">✦</div>
+                <div class="daily-challenge-content">
+                    <p class="eyebrow">A tiny brain break</p>
+                    <h2 id="dailyChallengeTitle">Your math mini-challenge</h2>
+                    <p id="dailyChallengeQuestion" class="daily-challenge-question"></p>
+                    <p id="dailyChallengeAnswer" class="daily-challenge-answer" aria-live="polite" hidden></p>
+                    <div class="daily-challenge-actions">
+                        <button id="revealChallenge" class="challenge-button" type="button">Reveal answer</button>
+                        <button id="nextChallenge" class="challenge-button challenge-button-secondary" type="button">Next challenge</button>
+                    </div>
+                </div>
+            </section>
+
             <section class="grade-textbook" aria-labelledby="textbookTitle">
                 <div class="grade-textbook-image" data-grade-view="10" hidden>
                     <a href="https://ncert.nic.in/textbook.php?jemh1=1-15" target="_blank" rel="noopener noreferrer">
                         <img src="data/ncert-grade10-textbook.png" alt="NCERT Grade 10 Mathematics textbook cover">
+                    </a>
+                </div>
+                <div class="grade-textbook-image" data-grade-view="11" hidden>
+                    <a href="https://ncert.nic.in/textbook.php?kemh1=0-16" target="_blank" rel="noopener noreferrer">
+                        <img data-src="data/ncert-grade11-textbook.png" alt="NCERT Grade 11 Mathematics textbook cover">
+                    </a>
+                </div>
+                <div class="grade-textbook-image" data-grade-view="12" hidden>
+                    <a href="https://ncert.nic.in/textbook.php?lemh1=0-13" target="_blank" rel="noopener noreferrer">
+                        <img data-src="data/ncert-grade12-textbook.png" alt="NCERT Grade 12 Mathematics textbook cover">
                     </a>
                 </div>
                 <div class="grade-textbook-copy">
@@ -67,6 +91,19 @@
             const links = document.getElementById('primaryNavigation');
             const isOpen = links.classList.toggle('is-open');
             this.setAttribute('aria-expanded', String(isOpen));
+        });
+    </script>
+    <script>
+        document.querySelectorAll('.grade-textbook-image img').forEach(image => {
+            const wrapper = image.closest('.grade-textbook-image');
+            const updateImage = loaded => {
+                wrapper.dataset.imageReady = String(loaded);
+                wrapper.hidden = !loaded || wrapper.dataset.gradeView !== document.documentElement.dataset.grade;
+                wrapper.setAttribute('aria-hidden', String(wrapper.hidden));
+            };
+            image.addEventListener('load', () => updateImage(true));
+            image.addEventListener('error', () => updateImage(false));
+            if (image.getAttribute('src') && image.complete) updateImage(image.naturalWidth > 0);
         });
     </script>
 </body>

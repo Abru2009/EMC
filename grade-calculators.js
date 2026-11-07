@@ -183,6 +183,64 @@
             const sin = Math.sin(radians), cos = Math.cos(radians), ratio = value => Math.abs(value) < 1e-12 ? 'undefined' : format(1 / value);
             return { answer: `${format(angle)} ${v.unit === 'degrees' ? '°' : 'rad'} = ${format(v.unit === 'degrees' ? radians : radians * 180 / Math.PI)} ${v.unit === 'degrees' ? 'rad' : '°'}; sin=${format(sin)}, cos=${format(cos)}, tan=${Math.abs(cos) < 1e-12 ? 'undefined' : format(sin / cos)}, csc=${ratio(sin)}, sec=${ratio(cos)}, cot=${Math.abs(sin) < 1e-12 ? 'undefined' : format(cos / sin)}.`, steps: 'The reciprocal ratios are csc=1/sin, sec=1/cos, and cot=cos/sin.' };
         }),
+        'mathematical-induction': config('Induction Step Explorer', 'Explore a common induction statement by checking its base case and testing the transition from k to k + 1.', 'An induction proof establishes P(1), then proves P(k) ⇒ P(k + 1) for every valid k. This tool checks the arithmetic at your chosen k; it does not replace the proof.', [
+            field('identity', 'Statement to explore', 'natural-sum', { type: 'select', options: [['natural-sum', '1 + 2 + … + n = n(n + 1)/2'], ['square-sum', '1² + 2² + … + n² = n(n + 1)(2n + 1)/6'], ['cube-sum', '1³ + 2³ + … + n³ = [n(n + 1)/2]²'], ['odd-sum', '1 + 3 + … + (2n − 1) = n²'], ['divisibility', 'n³ − n is divisible by 6']] }),
+            field('k', 'Induction step k', 5)
+        ], v => {
+            const k = integer(v.k, 'k', 1, 100000);
+            const identities = {
+                'natural-sum': { label: 'sum of the first n natural numbers', value: n => n * (n + 1) / 2, next: n => n + 1, step: n => `${format(n * (n + 1) / 2)} + ${n + 1} = ${format((n + 1) * (n + 2) / 2)}` },
+                'square-sum': { label: 'sum of the first n squares', value: n => n * (n + 1) * (2 * n + 1) / 6, next: n => (n + 1) ** 2, step: n => `${format(n * (n + 1) * (2 * n + 1) / 6)} + ${n + 1}² = ${format((n + 1) * (n + 2) * (2 * n + 3) / 6)}` },
+                'cube-sum': { label: 'sum of the first n cubes', value: n => (n * (n + 1) / 2) ** 2, next: n => (n + 1) ** 3, step: n => `${format((n * (n + 1) / 2) ** 2)} + ${n + 1}³ = ${format(((n + 1) * (n + 2) / 2) ** 2)}` },
+                'odd-sum': { label: 'sum of the first n odd numbers', value: n => n ** 2, next: n => 2 * n + 1, step: n => `${n}² + ${2 * n + 1} = ${(n + 1) ** 2}` }
+            };
+            const identity = identities[v.identity];
+            if (v.identity === 'divisibility') {
+                const base = (1 ** 3 - 1) % 6 === 0;
+                const kth = (k ** 3 - k) % 6 === 0;
+                const next = ((k + 1) ** 3 - (k + 1)) % 6 === 0;
+                return {
+                    answer: `Base P(1): ${base ? 'true' : 'false'}; P(${k}): ${kth ? 'true' : 'false'}; P(${k + 1}): ${next ? 'true' : 'false'}.`,
+                    steps: `The change from P(k) to P(k+1) is 3k(k+1) = ${format(3 * k * (k + 1))}, which is divisible by 6 because one of k and k+1 is even.`,
+                    visual: { type: 'induction', labels: ['Base case', `P(${k})`, `P(${k + 1})`], values: [base ? 'True' : 'False', kth ? 'True' : 'False', next ? 'True' : 'False'] }
+                };
+            }
+            const base = identity.value(1) === (v.identity === 'odd-sum' ? 1 : 1);
+            const kthValue = identity.value(k);
+            const nextValue = identity.value(k + 1);
+            return {
+                answer: `Base P(1): ${base ? 'true' : 'false'}; P(${k}) gives ${format(kthValue)}; P(${k + 1}) gives ${format(nextValue)}.`,
+                steps: `Add the next term to the induction hypothesis: ${identity.step(k)}. This numerical check illustrates the step but is not a proof for every k.`,
+                visual: { type: 'induction', labels: ['Base case P(1)', `P(${k})`, `P(${k + 1})`], values: [String(identity.value(1)), format(kthValue), format(nextValue)] }
+            };
+        }),
+        'mathematical-reasoning': config('Logic and Truth Table Explorer', 'Explore negation, conjunction, disjunction, implication, and related statements with a complete truth table.', 'An implication P ⇒ Q is false only when P is true and Q is false; it is logically equivalent to its contrapositive.', [
+            field('operation', 'Logical connection', 'and', { type: 'select', options: [['not', 'Negation ¬P'], ['and', 'Conjunction P ∧ Q'], ['or', 'Disjunction P ∨ Q'], ['xor', 'Exclusive or P ⊕ Q'], ['implies', 'Implication P ⇒ Q'], ['converse', 'Converse Q ⇒ P'], ['inverse', 'Inverse ¬P ⇒ ¬Q'], ['contrapositive', 'Contrapositive ¬Q ⇒ ¬P'], ['iff', 'Biconditional P ⇔ Q']] }),
+            field('p', 'Statement P is', 'true', { type: 'select', options: [['true', 'True'], ['false', 'False']] }),
+            field('q', 'Statement Q is', 'false', { type: 'select', options: [['true', 'True'], ['false', 'False']] })
+        ], v => {
+            const p = v.p === 'true', q = v.q === 'true';
+            const evaluate = (left, right) => ({
+                not: !left,
+                and: left && right,
+                or: left || right,
+                xor: left !== right,
+                implies: !left || right,
+                converse: !right || left,
+                inverse: left || !right,
+                contrapositive: right || !left,
+                iff: left === right
+            })[v.operation];
+            const labels = { not: '¬P', and: 'P ∧ Q', or: 'P ∨ Q', xor: 'P ⊕ Q', implies: 'P ⇒ Q', converse: 'Q ⇒ P', inverse: '¬P ⇒ ¬Q', contrapositive: '¬Q ⇒ ¬P', iff: 'P ⇔ Q' };
+            const rows = v.operation === 'not'
+                ? [[true], [false]].map(([left]) => [left, evaluate(left, false)])
+                : [[true, true], [true, false], [false, true], [false, false]].map(([left, right]) => [left, right, evaluate(left, right)]);
+            return {
+                answer: `${labels[v.operation]} is ${evaluate(p, q) ? 'true' : 'false'} when P is ${p ? 'true' : 'false'}${v.operation === 'not' ? '' : ` and Q is ${q ? 'true' : 'false'}`}.`,
+                steps: v.operation === 'contrapositive' ? 'The contrapositive has the same truth value as the original implication for every possible P and Q.' : 'Use the truth table below to compare the statement across all possible truth-value combinations.',
+                visual: { type: 'logic', operation: v.operation, rows, labels: v.operation === 'not' ? ['P', labels[v.operation]] : ['P', 'Q', labels[v.operation]] }
+            };
+        }),
         'complex-numbers': config('Complex Number Calculator', 'Add, subtract, multiply, divide, conjugate, or find modulus and argument of complex numbers.', 'For z=a+bi, |z|=√(a²+b²), arg(z)=atan2(b,a), and z̄=a−bi.', [
             field('operation', 'Operation', 'multiply', { type: 'select', options: [['add', 'Add'], ['subtract', 'Subtract'], ['multiply', 'Multiply'], ['divide', 'Divide'], ['conjugate', 'Conjugate z₁'], ['modulus', 'Modulus |z₁|'], ['argument', 'Argument arg(z₁)'], ['polar', 'Polar form of z₁']] }),
             field('ar', 'First real part', 3), field('ai', 'First imaginary part', 2),
@@ -661,8 +719,47 @@
         return svg;
     }
 
+    function makeLogicDiagram(labels, rows, label) {
+        const svg = makeSvg(label);
+        const top = 70, rowHeight = 42, columnWidth = 520 / labels.length;
+        labels.forEach((text, column) => {
+            const x = column * columnWidth;
+            svg.append(
+                svgElement('rect', { class: 'grade-logic-header', x: x + 8, y: top, width: columnWidth - 16, height: 34, rx: 7 }),
+                svgElement('text', { class: 'grade-logic-text', x: x + columnWidth / 2, y: top + 22, 'text-anchor': 'middle' }, text)
+            );
+        });
+        rows.forEach((row, rowIndex) => row.forEach((value, column) => {
+            const x = column * columnWidth, y = top + 42 + rowIndex * rowHeight;
+            svg.append(
+                svgElement('rect', { class: 'grade-logic-cell', x: x + 8, y, width: columnWidth - 16, height: 34, rx: 7 }),
+                svgElement('text', { class: 'grade-logic-text', x: x + columnWidth / 2, y: y + 22, 'text-anchor': 'middle' }, value ? 'True' : 'False')
+            );
+        }));
+        return svg;
+    }
+
     function makeVisualization(topic, values, result) {
         if (result.visual?.type === 'matrix') return makeMatrixDiagram(result.visual.matrix);
+        if (result.visual?.type === 'logic') {
+            const displayRows = result.visual.rows.map(row => row.map(Boolean));
+            return makeLogicDiagram(result.visual.labels, displayRows, 'Logical truth table');
+        }
+        if (result.visual?.type === 'induction') {
+            const svg = makeSvg('Induction step values');
+            const { labels, values: stepValues } = result.visual;
+            const columnWidth = 470 / labels.length;
+            labels.forEach((label, index) => {
+                const x = 25 + index * columnWidth;
+                svg.append(
+                    svgElement('rect', { class: 'grade-logic-header', x: x + 5, y: 92, width: columnWidth - 10, height: 45, rx: 9 }),
+                    svgElement('text', { class: 'grade-logic-text', x: x + columnWidth / 2, y: 120, 'text-anchor': 'middle' }, label),
+                    svgElement('rect', { class: 'grade-logic-cell', x: x + 5, y: 151, width: columnWidth - 10, height: 52, rx: 9 }),
+                    svgElement('text', { class: 'grade-logic-text', x: x + columnWidth / 2, y: 183, 'text-anchor': 'middle' }, stepValues[index])
+                );
+            });
+            return svg;
+        }
         if (result.visual?.type === 'linear-programming') {
             const svg = makeSvg('Linear programming constraints and feasible region');
             const { constraints, points, bounded } = result.visual;
