@@ -1,7 +1,7 @@
 (function () {
     const app = document.getElementById('calculatorApp');
     const grade = document.body.dataset.calculatorGrade;
-    const topic = new URLSearchParams(location.search).get('topic');
+    const topic = document.body.dataset.calculatorTopic || new URLSearchParams(location.search).get('topic');
 
     function number(value, label) {
         if (String(value).trim() === '') throw new InputError(`${label} is required.`);
